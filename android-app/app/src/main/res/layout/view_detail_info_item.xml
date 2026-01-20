@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="식물 분류"
+        android:textStyle="bold"
+        android:textColor="@color/text1"
+        android:textSize="16sp"
+        android:layout_marginBottom="12dp"/>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="2dp"
+        android:backgroundTint="@color/white">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="16dp" android:gravity="center_vertical">
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="60dp" android:layout_height="60dp"
+                android:scaleType="centerCrop" android:src="@drawable/bulbplant"
+                app:shapeAppearanceOverlay="@style/RoundedImage20"/>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:orientation="vertical">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="구근 식물" android:textColor="@color/text1" android:textSize="14sp" android:textStyle="bold" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="알뿌리를 가지는 식물. 감자, 백합, 달리아 등" android:textColor="#666666" android:lineSpacingExtra="2dp" android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="개화시기"
+        android:textStyle="bold"
+        android:textColor="@color/text1"
+        android:textSize="16sp"
+        android:layout_marginBottom="12dp"/>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="2dp"
+        android:backgroundTint="@color/white">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="16dp" android:gravity="center_vertical">
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="60dp" android:layout_height="60dp"
+                android:scaleType="centerCrop" android:src="@drawable/spring"
+                app:shapeAppearanceOverlay="@style/RoundedImage20"/>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:orientation="vertical">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="봄" android:textColor="@color/text1" android:textSize="14sp" android:textStyle="bold" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="11월경 온상에 넣어서 12월부터 꽃이 피고, 5월경 잎이 마르면 알뿌리를 캐내어 건조시켜 저장하였다가 다시 심는다." android:textColor="#666666" android:lineSpacingExtra="2dp" android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="향기"
+        android:textStyle="bold"
+        android:textColor="@color/text1"
+        android:textSize="16sp"
+        android:layout_marginBottom="12dp"/>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="2dp"
+        android:backgroundTint="@color/white">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="16dp" android:gravity="center_vertical">
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="60dp" android:layout_height="60dp"
+                android:scaleType="centerCrop" android:src="@drawable/sweet"
+                app:shapeAppearanceOverlay="@style/RoundedImage20"/>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:orientation="vertical">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="은은하고 달콤함" android:textColor="@color/text1" android:textSize="14sp" android:textStyle="bold" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="알뿌리를 가지는 식물. 감자, 백합, 달리아, 튤립 따위." android:textColor="#666666" android:lineSpacingExtra="2dp" android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="색상"
+        android:textStyle="bold"
+        android:textColor="@color/text1"
+        android:textSize="16sp"
+        android:layout_marginBottom="12dp"/>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="2dp"
+        android:backgroundTint="@color/white">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="16dp" android:gravity="center_vertical">
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="60dp" android:layout_height="60dp"
+                android:scaleType="centerCrop" android:src="@drawable/yellowhite"
+                app:shapeAppearanceOverlay="@style/RoundedImage20"/>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:orientation="vertical">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="노란색, 백색" android:textColor="@color/text1" android:textSize="14sp" android:textStyle="bold" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="알뿌리를 가지는 식물. 감자, 백합, 달리아, 튤립 따위." android:textColor="#666666" android:lineSpacingExtra="2dp" android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

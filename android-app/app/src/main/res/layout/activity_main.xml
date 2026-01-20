@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <!-- 스크롤되는 메인 콘텐츠 영역 -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="80dp">
+
+            <!-- 상단 헤더 -->
+            <include
+                layout="@layout/view_header"/>
+            <!-- 검색바 -->
+            <include
+                layout="@layout/view_search_bar"/>
+            <!-- 계절 카테고리 -->
+            <include
+                layout="@layout/view_season_category"/>
+            <!-- 대표 식물 슬라이드 -->
+            <include
+                android:id="@+id/layoutSlider"
+                layout="@layout/view_featured_slider" />
+            <!-- 인기 스토리 섹션 -->
+            <include
+                android:id="@+id/layoutStories"  layout="@layout/view_story_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <!-- 지금 볼 수 있는 식물 -->
+            <include
+                android:id="@+id/layoutAvailable"
+                layout="@layout/view_available_plants"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- 하단 네비게이션 -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="-20dp"
+        android:backgroundTint="@color/button"
+        android:src="@drawable/baseline_camera_alt_40"
+        android:tint="@color/white"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:elevation="10dp"/>
+    <!-- 카메라 FAB -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:backgroundTint="@color/white"
+        app:itemIconTint="@color/text1"
+        app:itemTextColor="@color/text1"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/menu_bottom_nav" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

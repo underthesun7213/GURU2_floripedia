@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
+    android:paddingHorizontal="40dp"
+    tools:context="com.example.plant.LoginActivity">
+
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/baseline_arrow_back_ios_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvLoginTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="당신만의 식물도감, Floripedia\n자연을 천천히 기록합니다!"
+        android:textColor="#333333"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:lineSpacingExtra="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnBack" />
+
+    <ImageView
+        android:id="@+id/ivLogo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="60dp"
+        android:src="@drawable/login_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvLoginTitle" />
+
+    <LinearLayout
+        android:id="@+id/layoutSocialButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/ivLogo">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_round_square"
+            android:backgroundTint="@color/background"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="12dp"
+                android:src="@drawable/logo_naver" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="네이버로 로그인"
+                android:textSize="16sp"
+                android:textColor="@color/sub_text1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_round_square"
+            android:backgroundTint="@color/background"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/logo_kakao" android:layout_marginEnd="12dp"/>
+            <TextView android:layout_width="wrap_content" android:textSize="16sp" android:layout_height="wrap_content" android:text="카카오로 로그인" android:textColor="@color/sub_text1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_round_square"
+            android:backgroundTint="@color/background"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/logo_google" android:layout_marginEnd="12dp"/>
+            <TextView android:layout_width="wrap_content" android:textSize="16sp" android:layout_height="wrap_content" android:text="구글로 로그인" android:textColor="@color/sub_text1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_round_square"
+            android:backgroundTint="@color/background"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/logo_apple" android:layout_marginEnd="12dp"/>
+            <TextView android:layout_width="wrap_content" android:textSize="16sp" android:layout_height="wrap_content" android:text="애플로 로그인" android:textColor="@color/sub_text1" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnLogin"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/bg_round_square"
+        android:backgroundTint="@color/button"
+        android:text="로그인"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/layoutSocialButtons" />
+
+
+    <TextView
+        android:id="@+id/tvSignUpGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="아직 회원이 아니신가요? 회원가입"
+        android:textColor="@color/sub_text1"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnLogin" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

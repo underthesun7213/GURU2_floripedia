@@ -1,0 +1,21 @@
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="118dp"
+    android:layout_height="118dp"
+    android:layout_marginEnd="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    app:cardMaxElevation="0dp"
+    app:cardBackgroundColor="@android:color/transparent"
+    app:cardPreventCornerOverlap="false"
+    app:cardUseCompatPadding="false">>
+
+    <ImageView
+        android:id="@+id/ivDetailImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/freesia1" />
+
+</androidx.cardview.widget.CardView>
