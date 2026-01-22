@@ -54,9 +54,10 @@ dependencies {
     implementation 'io.coil-kt:coil:2.4.0'
     
     // Firebase (Storage & Auth)
-    implementation platform('com.google.firebase:firebase-bom:32.7.0')
+    implementation(platform("com.google.firebase:firebase-bom:34.8.0"))
     implementation 'com.google.firebase:firebase-storage-ktx'
     implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation("com.google.firebase:firebase-analytics")
     
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
