@@ -20,4 +20,20 @@
     <style name="CircleImage" parent="">
         <item name="cornerSize">50%</item>
     </style>
+
+    <style name="Theme.Floripedia" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:textColorHint">@color/sub_text1</item>
+    </style>
+
+    <style name="CircleImageStyle">
+        <item name="cornerSize">50%</item> </style>
+
+    <style name="CustomBottomNav" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="enforceTextAppearance">true</item>
+        <item name="itemActiveIndicatorStyle">@style/ActiveIndicator</item>
+    </style>
+
+    <style name="ActiveIndicator" parent="Widget.MaterialComponents.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">#E8F5E9</item> <item name="marginHorizontal">12dp</item>
+    </style>
 </resources>

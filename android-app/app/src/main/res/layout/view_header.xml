@@ -16,14 +16,4 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageView
-        android:id="@+id/btnNotification"
-        android:layout_width="32dp"
-        android:layout_height="19.5dp"
-        android:src="@drawable/round_notifications_none_24"
-        app:tint="#444444"
-        app:layout_constraintTop_toTopOf="@id/imgLogo"
-        app:layout_constraintBottom_toBottomOf="@id/imgLogo"
-        app:layout_constraintEnd_toEndOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

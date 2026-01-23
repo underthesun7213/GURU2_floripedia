@@ -24,8 +24,10 @@
             android:layout_weight="1"
             android:background="@drawable/bg_search_view"
             app:iconifiedByDefault="false"
-            app:queryHint="식물 검색하기"
+            app:theme="@style/Theme.Floripedia" app:queryHint="식물 검색하기"
+
             app:searchIcon="@drawable/round_search_24"
+
             app:queryBackground="@android:color/transparent" />
 
         <TextView

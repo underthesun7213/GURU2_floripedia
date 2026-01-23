@@ -42,6 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="프리지아"
+                android:fontFamily="@font/pretendardbold"
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:textColor="@color/text1" />
@@ -79,8 +80,8 @@
                     android:layout_height="160dp"
                     android:gravity="center"
                     android:text="상황분석 후 관련 내용\nex) 새로운 일을 시작한 당신!"
+                    android:fontFamily="@font/pretendardsemibold"
                     android:textColor="@color/button"
-                    android:textStyle="bold"
                     android:textSize="16sp"
                     android:background="@color/white" />
             </androidx.cardview.widget.CardView>
@@ -94,13 +95,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="프리지아(꽃 이름)"
-                    android:textStyle="bold"
+                    android:fontFamily="@font/pretendardsemibold"
                     android:textColor="@color/text1" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:text="더보기 →"
+                    android:fontFamily="@font/pretendardmedium"
                     android:textSize="12sp"
                     android:textColor="@color/sub_text1" />
             </RelativeLayout>
@@ -123,6 +125,7 @@
                     android:layout_marginEnd="8dp"
                     android:backgroundTint="@color/button"
                     android:text="꽃갈피에 저장"
+                    android:fontFamily="@font/pretendardsemibold"
                     app:cornerRadius="28dp" />
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnRetry"
@@ -133,6 +136,7 @@
                     android:layout_marginStart="8dp"
                     android:backgroundTint="@color/chip"
                     android:text="재탐색"
+                    android:fontFamily="@font/pretendardsemibold"
                     app:cornerRadius="28dp" />
             </LinearLayout>
 
@@ -143,23 +147,30 @@
         android:id="@+id/fabCamera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="-20dp"
+
+        app:fabCustomSize="72dp"
+
+        app:maxImageSize="40dp"
+
         android:backgroundTint="@color/button"
         android:src="@drawable/baseline_camera_alt_40"
-        android:tint="@color/white"
+        app:tint="@color/white"
+        app:elevation="12dp"
+        app:borderWidth="0dp"
+
+        app:layout_constraintTop_toTopOf="@id/bottomNav"
         app:layout_constraintBottom_toTopOf="@id/bottomNav"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:elevation="10dp"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:backgroundTint="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="60dp" app:backgroundTint="@color/white"
         app:itemIconTint="@color/text1"
         app:itemTextColor="@color/text1"
         app:labelVisibilityMode="labeled"
+        android:elevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

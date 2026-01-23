@@ -20,12 +20,12 @@
             app:cardCornerRadius="12dp"
             app:cardElevation="2dp">
             <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:orientation="vertical" android:padding="8dp">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="식물 분류" android:textColor="#999999" android:textSize="11sp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="식물 분류" android:textColor="@color/text1" android:textSize="14sp" android:fontFamily="@font/pretendardmedium"/>
                 <com.google.android.material.imageview.ShapeableImageView
                     android:layout_width="50dp" android:layout_height="50dp" android:layout_marginTop="8dp"
                     android:scaleType="centerCrop" android:src="@drawable/bulbplant"
                     app:shapeAppearanceOverlay="@style/RoundedImage20" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="구근 식물" android:textColor="@color/text1" android:textSize="12sp" android:textStyle="bold" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="구근 식물" android:textColor="@color/text1" android:textSize="12sp" android:fontFamily="@font/pretendardmedium"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -36,13 +36,25 @@
             android:backgroundTint="@color/white"
             app:cardCornerRadius="12dp"
             app:cardElevation="2dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:orientation="vertical" android:padding="8dp">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="개화 시기" android:textColor="#999999" android:textSize="11sp" />
+            <LinearLayout android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center" android:orientation="vertical"
+                android:padding="8dp">
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="개화 시기"
+                    android:textColor="@color/text1"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/pretendardmedium"/>
                 <com.google.android.material.imageview.ShapeableImageView
                     android:layout_width="50dp" android:layout_height="50dp" android:layout_marginTop="8dp"
                     android:scaleType="centerCrop" android:src="@drawable/spring"
                     app:shapeAppearanceOverlay="@style/RoundedImage20" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="봄" android:textColor="@color/text1" android:textSize="12sp" android:textStyle="bold" />
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="봄" android:textColor="@color/text1"
+                    android:textSize="12sp" android:fontFamily="@font/pretendardmedium" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -54,12 +66,22 @@
             android:backgroundTint="@color/white"
             app:cardElevation="2dp">
             <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:orientation="vertical" android:padding="8dp">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="향기" android:textColor="#999999" android:textSize="11sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="향기" android:textColor="@color/text1"
+                    android:textSize="14sp" android:fontFamily="@font/pretendardmedium"/>
                 <com.google.android.material.imageview.ShapeableImageView
                     android:layout_width="50dp" android:layout_height="50dp" android:layout_marginTop="8dp"
                     android:scaleType="centerCrop" android:src="@drawable/sweet"
                     app:shapeAppearanceOverlay="@style/RoundedImage20" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="은은하고 달콤함" android:textColor="@color/text1" android:textSize="12sp" android:textStyle="bold" android:maxLines="1" android:ellipsize="end" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp" android:text="은은하고 달콤함"
+                    android:textColor="@color/text1" android:textSize="12sp"
+                    android:fontFamily="@font/pretendardmedium" android:maxLines="1"
+                    android:ellipsize="end" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -69,13 +91,19 @@
             app:cardCornerRadius="12dp"
             android:backgroundTint="@color/white"
             app:cardElevation="2dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:orientation="vertical" android:padding="8dp">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="색상" android:textColor="#999999" android:textSize="11sp" />
+            <LinearLayout android:layout_width="match_parent"
+                android:layout_height="match_parent" android:gravity="center" android:orientation="vertical" android:padding="8dp">
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="색상"
+                    android:textColor="#999999" android:textSize="14sp" android:fontFamily="@font/pretendardmedium"/>
                 <com.google.android.material.imageview.ShapeableImageView
                     android:layout_width="50dp" android:layout_height="50dp" android:layout_marginTop="8dp"
                     android:scaleType="centerCrop" android:src="@drawable/yellowhite"
                     app:shapeAppearanceOverlay="@style/RoundedImage20" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="노란색, 백색" android:textColor="@color/text1" android:textSize="12sp" android:textStyle="bold" />
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:layout_marginTop="8dp"
+                    android:text="노란색" android:textColor="@color/text1"
+                    android:textSize="12sp" android:fontFamily="@font/pretendardmedium" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 

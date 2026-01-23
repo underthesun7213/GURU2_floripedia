@@ -31,15 +31,16 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="당신의 이야기를 들려주세요"
+        android:fontFamily="@font/pretendardsemibold"
         android:textColor="@color/text1"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        android:textSize="22sp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="당신의 이야기에 어울리는 식물을 찾아드릴게요"
+            android:fontFamily="@font/pretendardregular"
             android:textColor="@color/text1"
             android:textSize="14sp" />
     </LinearLayout>
@@ -68,17 +69,19 @@
                 android:layout_height="match_parent"
                 android:layout_toStartOf="@+id/ivEditIcon"
                 android:hint="사용자 입력칸"
+                android:fontFamily="@font/pretendardmedium"
                 android:textColorHint="@color/sub_text1"
                 android:textSize="15sp" />
 
-            <ImageView
+            <ImageButton
                 android:id="@+id/ivEditIcon"
                 android:layout_width="24dp"
+                android:background="null"
                 android:layout_height="24dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:src="@drawable/baseline_edit_24"
-                app:tint="#999999" />
+                app:tint="@color/sub_text1" />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
@@ -88,26 +91,32 @@
         android:id="@+id/fabCamera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="-20dp"
+
+        app:fabCustomSize="72dp"
+
+        app:maxImageSize="40dp"
+
         android:backgroundTint="@color/button"
         android:src="@drawable/baseline_camera_alt_40"
-        android:tint="@color/white"
+        app:tint="@color/white"
+        app:elevation="12dp"
+        app:borderWidth="0dp"
+
+        app:layout_constraintTop_toTopOf="@id/bottomNav"
         app:layout_constraintBottom_toTopOf="@id/bottomNav"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:elevation="10dp"/>
-    <!-- 카메라 FAB -->
+        app:layout_constraintStart_toStartOf="parent" />
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:backgroundTint="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="60dp" app:backgroundTint="@color/white"
         app:itemIconTint="@color/text1"
         app:itemTextColor="@color/text1"
         app:labelVisibilityMode="labeled"
+        android:elevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/menu_bottom_nav" />
 

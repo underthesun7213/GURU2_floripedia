@@ -14,9 +14,9 @@
         android:layout_marginStart="17dp"
         android:layout_marginBottom="16dp"
         android:text="지금 볼 수 있는 식물"
+        android:fontFamily="@font/pretendardsemibold"
         android:textColor="@color/text1"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textSize="18sp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvAvailablePlants"

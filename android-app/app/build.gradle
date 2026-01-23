@@ -8,12 +8,12 @@ plugins {
 android {
     namespace 'com.example.plant'
     //Android API 버전을 한단계 올림
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.example.plant"
         minSdk 24
-        targetSdk 35
+        targetSdk 36
         versionCode 1
         versionName "1.0"
 

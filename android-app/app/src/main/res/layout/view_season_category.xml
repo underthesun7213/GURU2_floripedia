@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/background"
     android:orientation="vertical"
     android:paddingBottom="24dp">
@@ -26,7 +27,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="개화시기"
-                android:textSize="18sp"
+                android:fontFamily="@font/pretendardsemibold"
+                android:textSize="17sp"
                 android:textStyle="bold"
                 android:textColor="@color/text1"
                 android:layout_marginRight="20dp"/>
@@ -34,120 +36,45 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="꽃말"
-                android:textSize="18sp"
+                android:textSize="16sp"
+                android:fontFamily="@font/pretendardsemibold"
                 android:textColor="@color/sub_text1"
                 android:layout_marginRight="20dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="향기"
-                android:textSize="18sp"
+                android:fontFamily="@font/pretendardsemibold"
+                android:textSize="17sp"
                 android:textColor="@color/sub_text1"
                 android:layout_marginRight="20dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="식물 분류"
-                android:textSize="18sp"
+                android:fontFamily="@font/pretendardsemibold"
+                android:textSize="17sp"
                 android:textColor="@color/sub_text1"
                 android:layout_marginRight="20dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="색상"
-                android:textSize="18sp"
+                android:fontFamily="@font/pretendardsemibold"
+                android:textSize="17sp"
                 android:textColor="@color/sub_text1"
                 android:layout_marginRight="20dp"/>
             <TextView
                 android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="스토리" android:textSize="18sp" android:textColor="@color/sub_text1"/>
+                android:text="스토리" android:fontFamily="@font/pretendardsemibold" android:textSize="17sp" android:textColor="@color/sub_text1"/>
         </LinearLayout>
     </HorizontalScrollView>
 
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCategories"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center"
-        android:paddingTop="10dp">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-            <com.google.android.material.imageview.ShapeableImageView
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:src="@drawable/spring"
-                android:scaleType="centerCrop"
-                app:shapeAppearanceOverlay="@style/CircleImage"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="봄" android:layout_marginTop="8dp"
-                android:textColor="@color/text1" android:textStyle="bold"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-            <com.google.android.material.imageview.ShapeableImageView
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:src="@drawable/summer"
-                android:scaleType="centerCrop"
-                app:shapeAppearanceOverlay="@style/CircleImage"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="여름" android:layout_marginTop="8dp"
-                android:textColor="@color/sub_text1"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-            <com.google.android.material.imageview.ShapeableImageView
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:src="@drawable/autumn"
-                android:scaleType="centerCrop"
-                app:shapeAppearanceOverlay="@style/CircleImage"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="가을"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/sub_text1"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-            <com.google.android.material.imageview.ShapeableImageView
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:src="@drawable/winter"
-                android:scaleType="centerCrop"
-                app:shapeAppearanceOverlay="@style/CircleImage"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="겨울"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/sub_text1"/>
-        </LinearLayout>
-
-    </LinearLayout>
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_category" />
 </LinearLayout>

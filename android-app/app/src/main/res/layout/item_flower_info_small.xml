@@ -22,7 +22,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="식물 분류"
-            android:textColor="#999999"
+            android:fontFamily="@font/pretendardsemibold"
+            android:textColor="@color/sub_text1"
             android:textSize="11sp" />
 
         <com.google.android.material.imageview.ShapeableImageView
@@ -40,6 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="구근 식물"
+            android:fontFamily="@font/pretendardsemibold"
             android:textColor="@color/text1"
             android:textSize="12sp"
             android:textStyle="bold"

@@ -30,6 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="프리지아"
+            android:fontFamily="@font/pretendardsemibold"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold" />

@@ -15,6 +15,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginBottom="16dp"
         android:text="인기 있는 스토리"
+        android:fontFamily="@font/pretendardsemibold"
         android:textColor="@color/text1"
         android:textSize="16sp"
         android:textStyle="bold" />

@@ -21,6 +21,7 @@
             android:layout_width="140dp"
             android:layout_height="140dp"
             android:scaleType="centerCrop"
+
             android:src="@drawable/lilac"
             app:shapeAppearanceOverlay="@style/RoundedImage20" />
 
@@ -30,6 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
             android:text="라일락"
+            android:fontFamily="@font/pretendardsemibold"
             android:textColor="@color/text1"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -44,9 +46,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_tag_green"
+                android:id="@+id/tvTag1"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="4dp"
                 android:text="#첫사랑"
+                android:fontFamily="@font/pretendardmedium"
                 android:textSize="10sp"
                 android:textColor="@color/white"
                 android:layout_marginEnd="8dp"/>
@@ -55,21 +59,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_tag_green"
+                android:id="@+id/tvTag2"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="4dp"
                 android:text="#젊은 날의 추억"
+                android:fontFamily="@font/pretendardmedium"
                 android:textSize="10sp"
                 android:textColor="@color/white" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/tvDescription"
-            android:layout_width="230dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:gravity="center"
             android:text="유럽 원산으로 전국에 심어 기르는 낙엽 작은키나무이다.\n줄기는 가지가 갈라지고 높이 3-7m이다."
+            android:fontFamily="@font/pretendardregular"
             android:textColor="@color/text1"
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:lineSpacingExtra="2dp"
             android:textSize="10sp" />
 
     </LinearLayout>

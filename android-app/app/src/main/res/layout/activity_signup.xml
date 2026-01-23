@@ -5,15 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="#F4F9F6"
     android:padding="24dp">
 
     <ImageView
         android:id="@+id/btnBack"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:src="@drawable/baseline_close_24"
-        android:tint="@color/text1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,7 +23,7 @@
         android:text="회원가입"
         android:textColor="@color/text1"
         android:textSize="18sp"
-        android:textStyle="bold"
+        android:fontFamily="@font/pretendardbold"
         app:layout_constraintBottom_toBottomOf="@id/btnBack"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,198 +32,174 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         android:layout_marginBottom="16dp"
         android:scrollbars="none"
         app:layout_constraintBottom_toTopOf="@id/btnSignUp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@id/tvTitle">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
 
-            <TextView
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="30dp">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ivProfileSelect"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:src="@drawable/ic_profile_placeholder"
+                    android:scaleType="centerCrop"
+                    android:background="#D9D9D9"
+                    app:shapeAppearanceOverlay="@style/CircleImageStyle" />
+
+                <TextView
+                    android:id="@+id/btnProfileAdd"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="bottom|end"
+                    android:background="@drawable/bg_circle_iv"
+                    android:backgroundTint="@color/button"
+                    android:gravity="center"
+                    android:text="+"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:includeFontPadding="false" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="닉네임"
+                android:fontFamily="@font/pretendardsemibold"
+                android:textColor="@color/text1" />
+
+            <EditText
+                android:id="@+id/etNickname"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_round_square"
+                android:backgroundTint="@color/white"
+                android:hint="닉네임"
+                android:fontFamily="@font/pretendardmedium"
+                android:textColorHint="@color/sub_text1"
+                android:paddingHorizontal="16dp"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
                 android:text="아이디"
-                android:textColor="@color/text1"
-                android:textStyle="bold" />
+                android:fontFamily="@font/pretendardsemibold"
+                android:textColor="@color/text1" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal">
-
                 <EditText
                     android:id="@+id/etId"
                     android:layout_width="0dp"
-                    android:layout_height="50dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_round_square"
+                    android:backgroundTint="@color/white"
                     android:hint="아이디"
+                    android:fontFamily="@font/pretendardmedium"
                     android:textColorHint="@color/sub_text1"
                     android:paddingHorizontal="16dp"
                     android:textSize="14sp" />
-
-                <Button
+                //버튼이 활성화 되었을 경우 버튼 BackGround 색은 @color/button
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnCheckId"
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp"
+                    android:layout_height="52dp"
                     android:layout_marginStart="8dp"
-                    android:backgroundTint="#E0E0E0"
+                    android:background="@drawable/bg_round_square"
+                    android:backgroundTint="#D9D9D9"
                     android:text="중복확인"
-                    android:textColor="#999999"
-                    android:textSize="13sp" />
+                    android:fontFamily="@font/pretendardsemibold"
+                    android:textColor="@color/white"
+                    android:enabled="false"/>
             </LinearLayout>
-
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="4~12자/영문 소문자(숫자 조합 가능)"
-                android:textColor="#999999"
+                android:fontFamily="@font/pretendardregular"
+                android:textColor="@color/sub_text1"
                 android:textSize="11sp" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="20dp"
                 android:text="비밀번호"
-                android:textColor="@color/text1"
-                android:textStyle="bold" />
+                android:fontFamily="@font/pretendardsemibold"
+                android:textColor="@color/text1" />
 
             <EditText
                 android:id="@+id/etPw"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="52dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/bg_round_square"
+                android:backgroundTint="@color/white"
                 android:hint="비밀번호"
+                android:fontFamily="@font/pretendardmedium"
+                android:textColorHint="@color/sub_text1"
                 android:inputType="textPassword"
                 android:paddingHorizontal="16dp"
-                android:textColorHint="@color/sub_text1"
                 android:textSize="14sp" />
 
             <EditText
                 android:id="@+id/etPwCheck"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="52dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/bg_round_square"
+                android:backgroundTint="@color/white"
                 android:hint="비밀번호 확인"
+                android:fontFamily="@font/pretendardmedium"
+                android:textColorHint="@color/sub_text1"
                 android:inputType="textPassword"
                 android:paddingHorizontal="16dp"
-                android:textColorHint="@color/sub_text1"
                 android:textSize="14sp" />
-
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="6~20자/영문 대문자, 소문자, 숫자, 특수문자 중 2가지 이상 조합"
-                android:textColor="#999999"
+                android:textColor="@color/sub_text1"
+                android:fontFamily="@font/pretendardregular"
                 android:textSize="11sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="이메일"
-                android:textColor="@color/text1"
-                android:textStyle="bold" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_round_square"
-                    android:hint="이메일"
-                    android:textColorHint="@color/sub_text1"
-                    android:paddingHorizontal="16dp"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_horizontalEdge="8dp"
-                    android:layout_marginHorizontal="8dp"
-                    android:text="\@"
-                    android:textColor="@color/sub_text1"/>
-
-                <Spinner
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_round_square" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="더 안전하게 계정을 보호하려면 가입 후 [내정보 > 회원정보 수정]에서 이메일 인증을 진행해주세요."
-                android:textColor="#999999"
-                android:textSize="11sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="휴대폰 번호"
-                android:textColor="@color/text1"
-                android:textStyle="bold" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_round_square"
-                    android:hint="휴대폰 번호"
-                    android:textColorHint="@color/sub_text1"
-                    android:inputType="phone"
-                    android:paddingHorizontal="16dp"
-                    android:textSize="14sp" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="8dp"
-                    android:backgroundTint="#E0E0E0"
-                    android:text="인증번호 받기"
-                    android:textColor="#999999"
-                    android:textSize="13sp" />
-            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
 
-    <Button
+    //버튼 활성화 시 색깔은 @color/button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnSignUp"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="#E0E0E0"
+        android:background="@drawable/bg_round_square"
+        android:backgroundTint="#D9D9D9"
         android:text="가입하기"
         android:textColor="@color/white"
         android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:fontFamily="@font/pretendardsemibold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:enabled="false"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

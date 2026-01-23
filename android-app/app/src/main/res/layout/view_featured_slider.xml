@@ -10,8 +10,12 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPagerFeatured"
         android:layout_width="match_parent"
-        android:layout_height="300dp"  android:clipChildren="false"
-        android:clipToPadding="false" />
+        android:layout_height="350dp"   android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingHorizontal="50dp"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:listitem="@layout/item_featured_plant"
+        tools:itemCount="5" />
 
     <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
         android:id="@+id/dotsIndicator"

@@ -27,9 +27,9 @@
             android:layout_height="wrap_content"
             android:padding="12dp"
             android:text="라일락"
+            android:fontFamily="@font/pretendardmedium"
             android:textColor="@color/text1"
             android:textSize="18sp"
-            android:textStyle="bold"
             android:gravity="start" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

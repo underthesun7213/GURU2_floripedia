@@ -32,6 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="프리지아"
+            android:fontFamily="@font/pretendardsemibold"
             android:textColor="@color/text1"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -42,7 +43,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="프리지아는 구근 식물로 봄에 개화하며"
-            android:textColor="#88A391"
+            android:fontFamily="@font/pretendardmedium"
+            android:textColor="@color/button"
             android:textSize="13sp" />
         <View
             android:layout_width="match_parent"
@@ -55,7 +57,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/outline_arrow_forward_ios_24"
-            app:tint="#CCCCCC" />
+            app:tint="@color/sub_text1" />
     </LinearLayout>
 
 

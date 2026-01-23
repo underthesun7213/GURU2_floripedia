@@ -4,10 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/background"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.plant.Bookmark1Activity">
 
     <include
-        android:id="@+id/header"
+        android:id="@+id/fixedHeader"
         layout="@layout/view_header"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -18,10 +20,10 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:text="꽃갈피"
+        android:fontFamily="@font/pretendardsemibold"
         android:textColor="@color/text1"
         android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintTop_toBottomOf="@id/fixedHeader"
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.cardview.widget.CardView
@@ -46,9 +48,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="총 식물 갯수: 12개"
+                android:fontFamily="@font/pretendardsemibold"
                 android:textColor="#4A6750"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textSize="14sp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -57,7 +59,7 @@
                 android:text="추천 계절 식물: 장미"
                 android:textColor="#4A6750"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                android:fontFamily="@font/pretendardsemibold"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
@@ -98,9 +100,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="꽃말"
+                    android:fontFamily="@font/pretendardsemibold"
                     android:textColor="@color/text1"
                     android:textSize="20sp"
-                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -147,9 +149,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="향기"
+                    android:fontFamily="@font/pretendardsemibold"
                     android:textColor="@color/text1"
                     android:textSize="20sp"
-                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -197,8 +199,7 @@
                     android:text="개화시기"
                     android:textColor="@color/text1"
                     android:textSize="20sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:fontFamily="@font/pretendardsemibold"                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -216,54 +217,8 @@
 
             </FrameLayout>
         </androidx.cardview.widget.CardView>
-        <androidx.cardview.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:layout_columnWeight="1"
-            android:layout_margin="8dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="2dp">
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/habitat" /> <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#AAFFFFFF" /> <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="서식지"
-                    android:textColor="@color/text1"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginEnd="12dp"
-                    android:src="@drawable/outline_arrow_forward_ios_24"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/text1" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </FrameLayout>
-        </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_height="100dp"
@@ -293,8 +248,7 @@
                     android:text="색상"
                     android:textColor="@color/text1"
                     android:textSize="20sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:fontFamily="@font/pretendardsemibold"                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -314,32 +268,36 @@
         </androidx.cardview.widget.CardView>
 
     </GridLayout>
-    <!-- 하단 네비게이션 -->
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabCamera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="-20dp"
+
+        app:fabCustomSize="72dp"
+
+        app:maxImageSize="40dp"
+
         android:backgroundTint="@color/button"
         android:src="@drawable/baseline_camera_alt_40"
-        android:tint="@color/white"
+        app:tint="@color/white"
+        app:elevation="12dp"
+        app:borderWidth="0dp"
+
+        app:layout_constraintTop_toTopOf="@id/bottomNav"
         app:layout_constraintBottom_toTopOf="@id/bottomNav"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:elevation="10dp"/>
-    <!-- 카메라 FAB -->
+        app:layout_constraintStart_toStartOf="parent" />
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:backgroundTint="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="60dp" app:backgroundTint="@color/white"
         app:itemIconTint="@color/text1"
         app:itemTextColor="@color/text1"
         app:labelVisibilityMode="labeled"
+        android:elevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/menu_bottom_nav" />
 

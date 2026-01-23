@@ -5,5 +5,5 @@
     <item android:id="@+id/menu_empty" android:title="" android:enabled="false"/>
 
     <item android:id="@+id/menu_bookmark" android:icon="@drawable/baseline_bookmark_border_24" android:title="꽃갈피"/>
-    <item android:id="@+id/menu_profile" android:icon="@drawable/outline_person_24" android:title="마이"/>
+    <item android:id="@+id/menu_profile" android:icon="@drawable/outline_person_24" android:title="마이" />
 </menu>
