@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background"
+    android:orientation="vertical"
+    android:paddingTop="24dp"
+    android:paddingBottom="30dp">
+
+    <TextView
+        android:id="@+id/tvAvailableTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="17dp"
+        android:layout_marginBottom="16dp"
+        android:text="지금 볼 수 있는 식물"
+        android:fontFamily="@font/pretendardsemibold"
+        android:textColor="@color/text1"
+        android:textSize="18sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvAvailablePlants"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="17dp"
+
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:listitem="@layout/item_available_plant"
+        tools:itemCount="3" />
+
+</LinearLayout>

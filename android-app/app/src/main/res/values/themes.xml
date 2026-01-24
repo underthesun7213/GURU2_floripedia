@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Floripedia" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="CircleImage" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="RoundedImage20" parent="">
+        <item name="cornerSize">10dp</item>
+    </style>
+
+    <style name="TopRoundedImage20">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">20dp</item>
+        <item name="cornerSizeTopRight">20dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
+    <style name="CircleImage" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="Theme.Floripedia" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:textColorHint">@color/sub_text1</item>
+    </style>
+
+    <style name="CircleImageStyle">
+        <item name="cornerSize">50%</item> </style>
+
+    <style name="CustomBottomNav" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="enforceTextAppearance">true</item>
+        <item name="itemActiveIndicatorStyle">@style/ActiveIndicator</item>
+    </style>
+
+    <style name="ActiveIndicator" parent="Widget.MaterialComponents.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">#E8F5E9</item> <item name="marginHorizontal">12dp</item>
+    </style>
+</resources>

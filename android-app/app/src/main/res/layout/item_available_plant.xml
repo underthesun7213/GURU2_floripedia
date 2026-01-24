@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="196dp"
+    android:layout_height="160dp"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivPlantGrid"
+            android:layout_width="match_parent"
+            android:layout_height="109dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/lilac"
+            app:shapeAppearanceOverlay="@style/TopRoundedImage20" />
+
+        <TextView
+            android:id="@+id/tvPlantGridName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:text="라일락"
+            android:fontFamily="@font/pretendardmedium"
+            android:textColor="@color/text1"
+            android:textSize="18sp"
+            android:gravity="start" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

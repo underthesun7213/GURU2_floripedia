@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <!-- 상단 헤더 -->
+    <include
+        android:id="@+id/fixedHeader"
+        layout="@layout/view_header"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 스크롤되는 메인 콘텐츠 영역 -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/fixedHeader"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="80dp">
+
+            <TextView
+                android:id="@+id/tvFlowerName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="20dp"
+                android:layout_marginTop="16dp"
+                android:text="프리지아"
+                android:textSize="20sp"
+                android:fontFamily="@font/pretendardsemibold"
+                android:textColor="@color/text1" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvFlowerImages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:clipToPadding="false"
+                android:paddingStart="20dp"
+                android:paddingEnd="12dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_flower_detail_image" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupTags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:paddingHorizontal="20dp"
+                app:chipSpacingHorizontal="8dp"
+                app:chipSpacingVertical="4dp"> <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_tag_green"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
+                android:text="#새로운 시작"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:fontFamily="@font/pretendardregular" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_tag_green"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:text="#순수한 마음"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/pretendardregular" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_tag_green"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:text="#희망"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/pretendardregular" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_tag_green"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:text="#우정"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/pretendardregular" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="역사적 이야기"
+                android:textSize="16sp"
+                android:fontFamily="@font/pretendardsemibold"
+                android:layout_marginTop="24dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginBottom="4dp"
+                android:textColor="@color/text1"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:id="@+id/tvFlowerDesc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:lineSpacingExtra="4dp"
+                    android:text="순수한 모습과 일편단심인 모습에 감동을  받은 제우스는 그녀를 아름다운 꽃으로 다시 태어나게 했는데, 그 꽃이 프리지아입니다. 그리고 고백도 못한 그녀를 안타까워 해, 누구나 알아 볼 수 있는 달콤한 향기를 함께 선물했다고 하죠"
+                    android:fontFamily="@font/pretendardregular"
+                    android:textSize="12sp"
+                    android:textColor="@color/text1"
+                    android:background="@color/white" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="역사적 이야기"
+                android:textSize="16sp"
+                android:fontFamily="@font/pretendardsemibold"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginBottom="4dp"
+                android:textColor="@color/text1"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:id="@+id/tvFlowerDesc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:lineSpacingExtra="4dp"
+                    android:text="순수한 모습과 일편단심인 모습에 감동을  받은 제우스는 그녀를 아름다운 꽃으로 다시 태어나게 했는데, 그 꽃이 프리지아입니다. 그리고 고백도 못한 그녀를 안타까워 해, 누구나 알아 볼 수 있는 달콤한 향기를 함께 선물했다고 하죠"
+                    android:fontFamily="@font/pretendardregular"
+                    android:textSize="12sp"
+                    android:textColor="@color/text1"
+                    android:background="@color/white" />
+            </androidx.cardview.widget.CardView>
+
+            <include android:id="@+id/layoutInfoClassification" layout="@layout/view_detail_info_item" />
+
+            <Button
+                android:id="@+id/btnBookmark"
+                android:background="@drawable/bg_tag_gray"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="200dp"
+                android:layout_height="56dp"
+                android:layout_margin="20dp"
+                android:text="이미 꽃갈피에 있어요"
+                android:fontFamily="@font/pretendardsemibold"
+                android:textSize="16sp"
+                android:textColor="@color/white"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        app:fabCustomSize="72dp"
+
+        app:maxImageSize="40dp"
+
+        android:backgroundTint="@color/button"
+        android:src="@drawable/baseline_camera_alt_40"
+        app:tint="@color/white"
+        app:elevation="12dp"
+        app:borderWidth="0dp"
+
+        app:layout_constraintTop_toTopOf="@id/bottomNav"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="60dp" app:backgroundTint="@color/white"
+        app:itemIconTint="@color/text1"
+        app:itemTextColor="@color/text1"
+        app:labelVisibilityMode="labeled"
+        android:elevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/menu_bottom_nav" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
