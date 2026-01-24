@@ -35,12 +35,13 @@
             android:paddingBottom="80dp">
 
             <include layout="@layout/view_search_bar"/>
-            //CategoryAdapter를 통해 수정 가능(데이터를 이용해서 사진, 텍스트 변경 가능)
+<!--            CategoryAdapter를 통해 수정 가능(데이터를 이용해서 사진, 텍스트 변경 가능)-->
             <include layout="@layout/view_season_category"/>
-            //item_featured_plant.xml을 보면 라일락 페이지 자체는 만들었는데 넘기는 애니메이션 작업이 안됨
+<!--            item_featured_plant.xml을 보면 라일락 페이지 자체는 만들었는데 넘기는 애니메이션 작업이 안됨-->
             <include android:id="@+id/layoutSlider" layout="@layout/view_featured_slider" />
-            <include android:id="@+id/layoutStories" layout="@layout/view_story_section" />
-            <include android:id="@+id/layoutAvailable" layout="@layout/view_available_plants" />
+            <!--원래 스토리 서술 코드<include android:id="@+id/layoutStories" layout="@layout/view_story_section" />-->
+            <include android:id="@+id/layoutAvailable"
+                layout="@layout/view_available_plants" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -50,20 +51,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-    app:fabCustomSize="72dp"
+        app:fabCustomSize="72dp"
 
-    app:maxImageSize="40dp"
+        app:maxImageSize="40dp"
 
-    android:backgroundTint="@color/button"
-    android:src="@drawable/baseline_camera_alt_40"
-    app:tint="@color/white"
-    app:elevation="12dp"
-    app:borderWidth="0dp"
+        android:backgroundTint="@color/button"
+        android:src="@drawable/baseline_camera_alt_40"
+        app:tint="@color/white"
+        app:elevation="12dp"
+        app:borderWidth="0dp"
 
-    app:layout_constraintTop_toTopOf="@id/bottomNav"
-    app:layout_constraintBottom_toTopOf="@id/bottomNav"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/bottomNav"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"

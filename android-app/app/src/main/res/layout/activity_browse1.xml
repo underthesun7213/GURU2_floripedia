@@ -6,7 +6,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/background"
+    tools:context="com.example.plant.Browse1Activity">
 
     <include
         android:id="@+id/fixedHeader"
@@ -68,10 +69,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_toStartOf="@+id/ivEditIcon"
-                android:hint="사용자 입력칸"
+                android:hint="이야기를 입력해주세요!"
                 android:fontFamily="@font/pretendardmedium"
                 android:textColorHint="@color/sub_text1"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:inputType="text"
+                android:imeOptions="actionDone"/>
 
             <ImageButton
                 android:id="@+id/ivEditIcon"

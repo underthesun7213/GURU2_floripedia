@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         // --- [기존 슬라이더 및 새로운 스토리 섹션 실행] ---
         val plantData = getSamplePlants() // 데이터를 한 번만 생성해서 재사용합니다.
         setupPlantSlider(plantData)
-        setupStorySection(plantData) // 스토리 섹션 추가
+        //setupStorySection(plantData) // 스토리 섹션 추가
         setupAvailablePlantsSection(plantData)
 
         // 1. fixedHeader 내부에 있는 imgLogo를 찾아 클릭 리스너 연결
@@ -52,8 +52,8 @@ class MainActivity : AppCompatActivity() {
             // 이렇게 하면 이전에 설정한 setOnItemSelectedListener가 자동으로 실행되어 홈 화면으로 바뀝니다.
             binding.bottomNav.selectedItemId = R.id.menu_home
 
-            // (선택 사항) 만약 화면이 스크롤 된 상태라면 맨 위로 올려주는 효과를 줄 수도 있어요.
-            binding.scrollView.smoothScrollTo(0, 0)
+            // (선택 사항) 만약 화면이 스크롤 된 상태라면 맨 위로 올려주는 효과를 줄 수도 있어요.(비활성화)
+            //binding.scrollView.smoothScrollTo(0, 0)
         }
     }
 
@@ -127,34 +127,6 @@ class MainActivity : AppCompatActivity() {
                     else -> { page.alpha = 0f }
                 }
             }
-        }
-    }
-
-    // --- [새로 추가된 스토리 섹션 설정] ---
-    // 1. 스토리 섹션 (인디케이터 포함)
-    private fun setupStorySection(samplePlants: List<Plant>) {
-        val storyAdapter = StoryAdapter(samplePlants)
-        val layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-
-        binding.layoutStories.rvStories.apply {
-            this.adapter = storyAdapter
-            this.layoutManager = layoutManager
-
-            val snapHelper = PagerSnapHelper()
-            if (onFlingListener == null) snapHelper.attachToRecyclerView(this)
-
-            // 인디케이터 에러 해결을 위해 리스너 수동 구현
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    super.onScrollStateChanged(recyclerView, newState)
-                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        val centerView = snapHelper.findSnapView(layoutManager)
-                        val pos = centerView?.let { layoutManager.getPosition(it) } ?: 0
-                        // 여기서 setDotSelection 에러가 계속 나면 라이브러리가 지원하지 않는 것이니 주석처리 하세요.
-                        // binding.layoutStories.storyDotsIndicator.setDotSelection(pos)
-                    }
-                }
-            })
         }
     }
 
