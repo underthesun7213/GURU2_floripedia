@@ -24,5 +24,12 @@ class Bookmark1Activity : AppCompatActivity() {
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(intent)
         }
+
+        //'꽃말' 카드 클릭 시 상세 화면으로 이동
+        binding.cardFlowerLanguage.setOnClickListener {
+            // 실제 이동할 액티비티 클래스 이름(예: FlowerLanguageActivity)을 넣어주세요.
+            val intent = Intent(this, FlowerLanguageActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
