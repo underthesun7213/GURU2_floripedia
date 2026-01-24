@@ -28,7 +28,14 @@ render.experimental.xml
 *.keystore
 
 # Google Services (e.g. APIs or Firebase)
+# [보안 중요] Firebase 인증 키 파일 - 절대 커밋 금지!
 google-services.json
+firebase-key.json
+**/firebase-key.json
+serviceAccountKey.json
+**/serviceAccountKey.json
+app/core/firebase-key.json
+app/serviceAccountKey.json
 
 # Android Profiling
 *.hprof
@@ -40,20 +47,90 @@ google-services.json
 
 # Python
 __pycache__/
-*.py[cod]ㅁㅊ
+*.py[cod]
 *$py.class
 *.so
 .Python
+build/
+*.egg-info/
+dist/
+*.egg
+
+# Python 가상환경
 venv/
+.venv/
 env/
 ENV/
+.ENV/
 
+# Python 패키지 관리
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Python 테스트/코드 품질
+.pytest_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
 
 # 빌드 결과물 제외
 bin/
-build/
 out/
 obj/
+target/
+*.class
+
+# 데이터베이스
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# 임시 파일
+*.tmp
+*.temp
+*.bak
+*.cache
+
+# 로그 파일 (중복 제거 - 위에서 이미 *.log 선언됨)
+logs/
+*.log.*
+*.log.old
+
+# 데이터 파일 
+data/
+
+# 스크립트트
+scripts/
+
+
 
 # Docker
 .dockerignore
+
+# Backend data files (large JSON files for DB seeding)
+backend/data/
+
