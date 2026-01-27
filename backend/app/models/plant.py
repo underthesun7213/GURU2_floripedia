@@ -4,6 +4,7 @@ Plant 도메인 모델.
 MongoDB 문서 스키마 + 내부 비즈니스 로직을 정의한다.
 외부 의존성이 없는 순수 계산/검증 로직만 포함.
 """
+from typing import ClassVar
 from pydantic import Field
 
 from app.schemas import CamelCaseModel
@@ -30,9 +31,9 @@ class PlantModel(CamelCaseModel):
     # 인기도 계산 로직 (내부 비즈니스 규칙)
     # ==========================================
 
-    # 가중치 상수
-    VIEW_WEIGHT: int = 1
-    FAVORITE_WEIGHT: int = 10
+    # 가중치 상수 (ClassVar로 선언하여 Pydantic 필드가 아닌 클래스 변수로 인식)
+    VIEW_WEIGHT: ClassVar[int] = 1
+    FAVORITE_WEIGHT: ClassVar[int] = 10
 
     @classmethod
     def calculate_popularity_delta(

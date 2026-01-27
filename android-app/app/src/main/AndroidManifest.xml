@@ -4,23 +4,28 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    //카메라 접근 권한
+
     <uses-feature android:name="android.hardware.camera.any" />
     <uses-permission android:name="android.permission.CAMERA" />
-    //갤러리 접근 권한
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
+        android:name=".FloripediaApplication"
         android:allowBackup="true"
+        android:icon="@drawable/login_icon"
+        android:roundIcon="@drawable/login_icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat"
+        android:theme="@style/Theme.Floripedia"
         android:usesCleartextTraffic="true"
+        android:extractNativeLibs="false"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".ui.home.MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,10 +33,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Detail1Activity"
+            android:name=".ui.detail.Detail1Activity"
             android:exported="false" />
-        <activity android:name=".CameraActivity"/>
-        <activity android:name=".LoginActivity"/>
+        <activity android:name=".ui.camera.CameraActivity"/>
+        <activity android:name=".ui.auth.LoginActivity"/>
+        <activity android:name=".ui.auth.SignUpActivity"/>
+        <activity android:name=".ui.bookmark.Bookmark1Activity"/>
+        <activity android:name=".ui.bookmark.BookmarkCategoryActivity"/>
+        <activity android:name=".ui.browse.Browse2Activity"/>
+        <activity android:name=".ui.browse.Browse3Activity"/>
+        <activity android:name=".ui.browse.SearchActivity"/>
+        <activity android:name=".ui.mypage.MyPageActivity"/>
+        <activity android:name=".ui.mypage.ProfileEditActivity"/>
+        <activity android:name=".ui.detail.Detail2Activity"/>
     </application>
 
 </manifest>

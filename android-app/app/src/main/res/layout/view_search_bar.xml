@@ -3,43 +3,47 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/background"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="8dp"
-    android:paddingBottom="20dp">
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp">
 
-    <RelativeLayout
+    <!-- 이미지와 동일한 아주 둥근 검색창 -->
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:background="@drawable/bg_search_bar"
-        android:elevation="2dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="16dp">
+        app:cardCornerRadius="26dp"
+        app:cardElevation="3dp"
+        app:cardBackgroundColor="@color/white">
 
-        <EditText
-            android:id="@+id/etSearch"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_toStartOf="@id/ivSearchIcon"
-            android:background="@android:color/transparent"
-            android:hint="식물 이름, 꽃말로 검색하기"
-            android:fontFamily="@font/pretendardmedium"
-            android:imeOptions="actionSearch"
-            android:inputType="text"
-            android:maxLines="1"
-            android:textColor="@color/text1"
-            android:textColorHint="@color/sub_text1"
-            android:textSize="15sp" />
+            android:paddingHorizontal="20dp">
 
-        <ImageView
-            android:id="@+id/ivSearchIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/round_search_24"
-            app:tint="@color/button" />
+            <EditText
+                android:id="@+id/etSearch"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toStartOf="@id/ivSearchIcon"
+                android:background="@android:color/transparent"
+                android:hint="식물 이름, 꽃말로 검색하기"
+                android:fontFamily="@font/pretendardmedium"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textColor="@color/text1"
+                android:textColorHint="@color/sub_text1"
+                android:textSize="14sp" />
 
-    </RelativeLayout>
+            <ImageView
+                android:id="@+id/ivSearchIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/round_search_24"
+                app:tint="@color/button" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
 </LinearLayout>

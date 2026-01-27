@@ -5,24 +5,70 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:clipChildren="false"
+    android:clipToPadding="false">
 
+    <!-- 헤더 -->
     <RelativeLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:paddingHorizontal="20dp"
+        android:paddingHorizontal="16dp"
         app:layout_constraintTop_toTopOf="parent">
         <ImageButton
             android:id="@+id/btnBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_centerVertical="true"
+            android:padding="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/baseline_arrow_back_ios_24" />
+            android:src="@drawable/baseline_arrow_back_ios_24"
+            app:tint="@color/text1" />
     </RelativeLayout>
 
+    <!-- 로딩 오버레이 -->
+    <LinearLayout
+        android:id="@+id/loadingOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@color/background"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav">
+
+        <ImageView
+            android:id="@+id/ivLoadingIcon"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/ic_plant_loading" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="24dp"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/button" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginHorizontal="32dp"
+            android:text="당신의 이야기를 담은 식물을\n도감에서 찾고 있습니다"
+            android:textColor="@color/text1"
+            android:textSize="16sp"
+            android:fontFamily="@font/pretendardsemibold"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp" />
+    </LinearLayout>
+
+    <!-- 스크롤 컨텐츠 -->
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/header"
@@ -34,146 +80,381 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="20dp"
-            android:paddingBottom="40dp">
+            android:paddingBottom="24dp">
 
+            <!-- 식물 이름 -->
             <TextView
+                android:id="@+id/tvPlantName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="프리지아"
                 android:fontFamily="@font/pretendardbold"
                 android:textSize="22sp"
-                android:textStyle="bold"
                 android:textColor="@color/text1" />
 
+            <!-- 식물 이미지 -->
             <androidx.cardview.widget.CardView
-                android:layout_width="220dp"
-                android:layout_height="220dp"
+                android:id="@+id/cardPlantImage"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="0dp">
                 <ImageView
+                    android:id="@+id/ivPlantImage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/freesia1" />
+                    android:src="@drawable/bg_image_placeholder" />
             </androidx.cardview.widget.CardView>
 
-            <com.google.android.material.chip.ChipGroup
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="20dp"
-                app:chipSpacingHorizontal="8dp">
-            </com.google.android.material.chip.ChipGroup>
-
-            <androidx.cardview.widget.CardView
+            <!-- 태그들 -->
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/flexTags"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                app:cardCornerRadius="12dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_gravity="center"
+                app:flexWrap="wrap"
+                app:justifyContent="center"
+                app:alignItems="center">
+
+                <TextView
+                    android:id="@+id/tvTag1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/bg_tag_green"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:text="#새로운 시작"
+                    android:fontFamily="@font/pretendardmedium"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvTag2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/bg_tag_green"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:text="#순수한 마음"
+                    android:fontFamily="@font/pretendardmedium"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvTag3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/bg_tag_green"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:text="#희망"
+                    android:fontFamily="@font/pretendardmedium"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvTag4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/bg_tag_green"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:text="#우정"
+                    android:fontFamily="@font/pretendardmedium"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+            </com.google.android.flexbox.FlexboxLayout>
+
+            <!-- 추천 내용 카드 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardRecommendation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="16dp"
                 app:cardElevation="0dp">
                 <TextView
+                    android:id="@+id/tvRecommendationEssay"
                     android:layout_width="match_parent"
-                    android:layout_height="160dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="100dp"
                     android:gravity="center"
                     android:text="상황분석 후 관련 내용\nex) 새로운 일을 시작한 당신!"
-                    android:fontFamily="@font/pretendardsemibold"
-                    android:textColor="@color/button"
-                    android:textSize="16sp"
-                    android:background="@color/white" />
+                    android:fontFamily="@font/pretendardmedium"
+                    android:textColor="@color/text1"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="4dp"
+                    android:background="@color/white"
+                    android:padding="20dp" />
             </androidx.cardview.widget.CardView>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="20dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="프리지아(꽃 이름)"
-                    android:fontFamily="@font/pretendardsemibold"
-                    android:textColor="@color/text1" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="더보기 →"
-                    android:fontFamily="@font/pretendardmedium"
-                    android:textSize="12sp"
-                    android:textColor="@color/sub_text1" />
-            </RelativeLayout>
-
-            <include
-                android:layout_marginTop="12dp"
-                layout="@layout/view_browse3_items" />
-
+            <!-- 식물 정보 섹션 헤더 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="24dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tvInfoHeader"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="프리지아(꽃 이름)"
+                    android:fontFamily="@font/pretendardsemibold"
+                    android:textColor="@color/text1"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvMoreInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="더보기 →"
+                    android:fontFamily="@font/pretendardmedium"
+                    android:textColor="@color/sub_text1"
+                    android:textSize="12sp"
+                    android:padding="4dp" />
+            </LinearLayout>
+
+            <!-- 정보 카드 가로 스크롤 -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:scrollbars="none"
+                android:clipToPadding="false"
+                android:paddingHorizontal="16dp">
+
+                <LinearLayout
+                    android:id="@+id/llInfoCards"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- 식물 분류 카드 -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="@color/white">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="식물 분류"
+                                android:fontFamily="@font/pretendardsemibold"
+                                android:textColor="@color/text1"
+                                android:textSize="12sp" />
+                            <ImageView
+                                android:id="@+id/ivCategory"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="8dp"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/flower" />
+                            <TextView
+                                android:id="@+id/tvCategory"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="8dp"
+                                android:text="꽃과 풀"
+                                android:fontFamily="@font/pretendardmedium"
+                                android:textColor="@color/text1"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- 개화 시기 카드 -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="@color/white">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="개화 시기"
+                                android:fontFamily="@font/pretendardsemibold"
+                                android:textColor="@color/text1"
+                                android:textSize="12sp" />
+                            <ImageView
+                                android:id="@+id/ivSeason"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="8dp"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/spring" />
+                            <TextView
+                                android:id="@+id/tvSeason"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="8dp"
+                                android:text="봄"
+                                android:fontFamily="@font/pretendardmedium"
+                                android:textColor="@color/text1"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- 향기 카드 -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="@color/white">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="향기"
+                                android:fontFamily="@font/pretendardsemibold"
+                                android:textColor="@color/text1"
+                                android:textSize="12sp" />
+                            <ImageView
+                                android:id="@+id/ivScent"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="8dp"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/soft" />
+                            <TextView
+                                android:id="@+id/tvScent"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="8dp"
+                                android:text="은은하고 달콤함"
+                                android:fontFamily="@font/pretendardmedium"
+                                android:textColor="@color/text1"
+                                android:textSize="11sp"
+                                android:maxLines="1"
+                                android:ellipsize="end" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- 색상 카드 -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="@color/white">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="색상"
+                                android:fontFamily="@font/pretendardsemibold"
+                                android:textColor="@color/text1"
+                                android:textSize="12sp" />
+                            <View
+                                android:id="@+id/viewColor"
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="8dp"
+                                android:background="@color/button" />
+                            <TextView
+                                android:id="@+id/tvColor"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="8dp"
+                                android:text="노란색"
+                                android:fontFamily="@font/pretendardmedium"
+                                android:textColor="@color/text1"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <!-- 버튼 영역 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="24dp"
                 android:orientation="horizontal">
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSave"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="0dp"
-                    android:background="@drawable/bg_tag_green"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    android:backgroundTint="@color/button"
+                    android:layout_marginEnd="6dp"
                     android:text="꽃갈피에 저장"
                     android:fontFamily="@font/pretendardsemibold"
-                    app:cornerRadius="28dp" />
+                    android:textColor="@color/button"
+                    app:strokeColor="@color/button"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="26dp" />
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnRetry"
-                    android:background="@drawable/bg_tag_green"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    android:backgroundTint="@color/chip"
+                    android:layout_marginStart="6dp"
                     android:text="재탐색"
                     android:fontFamily="@font/pretendardsemibold"
-                    app:cornerRadius="28dp" />
+                    android:textColor="@color/white"
+                    app:backgroundTint="@color/button"
+                    app:cornerRadius="26dp" />
             </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabCamera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        app:fabCustomSize="72dp"
-
-        app:maxImageSize="40dp"
-
-        android:backgroundTint="@color/button"
-        android:src="@drawable/baseline_camera_alt_40"
-        app:tint="@color/white"
-        app:elevation="12dp"
-        app:borderWidth="0dp"
-
-        app:layout_constraintTop_toTopOf="@id/bottomNav"
-        app:layout_constraintBottom_toTopOf="@id/bottomNav"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
+    <!-- 하단 네비게이션 -->
+    <include
         android:id="@+id/bottomNav"
+        layout="@layout/view_bottom_navigation"
         android:layout_width="match_parent"
-        android:layout_height="60dp" app:backgroundTint="@color/white"
-        app:itemIconTint="@color/text1"
-        app:itemTextColor="@color/text1"
-        app:labelVisibilityMode="labeled"
-        android:elevation="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/menu_bottom_nav" />
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

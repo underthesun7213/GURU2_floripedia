@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="button">#416E51</color>
-    <color name="text1">#383832</color>
-    <color name="sub_text1">#929292</color>
-    <color name="sub_text2">#355627</color>
-    <color name="dot">#ABD5C4</color>
-    <color name="background">#E8F3ED</color>
-    <color name="chip">#5E8F7C</color>
+    <!-- 기본 브랜드 색상 -->
+    <color name="background">#F4F9F6</color>
+    <color name="button">#4A6750</color>
+    <color name="text1">#2D3436</color>
+    <color name="sub_text1">#636E72</color>
     <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
 
+    <!-- 에러 로그에 누락된 색상들 -->
+    <color name="bookmark_text">#4A6750</color>
+    <color name="overlay_white">#AAFFFFFF</color>
+    <color name="chip">#E8F5E9</color>
+    <color name="dot">#D9D9D9</color>
+    
+    <!-- 추가 디자인 색상 -->
+    <color name="chip_bg">#4A6750</color>
+    <color name="chip_text">#FFFFFF</color>
+    <color name="gray_light">#D9D9D9</color>
+    <color name="gray_tag">#F1F2F6</color>
 </resources>

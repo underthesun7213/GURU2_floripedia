@@ -35,7 +35,7 @@
         android:layout_marginTop="24dp"
         android:layout_marginBottom="16dp"
         android:scrollbars="none"
-        app:layout_constraintBottom_toTopOf="@id/btnSignUp"
+        app:layout_constraintBottom_toTopOf="@id/layoutLoginGuide"
         app:layout_constraintTop_toBottomOf="@id/tvTitle">
 
         <LinearLayout
@@ -98,7 +98,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:text="아이디"
+                android:text="이메일"
                 android:fontFamily="@font/pretendardsemibold"
                 android:textColor="@color/text1" />
 
@@ -114,12 +114,13 @@
                     android:layout_weight="1"
                     android:background="@drawable/bg_round_square"
                     android:backgroundTint="@color/white"
-                    android:hint="아이디"
+                    android:hint="example@email.com"
+                    android:inputType="textEmailAddress"
                     android:fontFamily="@font/pretendardmedium"
                     android:textColorHint="@color/sub_text1"
                     android:paddingHorizontal="16dp"
                     android:textSize="14sp" />
-                //버튼이 활성화 되었을 경우 버튼 BackGround 색은 @color/button
+
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnCheckId"
                     android:layout_width="wrap_content"
@@ -130,13 +131,14 @@
                     android:text="중복확인"
                     android:fontFamily="@font/pretendardsemibold"
                     android:textColor="@color/white"
-                    android:enabled="false"/>
+                    android:clickable="true"
+                    android:focusable="true"/>
             </LinearLayout>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="4~12자/영문 소문자(숫자 조합 가능)"
+                android:text="이메일 형식으로 입력해주세요"
                 android:fontFamily="@font/pretendardregular"
                 android:textColor="@color/sub_text1"
                 android:textSize="11sp" />
@@ -188,7 +190,38 @@
         </LinearLayout>
     </ScrollView>
 
-    //버튼 활성화 시 색깔은 @color/button
+    <!-- 로그인 가이드 추가 -->
+    <LinearLayout
+        android:id="@+id/layoutLoginGuide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/btnSignUp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="이미 계정이 있으신가요? "
+            android:textColor="@color/sub_text1"
+            android:fontFamily="@font/pretendardmedium"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/tvLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="로그인"
+            android:textColor="@color/text1"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/pretendardmedium"
+            android:background="?attr/selectableItemBackground"
+            android:padding="4dp"/>
+    </LinearLayout>
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnSignUp"
         android:layout_width="match_parent"

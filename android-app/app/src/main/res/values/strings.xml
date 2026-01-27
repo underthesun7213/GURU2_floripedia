@@ -3,12 +3,16 @@
     <string name="app_name">Floripedia</string>
     <string name="title_activity_main">activity_main</string>
 
-    <resources>
-        <string-array name="filter_array">
-            <item>최신순</item>
-            <item>오래된순</item>
-            <item>인기도순</item>
-        </string-array>
-    </resources>
+    <!-- 접근성 설명 -->
+    <string name="desc_camera_button">식물 사진 촬영 및 검색</string>
 
+    <!-- Firebase Google Sign-In Web Client ID -->
+    <!-- TODO: Firebase Console에서 발급받은 Web Client ID로 교체하세요 -->
+    <string name="default_web_client_id">YOUR_WEB_CLIENT_ID_HERE</string>
+
+    <string-array name="filter_array">
+        <item>최신순</item>
+        <item>오래된순</item>
+        <item>인기도순</item>
+    </string-array>
 </resources>

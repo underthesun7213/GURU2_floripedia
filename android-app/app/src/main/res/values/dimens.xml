@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- M3 Bottom Navigation Indicator를 원형으로 만들기 위해 가로/세로 크기를 동일하게 강제 설정 -->
+    <dimen name="m3_bottom_nav_active_indicator_width">44dp</dimen>
+    <dimen name="m3_bottom_nav_active_indicator_height">44dp</dimen>
+
+    <!-- 아이콘 라벨 겹침 방지를 위해 너비 제한 해제 (투명도 문제와 별개로 텍스트 가독성 핵심) -->
+    <dimen name="design_bottom_navigation_item_max_width">1000dp</dimen>
+    <dimen name="design_bottom_navigation_item_min_width">10dp</dimen>
+</resources>

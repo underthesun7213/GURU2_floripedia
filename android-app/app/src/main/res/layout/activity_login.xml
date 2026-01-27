@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".LoginActivity">
+    tools:context=".ui.auth.LoginActivity">
 
     <ImageButton
         android:id="@+id/btnBack"
@@ -25,7 +25,7 @@
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingHorizontal="40dp"
-        app:layout_constraintBottom_toTopOf="@+id/tvSignUpGuide"
+        app:layout_constraintBottom_toTopOf="@+id/layoutSignUp"
         app:layout_constraintTop_toBottomOf="@id/btnBack"
         app:layout_constraintVertical_bias="0.3">
 
@@ -33,7 +33,9 @@
             android:id="@+id/tvLoginTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="start"          android:textAlignment="viewStart" android:lineSpacingExtra="6dp"
+            android:gravity="start"
+            android:textAlignment="viewStart"
+            android:lineSpacingExtra="6dp"
             android:text="당신만의 식물도감, Floripedia\n자연을 천천히 기록합니다!"
             android:fontFamily="@font/pretendardbold"
             android:textColor="@color/text1"
@@ -47,15 +49,17 @@
             android:layout_marginTop="40dp"
             android:src="@drawable/login_icon" />
 
+        <!-- 아이디(이메일) 입력칸 ID 수정: etId -> etEmail -->
         <EditText
-            android:id="@+id/etId"
+            android:id="@+id/etEmail"
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:layout_marginTop="40dp"
             android:background="@drawable/bg_round_square"
             android:backgroundTint="#F8F8F8"
             android:fontFamily="@font/pretendardmedium"
-            android:hint="아이디"
+            android:hint="이메일"
+            android:inputType="textEmailAddress"
             android:paddingHorizontal="16dp"
             android:textColorHint="@color/sub_text1"
             android:textSize="14sp" />
@@ -87,11 +91,24 @@
                 android:alpha="0.5" />
         </FrameLayout>
 
+        <!-- 비밀번호 찾기 추가 -->
+        <TextView
+            android:id="@+id/tvForgotPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="12dp"
+            android:text="비밀번호를 잊으셨나요?"
+            android:textColor="@color/sub_text1"
+            android:fontFamily="@font/pretendardmedium"
+            android:textSize="12sp"
+            android:padding="4dp" />
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="32dp"
             android:background="@drawable/bg_round_square"
             android:backgroundTint="@color/button"
             android:text="로그인"

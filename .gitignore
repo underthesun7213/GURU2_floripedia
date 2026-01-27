@@ -121,7 +121,7 @@ logs/
 *.log.old
 
 # 데이터 파일 
-data/
+/backend/data/
 
 # 스크립트트
 scripts/

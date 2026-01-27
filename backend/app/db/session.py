@@ -4,6 +4,7 @@ MongoDB 비동기 연결 관리 모듈.
 Motor(AsyncIO MongoDB Driver)를 사용하여 비동기 DB 연결을 관리한다.
 애플리케이션 전역에서 mongodb 싱글톤 인스턴스를 사용한다.
 """
+import certifi
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 
 from app.core.config import settings
@@ -23,7 +24,11 @@ class MongoDB:
 
     async def connect(self) -> None:
         """MongoDB Atlas 연결 수립."""
-        self.client = AsyncIOMotorClient(settings.MONGO_URI)
+        self.client = AsyncIOMotorClient(
+            settings.MONGO_URI,
+            #tlsCAFile=certifi.where(),
+            tlsAllowInvalidCertificates=True    #보안상으론 좋지 않지만, 개발 환경에서 공공 와이파이 등 어느 환경에서도 사용 가능하도록
+        )
         self.db = self.client[settings.MONGODB_DB_NAME]
         print(f"[MongoDB] Connected to '{settings.MONGODB_DB_NAME}'")
 

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- 꽃잎 1 (상단) -->
+    <path
+        android:pathData="M24,8 C24,8 28,14 28,18 C28,22 26,24 24,24 C22,24 20,22 20,18 C20,14 24,8 24,8 Z"
+        android:fillColor="#C8E6C9"/>
+
+    <!-- 꽃잎 2 (우상단) -->
+    <path
+        android:pathData="M32,12 C32,12 30,19 28,22 C26,25 23,25 22,24 C21,23 21,20 24,17 C27,14 32,12 32,12 Z"
+        android:fillColor="#A5D6A7"/>
+
+    <!-- 꽃잎 3 (좌상단) -->
+    <path
+        android:pathData="M16,12 C16,12 18,19 20,22 C22,25 25,25 26,24 C27,23 27,20 24,17 C21,14 16,12 16,12 Z"
+        android:fillColor="#A5D6A7"/>
+
+    <!-- 꽃잎 4 (우측) -->
+    <path
+        android:pathData="M36,20 C36,20 30,22 27,24 C24,26 24,29 25,30 C26,31 29,30 31,27 C33,24 36,20 36,20 Z"
+        android:fillColor="#81C784"/>
+
+    <!-- 꽃잎 5 (좌측) -->
+    <path
+        android:pathData="M12,20 C12,20 18,22 21,24 C24,26 24,29 23,30 C22,31 19,30 17,27 C15,24 12,20 12,20 Z"
+        android:fillColor="#81C784"/>
+
+    <!-- 꽃 중심 -->
+    <path
+        android:pathData="M24,24 m-5,0 a5,5 0,1 1,10 0 a5,5 0,1 1,-10 0"
+        android:fillColor="#4A6750"/>
+
+    <!-- 줄기 -->
+    <path
+        android:pathData="M24,29 L24,42"
+        android:strokeWidth="3"
+        android:strokeColor="#4A6750"
+        android:strokeLineCap="round"/>
+
+    <!-- 잎 (우측) -->
+    <path
+        android:pathData="M24,36 C24,36 30,34 32,36 C34,38 32,40 30,40 C28,40 24,38 24,36 Z"
+        android:fillColor="#66BB6A"/>
+
+    <!-- 잎 (좌측) -->
+    <path
+        android:pathData="M24,32 C24,32 18,30 16,32 C14,34 16,36 18,36 C20,36 24,34 24,32 Z"
+        android:fillColor="#66BB6A"/>
+</vector>

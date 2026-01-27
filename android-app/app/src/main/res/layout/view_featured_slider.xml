@@ -10,7 +10,7 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPagerFeatured"
         android:layout_width="match_parent"
-        android:layout_height="350dp"   android:clipChildren="false"
+        android:layout_height="match_parent"   android:clipChildren="false"
         android:clipToPadding="false"
         android:paddingHorizontal="50dp"
         xmlns:tools="http://schemas.android.com/tools"

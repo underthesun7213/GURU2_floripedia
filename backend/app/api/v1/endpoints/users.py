@@ -131,7 +131,7 @@ async def toggle_favorite(
 # ==========================================
 @router.get("/me/favorites", response_model=List[PlantCardDto])
 async def get_my_favorites(
-    sort_by: str = Query("name", description="정렬 기준 (name, recent)"),
+    sort_by: str = Query("name", description="정렬 기준 (name, recent, popularity_score)"),
     sort_order: str = Query("asc", description="정렬 방향 (asc, desc)"),
     user_id: str = Depends(get_current_user_id),
     service: UserService = Depends(get_user_service)

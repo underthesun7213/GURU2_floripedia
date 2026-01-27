@@ -11,9 +11,21 @@
         android:id="@+id/imgLogo"
         android:layout_width="140dp"
         android:layout_height="24dp"
-        android:src="@drawable/Floripedia_logo"
+        android:src="@drawable/floripedia_logo"
         android:scaleType="fitStart"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- 사용자 아이콘 -->
+    <ImageView
+        android:id="@+id/imgUser"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/outline_person_24"
+        android:contentDescription="마이페이지"
+        app:tint="@color/text1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

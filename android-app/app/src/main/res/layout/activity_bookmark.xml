@@ -2,12 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.plant.Bookmark1Activity">
+    android:background="@color/background">
 
+    <!-- 상단 헤더 -->
     <include
         android:id="@+id/fixedHeader"
         layout="@layout/view_header"
@@ -19,287 +19,132 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:text="꽃갈피"
         android:fontFamily="@font/pretendardsemibold"
+        android:text="꽃갈피"
         android:textColor="@color/text1"
         android:textSize="24sp"
-        app:layout_constraintTop_toBottomOf="@id/fixedHeader"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fixedHeader" />
 
+    <!-- 요약 카드 -->
     <androidx.cardview.widget.CardView
         android:id="@+id/summaryCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="24dp"
-        app:cardCornerRadius="16dp"
+        app:cardCornerRadius="20dp"
         app:cardElevation="2dp"
         app:layout_constraintTop_toBottomOf="@id/tvTitle">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
             android:orientation="vertical"
-            android:padding="20dp"
-            android:background="@color/white">
+            android:padding="20dp">
 
-            <!--나중에 개수 수정 필요함(찾은 갯수대로 변수)-->
             <TextView
+                android:id="@+id/tvTotalCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="총 식물 갯수: 12개"
                 android:fontFamily="@font/pretendardsemibold"
-                android:textColor="#4A6750"
-                android:textSize="14sp"/>
+                android:text="총 식물 갯수: 0개"
+                android:textColor="@color/bookmark_text"
+                android:textSize="14sp" />
 
             <TextView
+                android:id="@+id/tvRecommendedSeasonPlant"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="추천 계절 식물: 장미"
+                android:fontFamily="@font/pretendardsemibold"
+                android:text="추천 계절 식물: -"
                 android:textColor="#4A6750"
-                android:textSize="14sp"
-                android:fontFamily="@font/pretendardsemibold"/>
+                android:textSize="14sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <!-- 카테고리 그리드 -->
     <GridLayout
+        android:id="@+id/gridLayoutCategories"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         android:columnCount="2"
-        android:rowCount="3"
         app:layout_constraintTop_toBottomOf="@id/summaryCard">
 
+        <!-- 꽃말 카드 -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/cvLanguage"
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_columnWeight="1"
             android:layout_margin="8dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="2dp">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/flowerLanguage" /> <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#AAFFFFFF" />
-                <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="꽃말"
-                    android:fontFamily="@font/pretendardsemibold"
-                    android:textColor="@color/text1"
-                    android:textSize="20sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginEnd="12dp"
-                    android:src="@drawable/outline_arrow_forward_ios_24"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/text1" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
+            app:cardCornerRadius="20dp">
+            <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
+                <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop" android:src="@drawable/flower_language" />
+                <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="#44000000" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:fontFamily="@font/pretendardbold" android:text="꽃말" android:textColor="@color/white" android:textSize="20sp" />
+                <ImageView android:layout_width="20dp" android:layout_height="20dp" android:layout_gravity="center_vertical|end" android:layout_marginEnd="16dp" android:src="@drawable/outline_arrow_forward_ios_24" app:tint="@color/white" />
             </FrameLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- 향기 카드 -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/cvScent"
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_columnWeight="1"
             android:layout_margin="8dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="2dp">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/scent" /> <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#AAFFFFFF" /> <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="향기"
-                    android:fontFamily="@font/pretendardsemibold"
-                    android:textColor="@color/text1"
-                    android:textSize="20sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginEnd="12dp"
-                    android:src="@drawable/outline_arrow_forward_ios_24"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/text1" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
+            app:cardCornerRadius="20dp">
+            <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
+                <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop" android:src="@drawable/scent" />
+                <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="#44000000" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:fontFamily="@font/pretendardbold" android:text="향기" android:textColor="@color/white" android:textSize="20sp" />
+                <ImageView android:layout_width="20dp" android:layout_height="20dp" android:layout_gravity="center_vertical|end" android:layout_marginEnd="16dp" android:src="@drawable/outline_arrow_forward_ios_24" app:tint="@color/white" />
             </FrameLayout>
         </androidx.cardview.widget.CardView>
+
+        <!-- 개화시기 카드 -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/cvSeason"
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_columnWeight="1"
             android:layout_margin="8dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="2dp">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/season" /> <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#AAFFFFFF" /> <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="개화시기"
-                    android:textColor="@color/text1"
-                    android:textSize="20sp"
-                    android:fontFamily="@font/pretendardsemibold"                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginEnd="12dp"
-                    android:src="@drawable/outline_arrow_forward_ios_24"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/text1" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
+            app:cardCornerRadius="20dp">
+            <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
+                <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop" android:src="@drawable/season" />
+                <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="#44000000" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:fontFamily="@font/pretendardbold" android:text="개화시기" android:textColor="@color/white" android:textSize="20sp" />
+                <ImageView android:layout_width="20dp" android:layout_height="20dp" android:layout_gravity="center_vertical|end" android:layout_marginEnd="16dp" android:src="@drawable/outline_arrow_forward_ios_24" app:tint="@color/white" />
             </FrameLayout>
         </androidx.cardview.widget.CardView>
 
-
+        <!-- 색상 카드 -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/cvColor"
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_columnWeight="1"
             android:layout_margin="8dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="2dp">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/hexcode" /> <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#AAFFFFFF" /> <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="색상"
-                    android:textColor="@color/text1"
-                    android:textSize="20sp"
-                    android:fontFamily="@font/pretendardsemibold"                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginEnd="12dp"
-                    android:src="@drawable/outline_arrow_forward_ios_24"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/text1" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
+            app:cardCornerRadius="20dp">
+            <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
+                <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop" android:src="@drawable/hexcode" />
+                <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="#44000000" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:fontFamily="@font/pretendardbold" android:text="색상" android:textColor="@color/white" android:textSize="20sp" />
+                <ImageView android:layout_width="20dp" android:layout_height="20dp" android:layout_gravity="center_vertical|end" android:layout_marginEnd="16dp" android:src="@drawable/outline_arrow_forward_ios_24" app:tint="@color/white" />
             </FrameLayout>
         </androidx.cardview.widget.CardView>
-
     </GridLayout>
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabCamera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
 
-        app:fabCustomSize="72dp"
-
-        app:maxImageSize="40dp"
-
-        android:backgroundTint="@color/button"
-        android:src="@drawable/baseline_camera_alt_40"
-        app:tint="@color/white"
-        app:elevation="12dp"
-        app:borderWidth="0dp"
-
-        app:layout_constraintTop_toTopOf="@id/bottomNav"
-        app:layout_constraintBottom_toTopOf="@id/bottomNav"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
+    <include
         android:id="@+id/bottomNav"
+        layout="@layout/view_bottom_navigation"
         android:layout_width="match_parent"
-        android:layout_height="60dp" app:backgroundTint="@color/white"
-        app:itemIconTint="@color/text1"
-        app:itemTextColor="@color/text1"
-        app:labelVisibilityMode="labeled"
-        android:elevation="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/menu_bottom_nav" />
-
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

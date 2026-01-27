@@ -76,7 +76,7 @@
             <ImageButton
                 android:id="@+id/ivEditIcon"
                 android:layout_width="24dp"
-                android:background="null"
+                android:background="@null"
                 android:layout_height="24dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
