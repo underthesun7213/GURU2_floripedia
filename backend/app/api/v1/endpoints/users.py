@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from fastapi import APIRouter, HTTPException, Depends, Query, UploadFile, File, status
 
 from app.schemas.user import UserResponse, UserUpdate
@@ -127,19 +127,42 @@ async def toggle_favorite(
 
 
 # ==========================================
-# 5. 꽃갈피(찜) - 목록 조회
+# 5. 꽃갈피(찜) - 목록 조회 (main /plants와 동일한 필터 구조)
 # ==========================================
 @router.get("/me/favorites", response_model=List[PlantCardDto])
 async def get_my_favorites(
-    sort_by: str = Query("name", description="정렬 기준 (name, recent, popularity_score)"),
+    # 필터 파라미터 (main /plants endpoint와 동일 - 모두 단일 선택)
+    season: Optional[str] = Query(None, description="계절 (SPRING, SUMMER, FALL, WINTER)"),
+    category_group: Optional[str] = Query(None, description="카테고리 그룹"),
+    color_group: Optional[str] = Query(None, description="색상 그룹"),
+    scent_group: Optional[str] = Query(None, description="향기 그룹"),
+    flower_group: Optional[str] = Query(None, description="꽃말 그룹"),
+    keyword: Optional[str] = Query(None, description="검색어"),
+    # 정렬 & 페이지네이션
+    skip: int = Query(0, ge=0),
+    limit: int = Query(100, ge=1, le=200),
+    sort_by: str = Query("name", description="정렬 기준 (name, popularity_score)"),
     sort_order: str = Query("asc", description="정렬 방향 (asc, desc)"),
+    # 인증
     user_id: str = Depends(get_current_user_id),
     service: UserService = Depends(get_user_service)
 ):
     """
-    내 찜 목록 조회
+    내 찜 목록 조회 - 찜한 식물 내에서 main plants 필터링 로직 적용
     """
-    plants = await service.get_favorites(user_id, sort_by, sort_order)
+    plants = await service.get_favorites(
+        user_id=user_id,
+        season=season,
+        category_group=category_group,
+        color_group=color_group,
+        scent_group=scent_group,
+        flower_group=flower_group,
+        keyword=keyword,
+        skip=skip,
+        limit=limit,
+        sort_by=sort_by,
+        sort_order=sort_order
+    )
     return plants
 
 

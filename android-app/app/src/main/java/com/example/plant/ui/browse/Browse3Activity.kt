@@ -166,8 +166,11 @@ class Browse3Activity : AppCompatActivity() {
         lifecycleScope.launch {
             val result = AppContainer.userRepository.toggleFavorite(plantId)
             result.onSuccess { isFavorite ->
-                val message = if (isFavorite) "꽃갈피에 저장되었습니다!" else "꽃갈피에서 제거되었습니다"
-                Toast.makeText(this@Browse3Activity, message, Toast.LENGTH_SHORT).show()
+                if (isFavorite) {
+                    com.example.plant.util.BookmarkToastUtil.showBookmarkSavedToast(this@Browse3Activity)
+                } else {
+                    Toast.makeText(this@Browse3Activity, "꽃갈피에서 제거되었습니다", Toast.LENGTH_SHORT).show()
+                }
             }.onFailure { error ->
                 com.example.plant.util.ErrorHandler.handleApiError(this@Browse3Activity, error, "Browse3Activity")
             }

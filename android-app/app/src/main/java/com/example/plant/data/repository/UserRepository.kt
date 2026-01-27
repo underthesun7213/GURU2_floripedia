@@ -84,14 +84,33 @@ class UserRepository {
     }
 
     /**
-     * 내 찜 목록 조회
+     * 내 찜 목록 조회 (main /plants와 동일한 필터 구조)
      */
     suspend fun getMyFavorites(
+        season: String? = null,
+        categoryGroup: String? = null,
+        colorGroup: String? = null,
+        scentGroup: String? = null,
+        flowerGroup: String? = null,
+        keyword: String? = null,
+        skip: Int = 0,
+        limit: Int = 100,
         sortBy: String = "name",
         sortOrder: String = "asc"
     ): Result<List<PlantCardDto>> {
         return try {
-            val response = api.getMyFavorites(sortBy, sortOrder)
+            val response = api.getMyFavorites(
+                season = season,
+                categoryGroup = categoryGroup,
+                colorGroup = colorGroup,
+                scentGroup = scentGroup,
+                flowerGroup = flowerGroup,
+                keyword = keyword,
+                skip = skip,
+                limit = limit,
+                sortBy = sortBy,
+                sortOrder = sortOrder
+            )
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!)
             } else {

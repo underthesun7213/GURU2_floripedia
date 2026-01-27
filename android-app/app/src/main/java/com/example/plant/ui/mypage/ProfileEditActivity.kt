@@ -1,5 +1,6 @@
 package com.example.plant.ui.mypage
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -7,12 +8,15 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.example.plant.R
+import com.example.plant.data.remote.TokenManager
 import com.example.plant.databinding.ActivityProfileEditBinding
 import com.example.plant.di.AppContainer
+import com.example.plant.ui.auth.LoginActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -58,6 +62,87 @@ class ProfileEditActivity : AppCompatActivity() {
         binding.btnSave.setOnClickListener {
             saveProfile()
         }
+
+        // 로그아웃 버튼
+        binding.tvLogout.setOnClickListener {
+            showLogoutDialog()
+        }
+
+        // 회원탈퇴 버튼
+        binding.tvDeleteAccount.setOnClickListener {
+            showDeleteAccountDialog()
+        }
+    }
+
+    private fun showLogoutDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("로그아웃")
+            .setMessage("정말 로그아웃 하시겠습니까?")
+            .setPositiveButton("로그아웃") { _, _ ->
+                performLogout()
+            }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+
+    private fun showDeleteAccountDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("회원탈퇴")
+            .setMessage("정말 탈퇴하시겠습니까?\n탈퇴 후에는 복구할 수 없습니다.")
+            .setPositiveButton("탈퇴") { _, _ ->
+                performDeleteAccount()
+            }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+
+    private fun performLogout() {
+        binding.progressBar.visibility = View.VISIBLE
+
+        lifecycleScope.launch {
+            val result = AppContainer.userRepository.logout()
+
+            // 서버 응답 상관없이 로컬 로그아웃 처리
+            AppContainer.firebaseAuthManager.signOut()
+            TokenManager.clearToken(this@ProfileEditActivity)
+
+            binding.progressBar.visibility = View.GONE
+
+            Toast.makeText(this@ProfileEditActivity, "로그아웃 되었습니다", Toast.LENGTH_SHORT).show()
+            navigateToLogin()
+        }
+    }
+
+    private fun performDeleteAccount() {
+        binding.progressBar.visibility = View.VISIBLE
+
+        lifecycleScope.launch {
+            val result = AppContainer.userRepository.deleteAccount()
+
+            binding.progressBar.visibility = View.GONE
+
+            result.onSuccess { message ->
+                // 로컬 로그아웃 처리
+                AppContainer.firebaseAuthManager.signOut()
+                TokenManager.clearToken(this@ProfileEditActivity)
+
+                Toast.makeText(this@ProfileEditActivity, "회원 탈퇴가 완료되었습니다", Toast.LENGTH_SHORT).show()
+                navigateToLogin()
+            }.onFailure { error ->
+                com.example.plant.util.ErrorHandler.handleApiError(
+                    this@ProfileEditActivity,
+                    error,
+                    "ProfileEditActivity"
+                )
+            }
+        }
+    }
+
+    private fun navigateToLogin() {
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 
     private fun openImagePicker() {

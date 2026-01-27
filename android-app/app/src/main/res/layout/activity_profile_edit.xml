@@ -144,6 +144,40 @@
         app:layout_constraintTop_toBottomOf="@id/tvEmailLabel"
         tools:text="GURURU @ naver.com" />
 
+    <!-- 로그아웃/회원탈퇴 영역 (우측 정렬) -->
+    <LinearLayout
+        android:id="@+id/layoutAccountActions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:orientation="vertical"
+        android:gravity="end"
+        app:layout_constraintTop_toBottomOf="@id/etEmail"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/tvLogout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="로그아웃"
+            android:textColor="@color/sub_text1"
+            android:textSize="14sp"
+            android:fontFamily="@font/pretendardmedium"
+            android:padding="4dp" />
+
+        <TextView
+            android:id="@+id/tvDeleteAccount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="회원탈퇴"
+            android:textColor="#E53935"
+            android:textSize="12sp"
+            android:fontFamily="@font/pretendardmedium"
+            android:padding="4dp" />
+    </LinearLayout>
+
     <!-- 변경하기 버튼 -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSave"

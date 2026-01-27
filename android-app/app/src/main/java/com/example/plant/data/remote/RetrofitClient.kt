@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
 
-    // TODO: 실제 서버 주소로 변경
+    // TODO: 실제 서버 주소로 변경 [로컬/aws]
     private const val BASE_URL = "http://10.0.2.2:8000/api/v1/"
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {

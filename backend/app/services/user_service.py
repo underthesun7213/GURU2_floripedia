@@ -190,19 +190,25 @@ class UserService:
     async def get_favorites(
         self,
         user_id: str,
+        # 필터 파라미터 (main /plants와 동일 - 모두 단일 선택)
+        season: Optional[str] = None,
+        category_group: Optional[str] = None,
+        color_group: Optional[str] = None,
+        scent_group: Optional[str] = None,
+        flower_group: Optional[str] = None,
+        keyword: Optional[str] = None,
+        # 페이지네이션 & 정렬
+        skip: int = 0,
+        limit: int = 100,
         sort_by: str = "name",
         sort_order: str = "asc",
     ) -> List[dict]:
         """
-        찜 목록 조회.
-        
-        sort_by 지원값:
-        - "name": 이름순 정렬
-        - "recent": 찜한 순서대로 (ID 리스트 순서 유지)
-        - "popularity_score": 인기도순 정렬 (내림차순 권장)
+        찜 목록 조회 - 찜한 식물 내에서 main plants 필터링 로직 적용
         """
         logger.debug(f"[get_favorites] user={user_id}, sort_by={sort_by}, sort_order={sort_order}")
-        
+        logger.debug(f"[get_favorites] filters: season={season}, category_group={category_group}, color_group={color_group}, scent_group={scent_group}, flower_group={flower_group}, keyword={keyword}")
+
         favorite_ids = await self.user_repo.get_favorites(user_id)
 
         if not favorite_ids:
@@ -212,36 +218,22 @@ class UserService:
         logger.debug(f"[get_favorites] 찜 ID 개수: {len(favorite_ids)}개")
 
         sort_order_int = -1 if sort_order == "desc" else 1
-        
-        # "recent"는 찜한 순서대로 (ID 리스트 순서 유지)
-        if sort_by == "recent":
-            plants = await self.plant_repo.get_list(
-                plant_ids=favorite_ids,
-                skip=0,
-                limit=len(favorite_ids),
-                sort_by="name",
-                sort_order=1
-            )
-            # ID 리스트 순서대로 재정렬
-            id_to_plant = {str(p["_id"]): p for p in plants}
-            plants = [id_to_plant[pid] for pid in favorite_ids if pid in id_to_plant]
-            if sort_order == "desc":
-                plants.reverse()
-        else:
-            # "name" 또는 "popularity_score" 정렬
-            if sort_by == "popularity_score" and sort_order == "asc":
-                sort_order_int = -1
-            elif sort_by == "popularity_score" and sort_order == "desc":
-                sort_order_int = 1
-            
-            plants = await self.plant_repo.get_list(
-                plant_ids=favorite_ids,
-                skip=0,
-                limit=len(favorite_ids),
-                sort_by=sort_by,
-                sort_order=sort_order_int
-            )
-            
+
+        # main /plants와 동일한 로직으로 찜 목록 내에서 필터링
+        plants = await self.plant_repo.get_list(
+            plant_ids=favorite_ids,
+            season=season,
+            category_group=category_group,
+            color_group=color_group,
+            scent_group=scent_group,
+            flower_group=flower_group,
+            keyword=keyword,
+            skip=skip,
+            limit=limit,
+            sort_by=sort_by,
+            sort_order=sort_order_int
+        )
+
         logger.debug(f"[get_favorites] 결과: {len(plants)}개")
         return plants
 

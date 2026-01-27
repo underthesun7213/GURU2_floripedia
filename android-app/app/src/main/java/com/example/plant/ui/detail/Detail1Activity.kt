@@ -166,7 +166,11 @@ class Detail1Activity : AppCompatActivity() {
             result.onSuccess { newState ->
                 isFavorite = newState
                 updateFavoriteButton()
-                Toast.makeText(this@Detail1Activity, if (newState) "저장되었습니다!" else "제거되었습니다", Toast.LENGTH_SHORT).show()
+                if (newState) {
+                    com.example.plant.util.BookmarkToastUtil.showBookmarkSavedToast(this@Detail1Activity)
+                } else {
+                    Toast.makeText(this@Detail1Activity, "꽃갈피에서 제거되었습니다", Toast.LENGTH_SHORT).show()
+                }
             }.onFailure { error ->
                 com.example.plant.util.ErrorHandler.handleAuthRequiredError(
                     this@Detail1Activity,

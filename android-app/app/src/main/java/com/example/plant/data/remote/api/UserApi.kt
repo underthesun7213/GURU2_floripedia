@@ -52,10 +52,18 @@ interface UserApi {
     ): Response<FavoriteToggleResponse>
 
     /**
-     * 내 찜 목록 조회
+     * 내 찜 목록 조회 (main /plants와 동일한 필터 구조)
      */
     @GET("users/me/favorites")
     suspend fun getMyFavorites(
+        @Query("season") season: String? = null,
+        @Query("category_group") categoryGroup: String? = null,
+        @Query("color_group") colorGroup: String? = null,
+        @Query("scent_group") scentGroup: String? = null,
+        @Query("flower_group") flowerGroup: String? = null,
+        @Query("keyword") keyword: String? = null,
+        @Query("skip") skip: Int = 0,
+        @Query("limit") limit: Int = 100,
         @Query("sort_by") sortBy: String = "name",
         @Query("sort_order") sortOrder: String = "asc"
     ): Response<List<PlantCardDto>>

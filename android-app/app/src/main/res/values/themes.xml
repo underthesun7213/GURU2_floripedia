@@ -1,11 +1,66 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.Floripedia" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary 계열 -->
         <item name="colorPrimary">@color/button</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/white</item>
+        <item name="colorOnPrimaryContainer">@color/button</item>
+
+        <!-- Secondary 계열 -->
+        <item name="colorSecondary">@color/button</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryContainer">@color/white</item>
+        <item name="colorOnSecondaryContainer">@color/button</item>
+
+        <!-- Tertiary 계열 -->
+        <item name="colorTertiary">@color/button</item>
+        <item name="colorOnTertiary">@color/white</item>
+        <item name="colorTertiaryContainer">@color/white</item>
+        <item name="colorOnTertiaryContainer">@color/button</item>
+
+        <!-- Surface 계열 -->
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/text1</item>
+        <item name="colorSurfaceVariant">@color/white</item>
+        <item name="colorOnSurfaceVariant">@color/sub_text1</item>
+
+        <!-- 기타 -->
+        <item name="colorOutline">@color/sub_text1</item>
+        <item name="colorError">@color/button</item>
+        <item name="colorOnError">@color/white</item>
+        <item name="colorErrorContainer">@color/white</item>
+        <item name="colorOnErrorContainer">@color/button</item>
+
+        <!-- 상태바 -->
         <item name="android:statusBarColor">@color/background</item>
         <item name="android:windowLightStatusBar">true</item>
-        
-        <!-- 하단 네비게이션 선택 배경(Indicator) 색상을 연두색으로 설정 -->
+
+        <!-- Ripple/Highlight 색상 투명 처리 -->
+        <item name="colorControlHighlight">@android:color/transparent</item>
+        <item name="android:colorControlHighlight">@android:color/transparent</item>
+
+        <!-- 하단 네비게이션 선택 배경(Indicator) 색상 -->
         <item name="colorContainer">#E8F5E9</item>
+
+        <!-- PopupMenu 스타일 -->
+        <item name="popupMenuStyle">@style/FloripediaPopupMenu</item>
+        <item name="android:popupMenuStyle">@style/FloripediaPopupMenu</item>
+
+        <!-- Switch/Checkbox 색상 -->
+        <item name="colorControlActivated">@color/button</item>
+        <item name="colorControlNormal">@color/sub_text1</item>
+        <item name="android:colorControlActivated">@color/button</item>
+        <item name="android:colorControlNormal">@color/sub_text1</item>
+
+        <!-- Material3 Switch 색상 -->
+        <item name="colorSurfaceContainerHighest">@color/white</item>
+        <item name="colorOnSurfaceInverse">@color/button</item>
+        <item name="colorPrimaryInverse">@color/button</item>
+    </style>
+
+    <!-- PopupMenu 스타일 -->
+    <style name="FloripediaPopupMenu" parent="Widget.Material3.PopupMenu">
+        <item name="android:popupBackground">@color/white</item>
     </style>
 
     <!-- 하단 네비게이션 전용 인디케이터 모양 (Oval/Pill) -->
