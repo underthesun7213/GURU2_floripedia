@@ -22,7 +22,7 @@ from app.db.session import mongodb
 # 1. Firebase 초기화 (앱 시작 시 1회 수행)
 # ==========================================
 if not firebase_admin._apps:
-    cred = credentials.Certificate("serviceAccountKey.json")
+    cred = credentials.Certificate(settings.FIREBASE_CREDENTIALS_PATH)
     firebase_admin.initialize_app(cred, {
         'storageBucket': settings.FIREBASE_STORAGE_BUCKET
     })

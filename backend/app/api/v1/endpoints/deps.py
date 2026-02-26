@@ -1,9 +1,7 @@
-import os
 from typing import Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-import firebase_admin
-from firebase_admin import credentials, auth
+from firebase_admin import auth
 
 from app.db.session import mongodb
 from app.repositories import PlantRepository, UserRepository
@@ -12,19 +10,7 @@ from app.services.plant_service import PlantService
 from app.services.user_service import UserService
 from app.services.auth_service import AuthService
 
-# Firebase 인증 초기화 (앱 실행 시 한 번만 실행되도록 싱글톤 패턴 적용)
-# serviceAccountKey.json 파일 경로를 정확히 지정해주세요.
-CRED_PATH = "app/serviceAccountKey.json" 
-
-if not firebase_admin._apps:
-    if os.path.exists(CRED_PATH):
-        cred = credentials.Certificate(CRED_PATH)
-        firebase_admin.initialize_app(cred)
-    else:
-        # 파일이 없으면 환경 변수(GOOGLE_APPLICATION_CREDENTIALS) 등을 시도하거나 경고 출력
-        print(f"Warning: {CRED_PATH} not found. Firebase Auth may fail.")
-        # 배포 환경에서는 default()를 사용하는 경우가 많습니다.
-        # firebase_admin.initialize_app() 
+# Firebase 초기화는 main.py에서 수행됨 (settings.FIREBASE_CREDENTIALS_PATH 사용)
 
 # Swagger UI에서 자물쇠 버튼을 누를 때 사용할 스키마 (실제 검증은 Firebase가 하므로 URL은 장식용입니다)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="firebase_auth", auto_error=False)

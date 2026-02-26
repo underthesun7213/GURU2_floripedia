@@ -40,6 +40,9 @@ app/serviceAccountKey.json
 # Android Profiling
 *.hprof
 
+# Claude Code
+.claude/
+
 # Environment variables
 .env
 .env.local
@@ -120,17 +123,12 @@ logs/
 *.log.*
 *.log.old
 
-# 데이터 파일 
-/backend/data/
+# 데이터 파일
+backend/data/
 
-# 스크립트트
+# 스크립트
 scripts/
-
-
 
 # Docker
 .dockerignore
-
-# Backend data files (large JSON files for DB seeding)
-backend/data/
 

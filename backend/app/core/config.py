@@ -47,8 +47,11 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
 
     # === Security ===
-    # [주의] 프로덕션에서는 특정 도메인만 허용할 것
-    BACKEND_CORS_ORIGINS: List[str] = ["*"]
+    BACKEND_CORS_ORIGINS: List[str] = [
+        "http://10.0.2.2:8000",   # Android 에뮬레이터
+        "http://localhost:8000",   # 로컬 개발
+        "http://localhost:3000",   # 웹 프론트 (필요 시)
+    ]
 
     model_config = SettingsConfigDict(
         env_file=".env",

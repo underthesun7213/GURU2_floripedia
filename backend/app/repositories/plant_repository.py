@@ -34,6 +34,23 @@ class PlantRepository:
         # MongoDB find_one을 사용하여 단일 문서 반환
         return await self.collection.find_one({"scientificName": scientific_name})
 
+    async def find_by_scientific_name_fuzzy(self, scientific_name: str) -> Optional[dict]:
+        """
+        학명 속(genus) 기준 퍼지 매칭.
+        'Myosotis' → 'Myosotis sylvatica' 매칭 가능.
+        """
+        if not scientific_name:
+            return None
+
+        # 속(genus) 추출: "Myosotis sylvatica" → "Myosotis"
+        genus = scientific_name.split()[0]
+        if not genus:
+            return None
+
+        return await self.collection.find_one({
+            "scientificName": {"$regex": f"^{genus}", "$options": "i"}
+        })
+
 
 
     async def create(self, plant_data: dict) -> dict:
