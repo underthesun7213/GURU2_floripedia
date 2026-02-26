@@ -18,6 +18,11 @@ import java.io.IOException
  */
 object ErrorHandler {
 
+    // 중복 Toast 방지용 (마지막 에러 메시지 + 시간)
+    private var lastErrorMessage: String? = null
+    private var lastErrorTime: Long = 0
+    private const val ERROR_DEBOUNCE_MS = 5000L  // 5초 내 동일 메시지 무시
+
     /**
      * 네트워크 연결 상태 확인
      */
@@ -64,15 +69,27 @@ object ErrorHandler {
 
     /**
      * 에러 처리 및 사용자에게 메시지 표시
+     * 동일한 메시지가 5초 내 반복되면 무시 (중복 Toast 방지)
      */
     fun handleError(context: Context, error: Throwable, tag: String, defaultMessage: String = "오류가 발생했습니다") {
-        Log.e(tag, "에러 발생", error)
+        Log.e(tag, "에러 발생: ${error.message}", error)
 
         val message = if (isNetworkAvailable(context)) {
             getErrorMessage(error)
         } else {
             "인터넷 연결을 확인해주세요"
         }
+
+        // 중복 Toast 방지: 동일 메시지가 5초 내 반복되면 무시
+        val now = System.currentTimeMillis()
+        if (message == lastErrorMessage && (now - lastErrorTime) < ERROR_DEBOUNCE_MS) {
+            Log.d(tag, "중복 에러 메시지 무시 (${(now - lastErrorTime)}ms 전 표시됨): $message")
+            return
+        }
+
+        Log.w(tag, "에러 Toast 표시: $message (from: $tag)")
+        lastErrorMessage = message
+        lastErrorTime = now
 
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }

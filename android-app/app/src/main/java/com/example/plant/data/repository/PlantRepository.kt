@@ -9,6 +9,11 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
+/**
+ * 커스텀 예외: 상세정보는 실패했지만 이름은 추출된 경우
+ */
+class PartialPlantException(val plantName: String) : Exception("상세정보를 불러오지 못했습니다. 이름은 ${plantName}입니다")
+
 class PlantRepository {
 
     private val api = RetrofitClient.plantApi
@@ -151,6 +156,9 @@ class PlantRepository {
 
     /**
      * 이미지로 식물 검색
+     * - 성공: PlantSearchResultDto 반환
+     * - 500 에러 + 이름 있음: PartialPlantException (이름 포함)
+     * - 500 에러 + 이름 없음: 일반 Exception
      */
     suspend fun searchByImage(imageData: ByteArray, fileName: String): Result<PlantSearchResultDto> {
         return try {
@@ -161,10 +169,36 @@ class PlantRepository {
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!)
             } else {
-                Result.failure(Exception("이미지 검색 실패: ${response.code()}"))
+                // 에러 body에서 이름 추출 시도
+                val errorBody = response.errorBody()?.string() ?: ""
+                val plantName = extractPlantName(errorBody)
+
+                if (plantName != null) {
+                    // 이름은 찾았지만 상세정보 실패
+                    Result.failure(PartialPlantException(plantName))
+                } else {
+                    // 이름도 없으면 완전 실패
+                    Result.failure(Exception("식물을 인식하지 못했습니다"))
+                }
             }
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    /**
+     * 에러 응답에서 식물 이름 추출
+     * 패턴: 'name': 'Echeveria' 또는 "name": "Echeveria"
+     */
+    private fun extractPlantName(errorBody: String): String? {
+        // 패턴 1: 'name': '...'
+        val regex1 = """'name':\s*'([^']+)'""".toRegex()
+        regex1.find(errorBody)?.groupValues?.get(1)?.let { return it }
+
+        // 패턴 2: "name": "..."
+        val regex2 = """"name":\s*"([^"]+)"""".toRegex()
+        regex2.find(errorBody)?.groupValues?.get(1)?.let { return it }
+
+        return null
     }
 }
