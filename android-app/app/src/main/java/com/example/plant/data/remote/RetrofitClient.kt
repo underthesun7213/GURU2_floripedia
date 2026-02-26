@@ -1,5 +1,6 @@
 package com.example.plant.data.remote
 
+import com.example.plant.BuildConfig
 import com.example.plant.data.remote.api.AuthApi
 import com.example.plant.data.remote.api.PlantApi
 import com.example.plant.data.remote.api.UserApi
@@ -11,10 +12,9 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
 
-    private const val BASE_URL = "http://10.0.2.2:8000/"
-    
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
+        level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+                else HttpLoggingInterceptor.Level.NONE
     }
 
     // 일반 API용 클라이언트 (30초)
@@ -45,13 +45,13 @@ object RetrofitClient {
         .build()
 
     private val commonRetrofit: Retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
+        .baseUrl(BuildConfig.BASE_URL)
         .client(commonHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
     private val longTimeoutRetrofit: Retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
+        .baseUrl(BuildConfig.BASE_URL)
         .client(longTimeoutHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
