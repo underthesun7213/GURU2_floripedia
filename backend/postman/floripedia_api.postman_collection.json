@@ -1,0 +1,201 @@
+{
+  "info": {
+    "name": "Floripedia API",
+    "description": "식물 정보 및 AI 기반 추천 서비스 API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/health",
+            "description": "서버 상태 확인"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Plants - Search",
+      "item": [
+        {
+          "name": "Image Search - Success",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/plants/search/image",
+            "description": "이미지로 식물 검색 (DB에 있는 식물)",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "",
+                  "description": "식물 이미지 파일"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Image Search - Not Found",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/api/v1/plants/search/image",
+            "description": "이미지로 식물 검색 (DB에 없는 식물) - 404 예상",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "",
+                  "description": "희귀 식물 이미지"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Plants - Recommend",
+      "item": [
+        {
+          "name": "Text Recommend - Success",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/plants/recommend?situation=우울할 때 위로가 되는 꽃",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "plants", "recommend"],
+              "query": [
+                {
+                  "key": "situation",
+                  "value": "우울할 때 위로가 되는 꽃"
+                }
+              ]
+            },
+            "description": "상황 기반 식물 추천 (DB에 있는 식물)"
+          }
+        },
+        {
+          "name": "Text Recommend - Not Found",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/plants/recommend?situation=매우 희귀한 열대 고산지대 식물",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "plants", "recommend"],
+              "query": [
+                {
+                  "key": "situation",
+                  "value": "매우 희귀한 열대 고산지대 식물"
+                }
+              ]
+            },
+            "description": "상황 기반 식물 추천 (DB에 없는 식물) - 404 예상"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Plants - List & Detail",
+      "item": [
+        {
+          "name": "Get Plants List",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/plants?skip=0&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "plants"],
+              "query": [
+                {"key": "skip", "value": "0"},
+                {"key": "limit", "value": "10"}
+              ]
+            },
+            "description": "식물 목록 조회"
+          }
+        },
+        {
+          "name": "Get Plants by Season",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/plants?season=SPRING&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "plants"],
+              "query": [
+                {"key": "season", "value": "SPRING"},
+                {"key": "limit", "value": "10"}
+              ]
+            },
+            "description": "계절별 식물 조회"
+          }
+        },
+        {
+          "name": "Get Plants by Keyword",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/plants?keyword=장미",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "plants"],
+              "query": [
+                {"key": "keyword", "value": "장미"}
+              ]
+            },
+            "description": "키워드 검색"
+          }
+        },
+        {
+          "name": "Get Plant Detail",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/plants/1",
+            "description": "식물 상세 조회 (plant_id=1)"
+          }
+        },
+        {
+          "name": "Get Plants Count",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/plants/count",
+            "description": "전체 식물 개수"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Plants - Favorites",
+      "item": [
+        {
+          "name": "Get User Favorites",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/plants/favorites",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}",
+                "description": "JWT 토큰"
+              }
+            ],
+            "description": "내 꽃갈피(찜) 목록 - 로그인 필요"
+          }
+        }
+      ]
+    }
+  ]
+}
