@@ -7,20 +7,20 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import coil.load
 import com.example.plant.data.remote.dto.response.PlantCardDto
-import com.example.plant.databinding.ItemAvailablePlantBinding
+import com.example.plant.databinding.ItemGridPlantBinding
 
 /**
- * 식물 카드 Adapter (검색 결과, 꽃갈피 등에서 사용)
+ * 식물 카드 Adapter (검색 결과 그리드에서 사용)
  */
 class PlantCardAdapter(
     private val onPlantClick: (PlantCardDto) -> Unit
 ) : ListAdapter<PlantCardDto, PlantCardAdapter.PlantCardViewHolder>(PlantCardDiffCallback()) {
 
-    inner class PlantCardViewHolder(val binding: ItemAvailablePlantBinding) :
+    inner class PlantCardViewHolder(val binding: ItemGridPlantBinding) :
         androidx.recyclerview.widget.RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlantCardViewHolder {
-        val binding = ItemAvailablePlantBinding.inflate(
+        val binding = ItemGridPlantBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
         return PlantCardViewHolder(binding)

@@ -35,6 +35,11 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
+        // 뒤로가기 버튼 → 메인으로 이동
+        binding.btnBack.setOnClickListener {
+            navigateToMain()
+        }
+
         // 로그인 버튼
         binding.btnLogin.setOnClickListener {
             val email = binding.etEmail.text.toString().trim()

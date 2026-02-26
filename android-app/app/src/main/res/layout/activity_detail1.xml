@@ -98,6 +98,22 @@
                     app:shapeAppearanceOverlay="@style/RoundedImage20" />
             </LinearLayout>
 
+            <!-- 꽃말 태그 -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:paddingHorizontal="24dp"
+                android:scrollbars="none"
+                android:clipToPadding="false">
+
+                <LinearLayout
+                    android:id="@+id/layoutFlowerLanguageTags"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
+
             <!-- 에피소드 1 -->
             <TextView
                 android:id="@+id/tvStoryGenre1"
@@ -164,6 +180,7 @@
 
             <!-- 상세 정보 섹션 -->
             <include
+                android:id="@+id/detailInfoSection"
                 layout="@layout/view_detail_info_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

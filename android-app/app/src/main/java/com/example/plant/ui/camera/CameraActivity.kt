@@ -1,7 +1,6 @@
 package com.example.plant.ui.camera
 
 import android.Manifest
-import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -20,16 +19,14 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import com.example.plant.R
 import com.example.plant.databinding.ActivityCameraBinding
+import com.example.plant.data.repository.PartialPlantException
 import com.example.plant.di.AppContainer
 import com.example.plant.ui.detail.Detail1Activity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
-import java.text.SimpleDateFormat
-import java.util.*
 
 class CameraActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCameraBinding
@@ -65,13 +62,18 @@ class CameraActivity : AppCompatActivity() {
         binding.btnCapture.setOnClickListener { takePhoto() }
 
         binding.btnSearch.setOnClickListener {
-            capturedImageData?.let { imageData ->
-                if (!com.example.plant.util.InputValidator.isValidImageSize(imageData)) {
-                    Toast.makeText(this, "이미지 크기는 10MB 이하여야 합니다", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-                searchPlantByImage(imageData)
+            val imageData = capturedImageData
+            if (imageData == null) {
+                Toast.makeText(this, "먼저 사진을 촬영하거나 선택해주세요", Toast.LENGTH_SHORT).show()
+                Log.e("CameraActivity", "capturedImageData is null")
+                return@setOnClickListener
             }
+            if (!com.example.plant.util.InputValidator.isValidImageSize(imageData)) {
+                Toast.makeText(this, "이미지 크기는 10MB 이하여야 합니다", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            Log.d("CameraActivity", "이미지 검색 시작, size=${imageData.size}")
+            searchPlantByImage(imageData)
         }
 
         binding.btnRetake.setOnClickListener { showCameraMode() }
@@ -94,7 +96,7 @@ class CameraActivity : AppCompatActivity() {
         val chooserIntent = Intent.createChooser(intent, "이미지 선택").apply {
             putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(pickIntent))
         }
-        
+
         // startActivityForResult 대신 런처 사용
         galleryLauncher.launch(chooserIntent)
     }
@@ -162,81 +164,57 @@ class CameraActivity : AppCompatActivity() {
 
     private fun takePhoto() {
         val imageCapture = imageCapture ?: return
+
+        // 임시 파일로 저장 (YUV 변환 문제 회피)
+        val photoFile = java.io.File(
+            cacheDir,
+            "capture_${System.currentTimeMillis()}.jpg"
+        )
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+
         imageCapture.takePicture(
+            outputOptions,
             ContextCompat.getMainExecutor(this),
-            object : ImageCapture.OnImageCapturedCallback() {
-                override fun onCaptureSuccess(image: ImageProxy) {
-                    lifecycleScope.launch { processImage(image) }
+            object : ImageCapture.OnImageSavedCallback {
+                override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                    lifecycleScope.launch { processImageFile(photoFile) }
                 }
                 override fun onError(exception: ImageCaptureException) {
+                    Log.e("CameraActivity", "사진 촬영 실패", exception)
                     Toast.makeText(baseContext, "사진 촬영 실패", Toast.LENGTH_SHORT).show()
                 }
             }
         )
     }
 
-    private suspend fun processImage(image: ImageProxy) {
+    private suspend fun processImageFile(photoFile: java.io.File) {
         withContext(Dispatchers.IO) {
             try {
-                // ImageProxy를 Bitmap으로 변환 (YUV → RGB)
-                val bitmap = imageProxyToBitmap(image)
+                Log.d("CameraActivity", "processImageFile: ${photoFile.absolutePath}, exists=${photoFile.exists()}, size=${photoFile.length()}")
+
+                val bitmap = BitmapFactory.decodeFile(photoFile.absolutePath)
                 if (bitmap != null) {
+                    Log.d("CameraActivity", "Bitmap 생성 성공: ${bitmap.width}x${bitmap.height}")
                     val outputStream = ByteArrayOutputStream()
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream)
                     capturedImageData = outputStream.toByteArray()
+                    Log.d("CameraActivity", "capturedImageData 설정 완료: ${capturedImageData?.size} bytes")
 
                     withContext(Dispatchers.Main) { showPreviewMode(bitmap) }
                 } else {
+                    Log.e("CameraActivity", "BitmapFactory.decodeFile 반환값 null")
                     withContext(Dispatchers.Main) {
                         Toast.makeText(this@CameraActivity, "이미지 처리 실패", Toast.LENGTH_SHORT).show()
                     }
                 }
-            } finally {
-                image.close()
+                // 임시 파일 삭제
+                photoFile.delete()
+            } catch (e: Exception) {
+                Log.e("CameraActivity", "이미지 처리 실패", e)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@CameraActivity, "이미지 처리 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
             }
-        }
-    }
-
-    /**
-     * ImageProxy (YUV_420_888)를 Bitmap으로 변환
-     */
-    private fun imageProxyToBitmap(image: ImageProxy): Bitmap? {
-        return try {
-            val yBuffer = image.planes[0].buffer
-            val uBuffer = image.planes[1].buffer
-            val vBuffer = image.planes[2].buffer
-
-            val ySize = yBuffer.remaining()
-            val uSize = uBuffer.remaining()
-            val vSize = vBuffer.remaining()
-
-            val nv21 = ByteArray(ySize + uSize + vSize)
-
-            // Y, V, U 순서로 복사 (NV21 포맷)
-            yBuffer.get(nv21, 0, ySize)
-            vBuffer.get(nv21, ySize, vSize)
-            uBuffer.get(nv21, ySize + vSize, uSize)
-
-            val yuvImage = android.graphics.YuvImage(
-                nv21,
-                android.graphics.ImageFormat.NV21,
-                image.width,
-                image.height,
-                null
-            )
-
-            val out = ByteArrayOutputStream()
-            yuvImage.compressToJpeg(
-                android.graphics.Rect(0, 0, image.width, image.height),
-                90,
-                out
-            )
-
-            val jpegBytes = out.toByteArray()
-            BitmapFactory.decodeByteArray(jpegBytes, 0, jpegBytes.size)
-        } catch (e: Exception) {
-            Log.e("CameraActivity", "이미지 변환 실패", e)
-            null
         }
     }
 
@@ -260,7 +238,24 @@ class CameraActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             }.onFailure { error ->
-                com.example.plant.util.ErrorHandler.handleApiError(this@CameraActivity, error, "CameraActivity")
+                when (error) {
+                    is PartialPlantException -> {
+                        // 이름은 찾았지만 상세정보 실패
+                        Toast.makeText(
+                            this@CameraActivity,
+                            "상세정보를 불러오지 못했습니다. 이름은 ${error.plantName}입니다",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    else -> {
+                        // 완전 실패
+                        Toast.makeText(
+                            this@CameraActivity,
+                            "식물을 인식하지 못했습니다",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
             }
         }
     }

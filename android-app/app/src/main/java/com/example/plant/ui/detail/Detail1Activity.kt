@@ -3,6 +3,8 @@ package com.example.plant.ui.detail
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -115,7 +117,10 @@ class Detail1Activity : AppCompatActivity() {
 
         with(binding) {
             tvPlantName.text = plantDetail.name
-            
+
+            // 꽃말 태그 표시
+            setupFlowerLanguageTags(plantDetail.flowerInfo.language)
+
             // 에피소드 1
             if (plantDetail.stories.size >= 1) {
                 tvStoryGenre1.visibility = View.VISIBLE
@@ -157,6 +162,31 @@ class Detail1Activity : AppCompatActivity() {
 
             isFavorite = plantDetail.isFavorite
             updateFavoriteButton()
+
+            // 상세 정보 섹션 바인딩
+            val infoSection = detailInfoSection
+
+            // 식물 분류
+            infoSection.tvCategoryTitle.text = plantDetail.horticulture.category
+            infoSection.tvCategoryDesc.text = plantDetail.horticulture.categoryGroup
+            infoSection.ivCategoryImage.setImageResource(getCategoryDrawable(plantDetail.horticulture.categoryGroup))
+
+            // 개화시기
+            infoSection.tvSeasonTitle.text = getSeasonKorean(plantDetail.season)
+            infoSection.tvSeasonDesc.text = plantDetail.horticulture.management ?: ""
+            infoSection.ivSeasonImage.setImageResource(getSeasonDrawable(plantDetail.season))
+
+            // 향기
+            val scentTitle = plantDetail.scentInfo.scentTags.joinToString(", ").ifEmpty { "정보 없음" }
+            infoSection.tvScentTitle.text = scentTitle
+            infoSection.tvScentDesc.text = plantDetail.scentInfo.scentGroup.joinToString(", ")
+            infoSection.ivScentImage.setImageResource(getScentDrawable(plantDetail.scentInfo.scentGroup))
+
+            // 색상
+            val colorTitle = plantDetail.colorInfo.colorLabels.joinToString(", ").ifEmpty { "정보 없음" }
+            infoSection.tvColorTitle.text = colorTitle
+            infoSection.tvColorDesc.text = plantDetail.colorInfo.colorGroup.joinToString(", ")
+            infoSection.ivColorImage.setImageResource(getColorDrawable(plantDetail.colorInfo.colorGroup))
         }
     }
 
@@ -203,5 +233,84 @@ class Detail1Activity : AppCompatActivity() {
 
     private fun getStoryGenreKorean(genre: String): String = when (genre.uppercase()) {
         "MYTH" -> "신화"; "SCIENCE" -> "과학"; "HISTORY" -> "역사"; else -> genre
+    }
+
+    private fun getSeasonDrawable(season: String): Int = when (season.uppercase()) {
+        "SPRING" -> R.drawable.spring
+        "SUMMER" -> R.drawable.summer
+        "FALL" -> R.drawable.autumn
+        "WINTER" -> R.drawable.winter
+        else -> R.drawable.spring
+    }
+
+    private fun getCategoryDrawable(categoryGroup: String): Int {
+        val group = categoryGroup.lowercase()
+        return when {
+            group.contains("구근") -> R.drawable.bulbplant
+            group.contains("화초") || group.contains("꽃") -> R.drawable.flower
+            group.contains("수목") || group.contains("나무") -> R.drawable.tree
+            group.contains("관엽") || group.contains("실내") -> R.drawable.interior
+            group.contains("정원") -> R.drawable.garden
+            else -> R.drawable.flower
+        }
+    }
+
+    private fun getScentDrawable(scentGroups: List<String>): Int {
+        val scent = scentGroups.joinToString(" ").lowercase()
+        return when {
+            scent.contains("달콤") || scent.contains("sweet") -> R.drawable.sweet
+            scent.contains("상쾌") || scent.contains("시원") || scent.contains("청량") || scent.contains("fresh") -> R.drawable.fresh
+            scent.contains("은은") || scent.contains("부드") || scent.contains("가벼") || scent.contains("soft") -> R.drawable.soft
+            scent.contains("무향") || scent.contains("없") || scent.isEmpty() -> R.drawable.unscented
+            else -> R.drawable.sweet
+        }
+    }
+
+    private fun getColorDrawable(colorGroups: List<String>): Int {
+        val color = colorGroups.joinToString(" ").lowercase()
+        return when {
+            color.contains("백색") || color.contains("미색") || color.contains("흰") || color.contains("white") -> R.drawable.white
+            color.contains("노랑") || color.contains("주황") || color.contains("살구") || color.contains("yellow") || color.contains("orange") -> R.drawable.yellow
+            color.contains("빨강") || color.contains("분홍") || color.contains("다홍") || color.contains("red") || color.contains("pink") -> R.drawable.red
+            color.contains("파랑") || color.contains("하늘") || color.contains("보라") || color.contains("연보라") || color.contains("푸른") || color.contains("blue") || color.contains("purple") -> R.drawable.blue
+            color.contains("갈색") || color.contains("검정") || color.contains("brown") || color.contains("black") -> R.drawable.black
+            else -> R.drawable.white
+        }
+    }
+
+    private fun setupFlowerLanguageTags(flowerLanguage: String) {
+        val container = binding.layoutFlowerLanguageTags
+        container.removeAllViews()
+
+        if (flowerLanguage.isBlank()) return
+
+        // 쉼표, 슬래시, 공백 등으로 분리
+        val tags = flowerLanguage.split(",", "/", "·", "、")
+            .map { it.trim() }
+            .filter { it.isNotBlank() }
+
+        tags.forEach { tag ->
+            val tagView = TextView(this).apply {
+                text = "#$tag"
+                setTextColor(resources.getColor(R.color.white, null))
+                textSize = 13f
+                typeface = resources.getFont(R.font.pretendardmedium)
+                setBackgroundResource(R.drawable.bg_tag_green)
+                setPadding(
+                    (14 * resources.displayMetrics.density).toInt(),
+                    (8 * resources.displayMetrics.density).toInt(),
+                    (14 * resources.displayMetrics.density).toInt(),
+                    (8 * resources.displayMetrics.density).toInt()
+                )
+                val params = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    marginEnd = (8 * resources.displayMetrics.density).toInt()
+                }
+                layoutParams = params
+            }
+            container.addView(tagView)
+        }
     }
 }

@@ -87,26 +87,21 @@
                     app:shapeAppearanceOverlay="@style/RoundedImage20" />
             </LinearLayout>
 
-            <!-- 태그 영역 -->
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroupTags"
+            <!-- 꽃말 태그 영역 -->
+            <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:paddingHorizontal="24dp"
-                app:chipSpacingHorizontal="8dp">
-                <!-- 가변 태그 예시 -->
-                <TextView
+                android:scrollbars="none"
+                android:clipToPadding="false">
+
+                <LinearLayout
+                    android:id="@+id/layoutFlowerLanguageTags"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_tag_green"
-                    android:fontFamily="@font/pretendardmedium"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="6dp"
-                    android:text="#새로운 시작"
-                    android:textColor="@color/white"
-                    android:textSize="12sp" />
-            </com.google.android.material.chip.ChipGroup>
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
 
             <!-- 에피소드 1 -->
             <TextView
@@ -175,6 +170,7 @@
 
             <!-- 상세 정보 섹션 -->
             <include
+                android:id="@+id/detailInfoSection"
                 layout="@layout/view_detail_info_item"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
