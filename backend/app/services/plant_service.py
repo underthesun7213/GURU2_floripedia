@@ -54,13 +54,13 @@ class PlantService:
         1. Gemini로 이미지에서 식물 식별
         2. DB 조회 (학명 → 이름 순)
         3. 없으면 신규 생성 (Gemini 데이터 + 이미지 검색 병렬)
-        4. DB 저장 후 반환
+        4. DB 저장 후 반환 (저장 직전 최종 중복 체크 추가)
         """
         start_time = datetime.now()
         logger.info("=" * 50)
         logger.info("[search_by_image] 이미지 검색 시작")
-        logger.info(f"  - 이미지 크기: {len(image_data):,} bytes")
-        logger.info(f"  - user_id: {user_id or 'Anonymous'}")
+        logger.info(f"   - 이미지 크기: {len(image_data):,} bytes")
+        logger.info(f"   - user_id: {user_id or 'Anonymous'}")
         
         # 1. Gemini: 이미지에서 식물 이름 및 학명 추출
         logger.debug("[Step 1] Gemini 식물 식별 호출...")
@@ -76,9 +76,9 @@ class PlantService:
         target_scientific_name = identified.get("scientificName", "").strip()
         target_english_name = identified.get("englishName", "")
         
-        logger.info(f"  - 식별된 이름: {target_name}")
-        logger.info(f"  - 학명: {target_scientific_name}")
-        logger.info(f"  - 영문명: {target_english_name}")
+        logger.info(f"   - 식별된 이름: {target_name}")
+        logger.info(f"   - 학명: {target_scientific_name}")
+        logger.info(f"   - 영문명: {target_english_name}")
         
         # 2. DB 조회 (학명 우선, spp 제외 로직)
         logger.debug("[Step 2] DB 조회 시작...")
@@ -90,14 +90,14 @@ class PlantService:
         )
 
         if is_specific_scientific_name:
-            logger.debug(f"  - 학명으로 조회: {target_scientific_name}")
+            logger.debug(f"   - 학명으로 조회: {target_scientific_name}")
             try:
                 plant_in_db = await self.plant_repo.get_by_scientific_name(target_scientific_name)
             except AttributeError:
                 pass
         
         if not plant_in_db:
-            logger.debug(f"  - 이름으로 조회: {target_name}")
+            logger.debug(f"   - 이름으로 조회: {target_name}")
             plant_in_db = await self.plant_repo.get_by_name(target_name)
 
         # 3. 이미 DB에 존재하면 반환
@@ -121,11 +121,11 @@ class PlantService:
         logger.info(f"[Step 3] '{target_name}' 신규 생성 시작 (병렬 처리)")
         
         new_plant_id = str(uuid.uuid4())
-        logger.debug(f"  - 생성할 ID: {new_plant_id}")
+        logger.debug(f"   - 생성할 ID: {new_plant_id}")
         
         try:
             # 병렬 실행: Gemini 데이터 생성 + 이미지 검색
-            logger.debug("  - Gemini 데이터 생성 + 이미지 검색 병렬 시작...")
+            logger.debug("   - Gemini 데이터 생성 + 이미지 검색 병렬 시작...")
             task_data = self.gemini.generate_plant_data_schema(target_name, target_scientific_name)
             task_images = image_search_service.get_plant_images_tiered(
                 target_name, 
@@ -135,18 +135,39 @@ class PlantService:
 
             new_plant_data, image_urls = await asyncio.gather(task_data, task_images)
             
-            logger.info(f"  - Gemini 데이터 생성: {'성공' if new_plant_data else '실패'}")
-            logger.info(f"  - 이미지 검색 결과: {len(image_urls)}개")
+            logger.info(f"   - Gemini 데이터 생성: {'성공' if new_plant_data else '실패'}")
+            logger.info(f"   - 이미지 검색 결과: {len(image_urls)}개")
 
             if not new_plant_data:
                 logger.error("[실패] Gemini 데이터 생성 실패")
                 raise RuntimeError("식물 데이터 생성 실패")
 
+            # [추가] Fallback 데이터인지 확인 - DB 저장 금지
+            if new_plant_data.get("_is_fallback"):
+                logger.error("[실패] Gemini API 실패로 기본값만 생성됨 - DB 저장 금지")
+                raise RuntimeError("식물 정보를 가져올 수 없습니다. 잠시 후 다시 시도해주세요.")
+
+            # ---------------------------------------------------------
+            # [추가] 최종 중복 체크 로직
+            # 제미나이가 '물망이'를 '물망초'로 교정했을 경우를 위해 
+            # 저장 직전에 다시 한번 DB를 조회합니다.
+            final_name = new_plant_data.get('name', target_name)
+            final_check = await self.plant_repo.get_by_name(final_name)
+            
+            if final_check:
+                logger.info(f"   - [중복 발견] 생성된 이름 '{final_name}'이(가) 이미 존재함. 기존 데이터 반환.")
+                result = final_check.copy()
+                result["is_newly_created"] = False
+                result["is_favorite"] = False # 신규 유저 흐름이므로 기본값
+                return result
+            # ---------------------------------------------------------
+
             # 5. 데이터 병합 & ID 할당
             new_plant_data["images"] = image_urls
             new_plant_data["imageUrl"] = image_urls[0] if image_urls else None
 
-            # Gemini가 만든 _id가 있다면 삭제
+            # 내부 플래그 및 Gemini가 만든 _id 삭제
+            new_plant_data.pop("_is_fallback", None)
             if "_id" in new_plant_data:
                 del new_plant_data["_id"]
             
@@ -155,12 +176,19 @@ class PlantService:
             new_plant_data["favorite_count"] = 0
             new_plant_data["created_at"] = datetime.utcnow().isoformat()
 
-            logger.debug(f"  - 최종 데이터 필드: {list(new_plant_data.keys())}")
+            logger.debug(f"   - 최종 데이터 필드: {list(new_plant_data.keys())}")
 
             # 6. DB 저장
             logger.debug("[Step 4] DB 저장 시작...")
-            saved_plant = await self.plant_repo.create(new_plant_data)
-            logger.info(f"[Step 4 완료] DB 저장 성공: {saved_plant.get('_id')}")
+            try:
+                saved_plant = await self.plant_repo.create(new_plant_data)
+                logger.info(f"[Step 4 완료] DB 저장 성공: {saved_plant.get('_id')}")
+            except Exception as db_err:
+                # 마지막 순간에 중복 에러가 났을 경우 (레이스 컨디션 방어)
+                if "11000" in str(db_err):
+                    logger.warning("   - [중복 에러 방어] 저장 실패(중복), 기존 데이터 재조회")
+                    return await self.plant_repo.get_by_name(final_name)
+                raise db_err
 
             # 7. 반환
             result = saved_plant.copy()
@@ -175,14 +203,12 @@ class PlantService:
             
         except Exception as e:
             logger.error(f"[에러] 신규 생성 중 예외 발생: {e}")
-            # 롤백: 혹시 부분적으로 저장되었다면 삭제 시도
+            # 롤백: 저장 시도 중 에러 났을 때 부분 데이터 삭제
             try:
                 await self.plant_repo.delete(new_plant_id)
-                logger.info(f"[롤백] 부분 저장된 데이터 삭제: {new_plant_id}")
             except Exception:
-                pass  # 삭제 실패해도 무시 (애초에 저장 안됐을 수 있음)
+                pass
             raise
-
     # =========================================================
     # 2. 텍스트 기반 추천 (학명 조회 + 에세이)
     # =========================================================
@@ -244,23 +270,34 @@ class PlantService:
                 
                 logger.info(f"  - Gemini 데이터: {'성공' if new_plant_data else '실패'}")
                 logger.info(f"  - 이미지: {len(image_urls)}개")
-                
-                if new_plant_data:
+
+                # [추가] Fallback 데이터인지 확인 - DB 저장 금지
+                if new_plant_data.get("_is_fallback"):
+                    logger.error("[실패] Gemini API 실패로 기본값만 생성됨 - DB 저장 금지")
+                    raise RuntimeError("식물 정보를 가져올 수 없습니다. 잠시 후 다시 시도해주세요.")
+
+                # [추가] 최종 중복 체크 - Gemini가 이름을 교정했을 경우 대비
+                final_name = new_plant_data.get('name', target_name)
+                final_check = await self.plant_repo.get_by_name(final_name)
+                if final_check:
+                    logger.info(f"  - [중복 발견] '{final_name}'이(가) 이미 존재함. 기존 데이터 반환.")
+                    plant_in_db = final_check
+                else:
+                    # 신규 저장
                     new_plant_data["images"] = image_urls
                     new_plant_data["imageUrl"] = image_urls[0] if image_urls else None
-                    
+
+                    # 내부 플래그 및 Gemini가 만든 _id 삭제
+                    new_plant_data.pop("_is_fallback", None)
                     if "_id" in new_plant_data:
                         del new_plant_data["_id"]
                     new_plant_data["_id"] = new_plant_id
                     new_plant_data["view_count"] = 0
                     new_plant_data["favorite_count"] = 0
                     new_plant_data["created_at"] = datetime.utcnow().isoformat()
-                    
+
                     plant_in_db = await self.plant_repo.create(new_plant_data)
                     logger.info(f"[Step 3 완료] DB 저장 성공: {plant_in_db.get('_id')}")
-                else:
-                    logger.error("[실패] 추천 식물 데이터 생성 실패")
-                    raise RuntimeError("추천 식물 데이터 생성 실패")
                     
             except Exception as e:
                 logger.error(f"[에러] 추천 식물 생성 중 예외: {e}")
