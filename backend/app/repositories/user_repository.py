@@ -84,3 +84,46 @@ class UserRepository:
         if user:
             return user.get("favoritePlantIds", [])
         return []
+
+    # ==========================================
+    # 레벨 시스템
+    # ==========================================
+
+    async def add_exp(self, user_id: str, exp_amount: int, new_level: int) -> bool:
+        """경험치 증가 및 레벨 업데이트"""
+        try:
+            result = await self.collection.update_one(
+                {"_id": user_id},
+                {
+                    "$inc": {"totalExp": exp_amount},
+                    "$set": {
+                        "level": new_level,
+                        "updatedAt": datetime.now(timezone.utc),
+                    },
+                },
+            )
+            return result.modified_count > 0
+        except Exception:
+            return False
+
+    async def add_discovered_plant(self, user_id: str, plant_id: str) -> bool:
+        """발견한 식물 ID 추가 (중복 방지)"""
+        try:
+            result = await self.collection.update_one(
+                {"_id": user_id},
+                {"$addToSet": {"discoveredPlantIds": plant_id}},
+            )
+            return result.modified_count > 0
+        except Exception:
+            return False
+
+    async def add_viewed_plant(self, user_id: str, plant_id: str) -> bool:
+        """조회한 식물 ID 추가 (중복 방지)"""
+        try:
+            result = await self.collection.update_one(
+                {"_id": user_id},
+                {"$addToSet": {"viewedPlantIds": plant_id}},
+            )
+            return result.modified_count > 0
+        except Exception:
+            return False

@@ -27,7 +27,13 @@ class UserModel(CamelCaseModel):
     # 3. 서비스 데이터
     favorite_plant_ids: List[str] = Field(default_factory=list, description="사용자가 하트를 누른 식물 ID 목록")
 
-    # 4. 관리용 데이터
+    # 4. 레벨 시스템
+    total_exp: int = Field(default=0, description="누적 경험치")
+    level: int = Field(default=1, description="현재 레벨 (1~5)")
+    discovered_plant_ids: List[str] = Field(default_factory=list, description="카메라로 발견한 식물 ID 목록")
+    viewed_plant_ids: List[str] = Field(default_factory=list, description="상세 조회한 식물 ID 목록")
+
+    # 5. 관리용 데이터
     is_active: bool = Field(default=True, description="활성 계정 여부 (탈퇴 시 False)")
     is_terms_agreed: bool = Field(default=True, description="약관 동의 여부")
     created_at: datetime = Field(default_factory=_utc_now, description="가입 시각 (UTC)")

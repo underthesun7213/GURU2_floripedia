@@ -179,6 +179,31 @@ class MyPageActivity : AppCompatActivity() {
             result.onSuccess { user ->
                 binding.tvUserName.text = user.nickname
 
+                // @핸들 표시 (email의 @ 앞부분)
+                val handle = "@${user.email.substringBefore("@")}"
+                binding.tvUserHandle.text = handle
+
+                // 레벨 정보 바인딩
+                user.levelInfo?.let { info ->
+                    binding.tvLevelTitle.text = getString(R.string.level_title_format, info.title, info.level)
+                    // 만렙이면 nextLevelExp=0 → "EXP MAX", 아니면 현재/다음 표시
+                    binding.tvExpProgress.text = if (info.nextLevelExp <= 0) {
+                        getString(R.string.level_exp_max)
+                    } else {
+                        getString(R.string.level_exp_format, info.currentLevelExp, info.nextLevelExp)
+                    }
+                    updateLevelSegments(info.currentLevelExp, info.nextLevelExp)
+                    binding.tvDiscoveredCount.text = getString(R.string.discovered_count_format, info.discoveredPlantCount)
+                } ?: run {
+                    binding.tvLevelTitle.text = getString(R.string.level_title_format, "씨앗", 1)
+                    binding.tvExpProgress.text = getString(R.string.level_exp_format, 0, 30)
+                    updateLevelSegments(0, 30)
+                    binding.tvDiscoveredCount.text = getString(R.string.discovered_count_format, 0)
+                }
+
+                // 탐험 기록 (viewedPlantIds 개수 — levelInfo에서 가져올 수 없으므로 discoveredPlantIds 길이 기반)
+                binding.tvViewedCount.text = getString(R.string.viewed_count_format, user.discoveredPlantIds.size)
+
                 user.profileImageUrl?.let { url ->
                     binding.ivProfile.load(url) {
                         crossfade(true)
@@ -196,6 +221,32 @@ class MyPageActivity : AppCompatActivity() {
                     "MyPageActivity"
                 )
             }
+        }
+    }
+
+    /**
+     * 현재 레벨 내 경험치 진행률을 5칸 게이지로 표시 (B 모델).
+     * 채운 칸 = round(현재EXP / 다음레벨EXP × 5). 만렙(nextExp<=0)이면 전부 채움.
+     */
+    private fun updateLevelSegments(currentExp: Int, nextExp: Int) {
+        val segments = listOf(
+            binding.lvSegment1,
+            binding.lvSegment2,
+            binding.lvSegment3,
+            binding.lvSegment4,
+            binding.lvSegment5
+        )
+        val activeColor = 0xCCFFFFFF.toInt()  // 밝은 흰색
+        val inactiveColor = 0x40FFFFFF         // 어두운 반투명
+
+        val filled = if (nextExp <= 0) {
+            segments.size
+        } else {
+            Math.round((currentExp.toFloat() / nextExp) * segments.size).coerceIn(0, segments.size)
+        }
+
+        segments.forEachIndexed { index, view ->
+            view.setBackgroundColor(if (index < filled) activeColor else inactiveColor)
         }
     }
 

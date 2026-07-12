@@ -24,11 +24,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- 녹색 헤더 배경 -->
+            <!-- 녹색 헤더 배경 (레벨/EXP 영역까지 포함하도록 높이 확장: 320→400dp) -->
             <View
                 android:id="@+id/topBackground"
                 android:layout_width="match_parent"
-                android:layout_height="320dp"
+                android:layout_height="400dp"
                 android:background="@color/button"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="48dp"
-                android:text="마이페이지"
+                android:text="@string/mypage_title"
                 android:fontFamily="@font/pretendardbold"
                 android:textColor="@color/white"
                 android:textSize="22sp"
@@ -52,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="24dp"
-                android:text="편집"
+                android:text="@string/edit"
                 android:padding="8dp"
                 android:textColor="@color/white"
                 android:textSize="14sp"
@@ -96,17 +96,95 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- 이메일 (작게) - 디자인에서는 보이지 않지만 필요시 사용 -->
+            <!-- @핸들 표시 -->
             <TextView
                 android:id="@+id/tvUserHandle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                tools:text="user@email.com"
+                android:layout_marginTop="4dp"
+                android:visibility="visible"
+                tools:text="@user"
                 android:fontFamily="@font/pretendardlight"
-                android:textColor="@color/white"
-                android:textSize="12sp"
+                android:textColor="#B2FFFFFF"
+                android:textSize="13sp"
                 app:layout_constraintTop_toBottomOf="@id/tvUserName"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- 레벨 칭호 -->
+            <TextView
+                android:id="@+id/tvLevelTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                tools:text="식물 탐험가 Lv.3"
+                android:fontFamily="@font/pretendardsemibold"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintTop_toBottomOf="@id/tvUserHandle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- 레벨 프로그레스바 (5-segment) -->
+            <LinearLayout
+                android:id="@+id/llLevelProgress"
+                android:layout_width="200dp"
+                android:layout_height="8dp"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:weightSum="5"
+                app:layout_constraintTop_toBottomOf="@id/tvLevelTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <View
+                    android:id="@+id/lvSegment1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="2dp"
+                    android:background="#80FFFFFF" />
+                <View
+                    android:id="@+id/lvSegment2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="2dp"
+                    android:background="#40FFFFFF" />
+                <View
+                    android:id="@+id/lvSegment3"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="2dp"
+                    android:background="#40FFFFFF" />
+                <View
+                    android:id="@+id/lvSegment4"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="2dp"
+                    android:background="#40FFFFFF" />
+                <View
+                    android:id="@+id/lvSegment5"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginStart="2dp"
+                    android:background="#40FFFFFF" />
+            </LinearLayout>
+
+            <!-- EXP 텍스트 -->
+            <TextView
+                android:id="@+id/tvExpProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                tools:text="EXP 30 / 50"
+                android:fontFamily="@font/pretendardlight"
+                android:textColor="#B2FFFFFF"
+                android:textSize="11sp"
+                app:layout_constraintTop_toBottomOf="@id/llLevelProgress"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
@@ -144,7 +222,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:text="최근 본 식물"
+                            android:text="@string/recent_viewed_plants"
                             android:textColor="@color/text1"
                             android:textSize="16sp"
                             android:fontFamily="@font/pretendardsemibold" />
@@ -164,7 +242,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="100dp"
                         android:gravity="center"
-                        android:text="아직 본 식물이 없습니다"
+                        android:text="@string/no_recent_plants"
                         android:textColor="@color/sub_text1"
                         android:textSize="14sp"
                         android:fontFamily="@font/pretendardmedium"
@@ -214,6 +292,92 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- 발견한 식물 / 탐험 기록 카드 -->
+            <LinearLayout
+                android:id="@+id/llStatCards"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                app:layout_constraintTop_toBottomOf="@id/cardRecentPlants">
+
+                <!-- 발견한 식물 카드 -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@color/white">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/discovered_plants"
+                            android:textColor="@color/sub_text1"
+                            android:textSize="12sp"
+                            android:fontFamily="@font/pretendardmedium" />
+
+                        <TextView
+                            android:id="@+id/tvDiscoveredCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            tools:text="12종"
+                            android:textColor="@color/button"
+                            android:textSize="20sp"
+                            android:fontFamily="@font/pretendardbold" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 탐험 기록 카드 -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@color/white">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/explore_records"
+                            android:textColor="@color/sub_text1"
+                            android:textSize="12sp"
+                            android:fontFamily="@font/pretendardmedium" />
+
+                        <TextView
+                            android:id="@+id/tvViewedCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            tools:text="25회"
+                            android:textColor="@color/button"
+                            android:textSize="20sp"
+                            android:fontFamily="@font/pretendardbold" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
             <!-- 계정 메뉴 (숨김 처리 - 필요시 표시) -->
             <LinearLayout
                 android:id="@+id/llAccountMenu"
@@ -223,13 +387,13 @@
                 android:orientation="vertical"
                 android:paddingHorizontal="24dp"
                 android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/cardRecentPlants">
+                app:layout_constraintTop_toBottomOf="@id/llStatCards">
 
                 <Button
                     android:id="@+id/btnChangePassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="비밀번호 변경"
+                    android:text="@string/change_password"
                     android:backgroundTint="@color/button"
                     android:textColor="@color/white" />
 
@@ -238,7 +402,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="로그아웃"
+                    android:text="@string/logout"
                     android:backgroundTint="@color/background"
                     android:textColor="@color/text1" />
 
@@ -247,7 +411,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="회원 탈퇴"
+                    android:text="@string/delete_account"
                     android:backgroundTint="#F44336"
                     android:textColor="@color/white" />
             </LinearLayout>

@@ -9,6 +9,7 @@ from typing import List, Optional
 
 from app.repositories import UserRepository, PlantRepository
 from app.services.firebase_service import firebase_storage
+from app.schemas.user import LEVEL_THRESHOLDS, compute_level_info
 
 # 로거 설정
 logger = logging.getLogger(__name__)
@@ -23,6 +24,15 @@ if not logger.handlers:
     logger.addHandler(handler)
 
 
+def _compute_level(total_exp: int) -> int:
+    """누적 경험치로 레벨 계산 (1~10)"""
+    level = 1
+    for lv, _, threshold in LEVEL_THRESHOLDS:
+        if total_exp >= threshold:
+            level = lv
+    return level
+
+
 class UserService:
     """사용자 비즈니스 로직 서비스"""
 
@@ -31,13 +41,30 @@ class UserService:
         self.plant_repo = plant_repo
 
     # ==========================================
+    # 레벨 시스템
+    # ==========================================
+
+    async def award_exp(self, user_id: str, amount: int, reason: str) -> None:
+        """경험치 부여 및 레벨 업데이트"""
+        user = await self.user_repo.get_by_id(user_id)
+        if not user:
+            return
+
+        current_exp = user.get("totalExp", 0)
+        new_exp = current_exp + amount
+        new_level = _compute_level(new_exp)
+
+        await self.user_repo.add_exp(user_id, amount, new_level)
+        logger.info(f"[award_exp] user={user_id}, +{amount} exp ({reason}), total={new_exp}, level={new_level}")
+
+    # ==========================================
     # 프로필 관리
     # ==========================================
 
     async def get_profile(self, user_id: str) -> Optional[dict]:
         """사용자 프로필 조회."""
         logger.debug(f"[get_profile] user_id={user_id}")
-        
+
         user = await self.user_repo.get_by_id(user_id)
 
         if not user:
@@ -47,6 +74,13 @@ class UserService:
         if not user.get("isActive", True):
             logger.warning(f"[get_profile] 탈퇴한 계정: {user_id}")
             raise ValueError("탈퇴한 계정입니다")
+
+        # 레벨 정보 주입
+        total_exp = user.get("totalExp", 0)
+        level = user.get("level", 0) or _compute_level(total_exp)
+        discovered = user.get("discoveredPlantIds", [])
+        user["levelInfo"] = compute_level_info(total_exp, level, len(discovered))
+        user["discoveredPlantIds"] = discovered
 
         logger.debug(f"[get_profile] 조회 성공: {user.get('nickname', 'Unknown')}")
         return user
@@ -180,6 +214,9 @@ class UserService:
                     logger.info("  - 롤백 완료: User에서 제거됨")
                     raise
                 
+                # 찜 추가 시 EXP 부여
+                await self.award_exp(user_id, 5, "favorite_add")
+
                 logger.info("[toggle_favorite] 찜 추가 완료")
                 return {"isFavorite": True, "message": "찜 목록에 추가되었습니다"}
                 
@@ -238,9 +275,15 @@ class UserService:
         return plants
 
     async def get_favorites_count(self, user_id: str) -> int:
-        """찜 목록 개수 조회."""
+        """
+        찜 목록 개수 조회.
+
+        len(favorite_ids) 대신 plants 존재검증 카운트를 사용한다.
+        → get_favorites(get_list(plant_ids=...)) 목록과 동일 집합을 세므로,
+          삭제/누락된 찜 id 로 인한 overcount(목록보다 개수가 큰 불일치)를 제거한다.
+        """
         favorite_ids = await self.user_repo.get_favorites(user_id)
-        count = len(favorite_ids)
+        count = await self.plant_repo.count(plant_ids=favorite_ids)
         logger.debug(f"[get_favorites_count] user={user_id}, count={count}")
         return count
 
