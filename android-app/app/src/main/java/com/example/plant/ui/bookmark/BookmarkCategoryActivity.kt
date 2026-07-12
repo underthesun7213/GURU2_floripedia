@@ -63,6 +63,7 @@ class BookmarkCategoryActivity : AppCompatActivity() {
             "백색/미색" to "백색/미색",
             "노랑/주황" to "노랑/주황",
             "빨강/분홍" to "빨강/분홍",
+            "초록/연두" to "초록/연두",
             "푸른색" to "푸른색",
             "갈색/검정" to "갈색/검정"
         )

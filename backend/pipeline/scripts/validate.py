@@ -23,7 +23,7 @@ REPORT_PATH = _HERE.parent / 'validation_report.json'
 
 
 VALID_GENRES = {'SCIENCE', 'HISTORY', 'EPISODE', 'ART', 'MYTH'}
-VALID_COLOR_GROUPS = {'빨강/분홍', '푸른색', '백색/미색', '노랑/주황', '갈색/검정'}
+VALID_COLOR_GROUPS = {'빨강/분홍', '푸른색', '백색/미색', '노랑/주황', '갈색/검정', '초록/연두'}
 VALID_SCENT_GROUPS = {'은은·차분', '싱그러운·시원', '달콤·화사', '무향'}
 VALID_FLOWER_GROUPS = {'사랑/고백', '감사/존경', '행복/즐거움', '위로/슬픔', '이별/그리움'}
 

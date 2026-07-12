@@ -19,7 +19,7 @@ data class FilterCategory(
 enum class FilterType {
     SEASON,           // 계절 (SPRING, SUMMER, FALL, WINTER)
     CATEGORY_GROUP,   // 식물 분류 (꽃과 풀, 나무와 조경, 실내 인테리어, 텃밭과 정원)
-    COLOR_GROUP,      // 색상 그룹 (백색/미색, 노랑/주황, 빨강/분홍, 푸른색, 갈색/검정)
+    COLOR_GROUP,      // 색상 그룹 (백색/미색, 노랑/주황, 빨강/분홍, 초록/연두, 푸른색, 갈색/검정)
     SCENT_GROUP,      // 향기 그룹 (달콤·화사, 싱그러운·시원, 은은·차분, 무향)
     FLOWER_GROUP,     // 꽃말 그룹 (사랑/고백, 위로/슬픔, 감사/존경, 이별/그리움, 행복/즐거움)
     STORY_GENRE       // 이야기 장르
@@ -61,6 +61,7 @@ object FilterCategoryFactory {
         data.add(FilterCategory("백색/미색", R.drawable.white, FilterType.COLOR_GROUP, "백색/미색"))
         data.add(FilterCategory("노랑/주황", R.drawable.yellow, FilterType.COLOR_GROUP, "노랑/주황"))
         data.add(FilterCategory("빨강/분홍", R.drawable.red, FilterType.COLOR_GROUP, "빨강/분홍"))
+        data.add(FilterCategory("초록/연두", R.drawable.green, FilterType.COLOR_GROUP, "초록/연두"))
         data.add(FilterCategory("푸른색", R.drawable.blue, FilterType.COLOR_GROUP, "푸른색"))
         data.add(FilterCategory("갈색/검정", R.drawable.black, FilterType.COLOR_GROUP, "갈색/검정"))
 
@@ -74,7 +75,7 @@ object FilterCategoryFactory {
 object FilterValidator {
     private val validSeasons = setOf("SPRING", "SUMMER", "FALL", "WINTER")
     private val validCategoryGroups = setOf("꽃과 풀", "나무와 조경", "실내 인테리어", "텃밭과 정원")
-    private val validColorGroups = setOf("백색/미색", "노랑/주황", "빨강/분홍", "푸른색", "갈색/검정")
+    private val validColorGroups = setOf("백색/미색", "노랑/주황", "빨강/분홍", "초록/연두", "푸른색", "갈색/검정")
     private val validScentGroups = setOf("달콤·화사", "싱그러운·시원", "은은·차분", "무향")
     private val validFlowerGroups = setOf("사랑/고백", "위로/슬픔", "감사/존경", "이별/그리움", "행복/즐거움")
     
