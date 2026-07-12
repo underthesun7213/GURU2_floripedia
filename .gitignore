@@ -126,6 +126,15 @@ logs/
 # 데이터 파일 (backend seed/legacy: 대용량 json·로그는 제외, README·_LEGACY.md만 추적)
 backend/data/**/*.json
 backend/data/**/*.txt
+backend/data/**/*.hidbak
+# seed_atlas.py 가 drop 전 export 하는 컬렉션 백업
+backend/data/_backups/
+
+# 이미지/데이터 리서치 스크래치 (대용량 다운로드 이미지·로그, 커밋 금지 ~472MB)
+research/
+
+# 개인 개발 로그 (팀 공유 아님)
+backend/devlog.md
 
 # Floripedia 데이터 작업 (backend/pipeline/)
 /backend/pipeline/_scratch/

@@ -1,0 +1,20 @@
+# Floripedia gitleaks 설정
+# 기본 룰셋을 그대로 사용하고, 아래 allowlist만 추가한다.
+title = "Floripedia gitleaks config"
+
+[extend]
+useDefault = true
+
+# README.md API 문서의 예시 idToken placeholder 오탐만 제외.
+# condition = "AND" 로 (1) 경로가 README.md 이고  (2) 해당 예시 라인일 때만 허용.
+# 전역 eyJhbGci regex 를 쓰지 않으므로 다른 파일/다른 값의 진짜 JWT 유출은 계속 탐지된다.
+[[allowlists]]
+description = "API 문서(README.md)의 예시 idToken placeholder (공개 JWT 헤더 + '...' 자리표시자)"
+condition = "AND"
+regexTarget = "line"
+paths = [
+    '''(^|/)README\.md$''',
+]
+regexes = [
+    '''"idToken":\s*"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9\.\.\."''',
+]
