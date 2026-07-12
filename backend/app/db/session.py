@@ -26,8 +26,7 @@ class MongoDB:
         """MongoDB Atlas 연결 수립."""
         self.client = AsyncIOMotorClient(
             settings.MONGO_URI,
-            #tlsCAFile=certifi.where(),
-            tlsAllowInvalidCertificates=True    #보안상으론 좋지 않지만, 개발 환경에서 공공 와이파이 등 어느 환경에서도 사용 가능하도록
+            tlsCAFile=certifi.where(),   # 서버 인증서 검증 (MITM 방지). certifi 번들 CA 사용
         )
         self.db = self.client[settings.MONGODB_DB_NAME]
         print(f"[MongoDB] Connected to '{settings.MONGODB_DB_NAME}'")

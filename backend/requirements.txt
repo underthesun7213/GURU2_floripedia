@@ -17,8 +17,8 @@ pydantic-settings==2.5.2
 motor==3.6.0
 certifi>=2024.0.0
 
-# AI & ML
-google-generativeai==0.8.3
+# AI & ML  (신 SDK: 코드가 `from google import genai` / genai.Client 사용)
+google-genai==1.65.0
 
 # Firebase
 firebase-admin==6.5.0
@@ -31,3 +31,6 @@ Pillow==10.4.0
 
 # HTTP Client (for image search API)
 httpx==0.27.2
+
+# Kew Gardens API (POWO plant data)
+pykew==0.1.5
