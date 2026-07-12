@@ -4,7 +4,7 @@ from fastapi import APIRouter, Query, HTTPException, UploadFile, File, Depends, 
 from app.db.session import mongodb
 from app.repositories import PlantRepository, UserRepository
 from app.services.plant_service import PlantService
-from app.schemas import PlantCardDto, PlantDetailDto, PlantExploreDto, PlantSearchResultDto
+from app.schemas import PlantCardDto, PlantDetailDto, PlantExploreDto, PlantSearchResultDto, PopularStoryDto
 
 
 # [핵심] deps.py에서 만든 3가지를 가져옵니다.
@@ -52,7 +52,26 @@ async def get_user_favorites(
 
 
 # ==========================================
-# 2. 카테고리별 통합 조회 API (Filter & List)
+# 2. 인기 스토리 목록 API
+# ==========================================
+# 주의: 동적 경로(/{plant_id})보다 위에 있어야 함
+@router.get("/stories/popular", response_model=List[PopularStoryDto])
+async def get_popular_stories(
+    skip: int = Query(0, ge=0, description="건너뛸 개수"),
+    limit: int = Query(10, ge=1, le=50, description="가져올 개수"),
+):
+    """
+    인기 스토리 목록 조회.
+    - SCIENCE 장르: 식물당 첫 번째만 포함
+    - 그 외 장르: 모두 포함
+    - popularity_score 내림차순 정렬
+    """
+    service = get_plant_service()
+    return await service.get_popular_stories(skip=skip, limit=limit)
+
+
+# ==========================================
+# 3. 카테고리별 통합 조회 API (Filter & List)
 # ==========================================
 @router.get("", response_model=List[PlantCardDto])
 async def get_plants(
@@ -131,14 +150,17 @@ async def get_plants_count(
 # 3. 상황별 꽃 추천 API (AI Curation, 체험 차원에서 열어 둠. 추후 배포 한다면 비즈니스 모델에 따라 permit state 조절)
 # ==========================================
 @router.post("/recommend", response_model=PlantExploreDto)
-async def recommend_plants(situation: str = Query(..., description="사용자 상황 설명")):
+async def recommend_plants(
+    situation: str = Query(..., description="사용자 상황 설명"),
+    user_id: Optional[str] = Depends(get_current_user_id_optional),
+):
     """
     상황에 맞는 단일 식물 추천
     """
     service = get_plant_service()
 
     try:
-        result = await service.recommend_plants(situation)
+        result = await service.recommend_plants(situation, user_id=user_id)
         return result
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))

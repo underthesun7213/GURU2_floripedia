@@ -36,24 +36,24 @@ class GeminiService:
         # 새로운 클라이언트 객체 생성 방식
         self.client = genai.Client(api_key=settings.GEMINI_API_KEY)
         
-        # 모델명 설정
-        self.model_name = 'gemini-2.5-flash-lite'
-        self.essay_model_name = 'gemini-3-flash-preview'
+        # 모델명 설정 (config.py 중앙 관리)
+        self.basic_model = settings.GEMINI_BASIC_MODEL
+        self.essay_model = settings.GEMINI_ESSAY_MODEL
         
         logger.info("[GeminiService] 초기화 완료 (Google Gen AI SDK 적용)")
 
-    async def _generate_content(self, parts: list, is_grounded: bool = False, is_json: bool = False) -> Optional[Any]:
+    async def _generate_content(self, parts: list, is_grounded: bool = False, is_json: bool = False, model: str = None) -> Optional[Any]:
         try:
             tools = [types.Tool(google_search=types.GoogleSearch())] if is_grounded else None
             mime_type = "application/json" if (is_json and not is_grounded) else "text/plain"
-            
+
             config = types.GenerateContentConfig(
                 tools=tools,
                 response_mime_type=mime_type
             )
 
             response = self.client.models.generate_content(
-                model=self.model_name,
+                model=model or self.basic_model,
                 contents=parts,
                 config=config
             )
@@ -125,7 +125,7 @@ IMPORTANT: scientificName MUST be the FULL binomial name (genus + species), e.g.
 
     async def generate_recommendation_essay(self, user_situation: str, plant_data: dict) -> str:
         prompt = f"Role: Expert Florist(한국어로만 말을 한다). Situation: {user_situation}. Plant: {plant_data['name']}. Write a 400-char touching essay."
-        result = await self._generate_content([prompt])
+        result = await self._generate_content([prompt], model=self.essay_model)
         return result if result else "에세이를 작성할 수 없습니다."
 
 

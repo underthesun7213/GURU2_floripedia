@@ -29,8 +29,10 @@ from app.schemas.plant import (
     PlantDetailDto,
     PlantExploreDto,
     PlantSearchResultDto,
+    PopularStoryDto,
 )
 from app.schemas.user import (
+    LevelInfo,
     UserBase,
     UserLoginRequest,
     UserResponse,
@@ -54,7 +56,9 @@ __all__ = [
     "PlantDetailDto",
     "PlantExploreDto",
     "PlantSearchResultDto",
+    "PopularStoryDto",
     # User schemas
+    "LevelInfo",
     "UserBase",
     "UserLoginRequest",
     "UserResponse",

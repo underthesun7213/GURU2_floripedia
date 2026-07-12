@@ -9,6 +9,7 @@ from typing import List, Optional
 
 from app.repositories import PlantRepository, UserRepository
 from app.services.gemini_service import GeminiService, gemini_service
+from app.schemas.user import LEVEL_THRESHOLDS
 
 # 로거 설정
 logger = logging.getLogger(__name__)
@@ -39,6 +40,24 @@ class PlantService:
         self.user_repo = user_repo
         # 싱글톤 인스턴스 사용 (메모리 효율적)
         self.gemini = gemini_svc or gemini_service
+
+    # =========================================================
+    # 0. EXP 헬퍼
+    # =========================================================
+    async def _award_exp(self, user_id: str, amount: int, reason: str) -> None:
+        """경험치 부여 (PlantService 내부용)"""
+        user = await self.user_repo.get_by_id(user_id)
+        if not user:
+            return
+        current_exp = user.get("totalExp", 0)
+        new_exp = current_exp + amount
+        # 레벨 계산
+        new_level = 1
+        for lv, _, threshold in LEVEL_THRESHOLDS:
+            if new_exp >= threshold:
+                new_level = lv
+        await self.user_repo.add_exp(user_id, amount, new_level)
+        logger.info(f"[_award_exp] user={user_id}, +{amount} ({reason}), total={new_exp}, lv={new_level}")
 
     # =========================================================
     # 1. 이미지 기반 검색 (DB-only 모드)
@@ -103,6 +122,13 @@ class PlantService:
                 favorites = await self.user_repo.get_favorites(user_id)
                 is_fav = str(plant_in_db["_id"]) in favorites
 
+                # EXP: 카메라 식물 발견 (최초 1회만)
+                plant_id_str = str(plant_in_db["_id"])
+                user = await self.user_repo.get_by_id(user_id)
+                if user and plant_id_str not in user.get("discoveredPlantIds", []):
+                    await self.user_repo.add_discovered_plant(user_id, plant_id_str)
+                    await self._award_exp(user_id, 20, "discover_plant")
+
             result = plant_in_db.copy()
             result["is_newly_created"] = False
             result["is_favorite"] = is_fav
@@ -118,7 +144,7 @@ class PlantService:
     # =========================================================
     # 2. 텍스트 기반 추천 (DB-only 모드 + 에세이)
     # =========================================================
-    async def recommend_plants(self, situation: str) -> dict:
+    async def recommend_plants(self, situation: str, user_id: Optional[str] = None) -> dict:
         """
         상황 기반 식물 추천 (DB-only 모드).
 
@@ -177,6 +203,10 @@ class PlantService:
         essay = await self.gemini.generate_recommendation_essay(situation, plant_in_db)
         logger.info(f"[Step 3 완료] 에세이 길이: {len(essay)}자")
 
+        # EXP: AI 추천 사용
+        if user_id:
+            await self._award_exp(user_id, 10, "ai_recommend")
+
         result = plant_in_db.copy()
         result["recommendation"] = essay
 
@@ -187,7 +217,21 @@ class PlantService:
         return result
 
     # =========================================================
-    # 3. 목록 조회
+    # 3. 인기 스토리 조회
+    # =========================================================
+    async def get_popular_stories(
+        self,
+        skip: int = 0,
+        limit: int = 10,
+    ) -> List[dict]:
+        """인기 스토리 목록 조회 (Lazy Aggregation)"""
+        logger.debug(f"[get_popular_stories] skip={skip}, limit={limit}")
+        result = await self.plant_repo.get_popular_stories(skip=skip, limit=limit)
+        logger.debug(f"[get_popular_stories] 결과: {len(result)}개")
+        return result
+
+    # =========================================================
+    # 4. 목록 조회
     # =========================================================
     async def get_plants(
         self, 
@@ -302,8 +346,14 @@ class PlantService:
         if user_id:
             favorites = await self.user_repo.get_favorites(user_id)
             is_favorite = plant_id in favorites
-            
+
+            # EXP: 식물 상세 조회 (최초 1회만)
+            user = await self.user_repo.get_by_id(user_id)
+            if user and plant_id not in user.get("viewedPlantIds", []):
+                await self.user_repo.add_viewed_plant(user_id, plant_id)
+                await self._award_exp(user_id, 2, "view_plant_detail")
+
         plant["is_favorite"] = is_favorite
-        
+
         logger.debug(f"[get_plant_detail] 완료: {plant.get('name')}")
         return plant

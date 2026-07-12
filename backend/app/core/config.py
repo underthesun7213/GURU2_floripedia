@@ -42,6 +42,11 @@ class Settings(BaseSettings):
     FIREBASE_CREDENTIALS_PATH: str = "app/core/firebase-key.json"  # Firebase 서비스 계정 키 파일 경로
     FIREBASE_STORAGE_BUCKET: str = "floripedia-c0bf0.firebasestorage.app"    # Firebase Storage 버킷
 
+    # === Gemini Models ===
+    GEMINI_BASIC_MODEL: str = "gemini-2.5-flash-lite"      # 식별·분류 등 경량 작업
+    GEMINI_DEFAULT_MODEL: str = "gemini-2.5-flash"          # ETL 등 일반 생성
+    GEMINI_ESSAY_MODEL: str = "gemini-3-flash-preview"      # 에세이·고품질 텍스트
+
     # === Application ===
     PROJECT_NAME: str = "Floripedia API"
     API_V1_STR: str = "/api/v1"
