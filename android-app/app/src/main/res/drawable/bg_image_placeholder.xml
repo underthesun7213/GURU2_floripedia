@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rotate xmlns:android="http://schemas.android.com/apk/res/android"
-    android:fromDegrees="0"
-    android:pivotX="50%"
-    android:pivotY="50%"
-    android:toDegrees="1080">
+<!-- 로딩 스피너 링(정적). 회전은 ImageView.loadPlantImage()가 뷰 애니메이션으로 처리 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:innerRadiusRatio="2.5"
+    android:shape="ring"
+    android:thicknessRatio="30"
+    android:useLevel="false">
 
-    <shape
-        android:innerRadiusRatio="2.5"
-        android:shape="ring"
-        android:thicknessRatio="30"
-        android:useLevel="false">
-
-        <gradient
-            android:centerColor="#8BC34A"
-            android:centerY="0.5"
-            android:endColor="#F0F4F0"
-            android:startColor="#558B2F"
-            android:type="sweep" />
-    </shape>
-</rotate>
+    <gradient
+        android:centerColor="#8BC34A"
+        android:centerY="0.5"
+        android:endColor="#F0F4F0"
+        android:startColor="#558B2F"
+        android:type="sweep" />
+</shape>

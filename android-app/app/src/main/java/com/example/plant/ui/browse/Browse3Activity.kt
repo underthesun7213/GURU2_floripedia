@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.example.plant.R
+import com.example.plant.util.loadPlantImage
 import com.example.plant.data.remote.dto.response.PlantExploreDto
 import com.example.plant.databinding.ActivityBrowse3Binding
 import com.example.plant.di.AppContainer
@@ -107,13 +108,7 @@ class Browse3Activity : AppCompatActivity() {
         binding.tvInfoHeader.text = "${plant.name}(꽃 이름)"
         binding.tvRecommendationEssay.text = plant.recommendation
 
-        plant.imageUrl.let { url ->
-            binding.ivPlantImage.load(url) {
-                crossfade(true)
-                placeholder(R.drawable.bg_image_placeholder)
-                error(R.drawable.bg_image_placeholder)
-            }
-        }
+        binding.ivPlantImage.loadPlantImage(plant.imageUrl)
 
         // 꽃말 태그 (PlantExploreDto 에는 flowerLanguage 가 없음. recommendation 이나 다른 필드 활용 필요하나 
         // 레이아웃 구조상 숨김 처리 하거나 고정값 처리)

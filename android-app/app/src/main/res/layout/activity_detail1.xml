@@ -98,6 +98,21 @@
                     app:shapeAppearanceOverlay="@style/RoundedImage20" />
             </LinearLayout>
 
+            <!-- 사진 없는 식물: 제보 안내 (기본 숨김) -->
+            <TextView
+                android:id="@+id/tvNoImageHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:paddingHorizontal="24dp"
+                android:visibility="gone"
+                android:fontFamily="@font/pretendardmedium"
+                android:textColor="@color/sub_text1"
+                android:textSize="12sp"
+                android:lineSpacingExtra="2dp"
+                android:text="@string/no_image_report_hint"
+                tools:visibility="visible" />
+
             <!-- 꽃말 태그 -->
             <HorizontalScrollView
                 android:layout_width="match_parent"
@@ -122,7 +137,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="24dp"
                 android:fontFamily="@font/pretendardsemibold"
-                android:text="역사적 이야기"
+                android:text="@string/story_history"
                 android:textColor="@color/text1"
                 android:textSize="16sp" />
 
@@ -154,7 +169,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="20dp"
                 android:fontFamily="@font/pretendardsemibold"
-                android:text="또 다른 이야기"
+                android:text="@string/story_another"
                 android:textColor="@color/text1"
                 android:textSize="16sp" />
 
@@ -196,7 +211,7 @@
                 android:background="@drawable/bg_round_square"
                 android:backgroundTint="@color/button"
                 android:fontFamily="@font/pretendardsemibold"
-                android:text="꽃갈피에 저장"
+                android:text="@string/save_to_bookmark"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="16sp" />

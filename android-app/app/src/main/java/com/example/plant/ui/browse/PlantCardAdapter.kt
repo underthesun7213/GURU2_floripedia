@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import coil.load
 import com.example.plant.data.remote.dto.response.PlantCardDto
+import com.example.plant.util.loadPlantImage
 import com.example.plant.databinding.ItemGridPlantBinding
 
 /**
@@ -30,15 +31,7 @@ class PlantCardAdapter(
         val plant = getItem(position)
         holder.binding.apply {
             tvPlantGridName.text = plant.name
-            plant.imageUrl?.let { url ->
-                ivPlantGrid.load(url) {
-                    crossfade(true)
-                    placeholder(com.example.plant.R.drawable.bg_image_placeholder)
-                    error(com.example.plant.R.drawable.bg_image_placeholder)
-                }
-            } ?: run {
-                ivPlantGrid.setImageResource(com.example.plant.R.drawable.bg_image_placeholder)
-            }
+            ivPlantGrid.loadPlantImage(plant.imageUrl)
 
             // 카드 전체 클릭 리스너
             root.setOnClickListener {

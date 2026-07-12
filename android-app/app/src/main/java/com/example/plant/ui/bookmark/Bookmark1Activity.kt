@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.plant.R
 import com.example.plant.databinding.ActivityBookmarkBinding
 import com.example.plant.di.AppContainer
 import com.example.plant.ui.auth.LoginActivity
@@ -35,10 +36,10 @@ class Bookmark1Activity : AppCompatActivity() {
     }
 
     private fun setupCategoryClickListeners() {
-        binding.cvLanguage.setOnClickListener { navigateToResult("꽃말") }
-        binding.cvScent.setOnClickListener { navigateToResult("향기") }
-        binding.cvSeason.setOnClickListener { navigateToResult("개화시기") }
-        binding.cvColor.setOnClickListener { navigateToResult("색상") }
+        binding.cvLanguage.setOnClickListener { navigateToResult(getString(R.string.category_flower_language)) }
+        binding.cvScent.setOnClickListener { navigateToResult(getString(R.string.category_scent)) }
+        binding.cvSeason.setOnClickListener { navigateToResult(getString(R.string.category_blooming_season)) }
+        binding.cvColor.setOnClickListener { navigateToResult(getString(R.string.category_color)) }
 
         binding.fixedHeader.imgLogo.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
@@ -55,9 +56,9 @@ class Bookmark1Activity : AppCompatActivity() {
         lifecycleScope.launch {
             val result = AppContainer.userRepository.getMyFavorites()
             result.onSuccess { plants ->
-                binding.tvTotalCount.text = "총 식물 갯수: ${plants.size}개"
+                binding.tvTotalCount.text = getString(R.string.bookmark_total_count_format, plants.size)
                 if (plants.isNotEmpty()) {
-                    binding.tvRecommendedSeasonPlant.text = "추천 계절 식물: ${plants[0].name}"
+                    binding.tvRecommendedSeasonPlant.text = getString(R.string.bookmark_recommended_format, plants[0].name)
                 }
             }.onFailure { error ->
                 ErrorHandler.handleAuthRequiredError(this@Bookmark1Activity, error, "Bookmark1Activity")

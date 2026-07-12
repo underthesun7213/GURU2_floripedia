@@ -5,9 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
-import com.example.plant.R
 import com.example.plant.data.remote.dto.response.PlantCardDto
+import com.example.plant.util.loadPlantImage
 import com.example.plant.databinding.ItemBookmarkPlantBinding
 
 class BookmarkPlantAdapter(
@@ -30,15 +29,7 @@ class BookmarkPlantAdapter(
             tvPlantName.text = plant.name
             tvFlowerLanguage.text = "#${plant.flowerLanguage.split(",").firstOrNull()?.trim() ?: plant.flowerLanguage}"
 
-            plant.imageUrl?.let { url ->
-                ivPlantImage.load(url) {
-                    crossfade(true)
-                    placeholder(R.drawable.bg_image_placeholder)
-                    error(R.drawable.bg_image_placeholder)
-                }
-            } ?: run {
-                ivPlantImage.setImageResource(R.drawable.bg_image_placeholder)
-            }
+            ivPlantImage.loadPlantImage(plant.imageUrl)
 
             root.setOnClickListener {
                 onItemClick(plant)

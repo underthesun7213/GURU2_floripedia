@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import coil.load
 import com.example.plant.databinding.ItemFeaturedPlantBinding
+import com.example.plant.util.loadPlantImage
 import com.example.plant.data.remote.dto.response.PlantCardDto
 
 class FeaturedPlantAdapter(
@@ -44,20 +45,7 @@ class FeaturedPlantAdapter(
                 tvTag2.visibility = android.view.View.GONE
             }
 
-            plant.imageUrl?.let { url ->
-                ivPlant.load(url) {
-                    crossfade(true)
-                    placeholder(com.example.plant.R.drawable.bg_image_placeholder)
-                    error(com.example.plant.R.drawable.bg_image_placeholder)
-                    listener(
-                        onError = { _, _ ->
-                            ivPlant.setImageResource(com.example.plant.R.drawable.bg_image_placeholder)
-                        }
-                    )
-                }
-            } ?: run {
-                ivPlant.setImageResource(com.example.plant.R.drawable.bg_image_placeholder)
-            }
+            ivPlant.loadPlantImage(plant.imageUrl)
 
             // 카드 전체 클릭 리스너
             root.setOnClickListener {

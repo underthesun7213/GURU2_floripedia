@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.plant.R
 import com.example.plant.databinding.ItemMypageRecentPlantBinding
+import com.example.plant.util.loadPlantImage
 import com.example.plant.util.RecentPlantManager.RecentPlant
 
 class MyPageRecentPlantAdapter(
@@ -29,15 +30,7 @@ class MyPageRecentPlantAdapter(
         holder.binding.apply {
             tvPlantName.text = plant.name
 
-            plant.imageUrl?.let { url ->
-                ivPlantImage.load(url) {
-                    crossfade(true)
-                    placeholder(R.drawable.bg_image_placeholder)
-                    error(R.drawable.bg_image_placeholder)
-                }
-            } ?: run {
-                ivPlantImage.setImageResource(R.drawable.bg_image_placeholder)
-            }
+            ivPlantImage.loadPlantImage(plant.imageUrl)
 
             root.setOnClickListener {
                 onItemClick(plant)

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.plant.R
 import com.example.plant.databinding.ItemSearchFlowerBinding
+import com.example.plant.util.loadPlantImage
 import com.example.plant.util.RecentPlantManager.RecentPlant
 
 class RecentSearchPlantAdapter(
@@ -30,15 +31,7 @@ class RecentSearchPlantAdapter(
             tvSearchFlowerName.text = plant.name
             tvSearchFlowerDesc.text = plant.description ?: "${plant.name}은 구근 식물로 봄에 개화하며"
 
-            plant.imageUrl?.let { url ->
-                ivSearchFlower.load(url) {
-                    crossfade(true)
-                    placeholder(R.drawable.bg_image_placeholder)
-                    error(R.drawable.bg_image_placeholder)
-                }
-            } ?: run {
-                ivSearchFlower.setImageResource(R.drawable.bg_image_placeholder)
-            }
+            ivSearchFlower.loadPlantImage(plant.imageUrl)
 
             root.setOnClickListener {
                 onItemClick(plant)

@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.example.plant.R
 import com.example.plant.data.remote.dto.response.PlantDetailDto
+import com.example.plant.util.loadPlantImage
 import com.example.plant.databinding.ActivityDetail1Binding
 import com.example.plant.di.AppContainer
 import com.example.plant.ui.camera.CameraActivity
@@ -36,7 +37,7 @@ class Detail1Activity : AppCompatActivity() {
         val isNewlyCreated = intent.getBooleanExtra("is_newly_created", false)
 
         if (isNewlyCreated) {
-            Toast.makeText(this, "새로운 식물이 도감에 추가되었습니다!", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.plant_added_to_collection), Toast.LENGTH_LONG).show()
         }
 
         setupNavigation()
@@ -95,7 +96,14 @@ class Detail1Activity : AppCompatActivity() {
             val result = AppContainer.plantRepository.getPlantDetail(plantId)
             binding.progressBar.visibility = View.GONE
             result.onSuccess { displayPlantDetail(it) }.onFailure { error ->
-                com.example.plant.util.ErrorHandler.handleApiError(this@Detail1Activity, error, "Detail1Activity")
+                // 삭제된 식물(404): 로컬 최근 본 식물에서도 제거하고 화면 종료
+                if (error.message?.contains("404") == true) {
+                    com.example.plant.util.RecentPlantManager.removeRecentPlant(this@Detail1Activity, plantId)
+                    Toast.makeText(this@Detail1Activity, getString(R.string.plant_not_found), Toast.LENGTH_SHORT).show()
+                    finish()
+                } else {
+                    com.example.plant.util.ErrorHandler.handleApiError(this@Detail1Activity, error, "Detail1Activity")
+                }
             }
         }
     }
@@ -106,7 +114,7 @@ class Detail1Activity : AppCompatActivity() {
         // 최근 본 식물에 이미지와 설명 포함하여 저장
         val description = plantDetail.horticulture.preContent
             ?: plantDetail.stories.firstOrNull()?.content?.take(50)
-            ?: "${plantDetail.name}은 아름다운 식물입니다"
+            ?: getString(R.string.default_plant_description, plantDetail.name)
         com.example.plant.util.RecentPlantManager.addRecentPlant(
             this,
             plantDetail.id,
@@ -122,7 +130,7 @@ class Detail1Activity : AppCompatActivity() {
             setupFlowerLanguageTags(plantDetail.flowerInfo.language)
 
             // 에피소드 1
-            if (plantDetail.stories.size >= 1) {
+            if (plantDetail.stories.isNotEmpty()) {
                 tvStoryGenre1.visibility = View.VISIBLE
                 tvStoryGenre1.text = "[${getStoryGenreKorean(plantDetail.stories[0].genre)}]"
                 tvStoryContent1.text = plantDetail.stories[0].content
@@ -140,24 +148,19 @@ class Detail1Activity : AppCompatActivity() {
             }
 
             if (plantDetail.images.isNotEmpty()) {
-                ivPlantImage1.load(plantDetail.images[0]) {
-                    crossfade(true)
-                    placeholder(R.drawable.bg_image_placeholder)
-                    error(R.drawable.bg_image_placeholder)
-                }
+                tvNoImageHint.visibility = View.GONE
+                ivPlantImage1.loadPlantImage(plantDetail.images[0])
                 if (plantDetail.images.size > 1) {
                     ivPlantImage2.visibility = View.VISIBLE
-                    ivPlantImage2.load(plantDetail.images[1]) {
-                        crossfade(true)
-                        placeholder(R.drawable.bg_image_placeholder)
-                        error(R.drawable.bg_image_placeholder)
-                    }
+                    ivPlantImage2.loadPlantImage(plantDetail.images[1])
                 } else {
                     ivPlantImage2.visibility = View.GONE
                 }
             } else {
-                ivPlantImage1.setImageResource(R.drawable.bg_image_placeholder)
+                // 이미지 확정 부재 → 정적 준비중 플레이스홀더 + 제보 안내
+                ivPlantImage1.loadPlantImage(null)
                 ivPlantImage2.visibility = View.GONE
+                tvNoImageHint.visibility = View.VISIBLE
             }
 
             isFavorite = plantDetail.isFavorite
@@ -173,20 +176,22 @@ class Detail1Activity : AppCompatActivity() {
 
             // 개화시기
             infoSection.tvSeasonTitle.text = getSeasonKorean(plantDetail.season)
-            infoSection.tvSeasonDesc.text = plantDetail.horticulture.management ?: ""
+            infoSection.tvSeasonDesc.text = plantDetail.seasonDescription
+                ?: plantDetail.horticulture.management ?: ""
             infoSection.ivSeasonImage.setImageResource(getSeasonDrawable(plantDetail.season))
 
             // 향기
-            val scentTitle = plantDetail.scentInfo.scentTags.joinToString(", ").ifEmpty { "정보 없음" }
+            val scentTitle = plantDetail.scentInfo.scentTags.joinToString(", ").ifEmpty { getString(R.string.info_not_available) }
             infoSection.tvScentTitle.text = scentTitle
             infoSection.tvScentDesc.text = plantDetail.scentInfo.scentGroup.joinToString(", ")
             infoSection.ivScentImage.setImageResource(getScentDrawable(plantDetail.scentInfo.scentGroup))
 
             // 색상
-            val colorTitle = plantDetail.colorInfo.colorLabels.joinToString(", ").ifEmpty { "정보 없음" }
+            val colorTitle = plantDetail.colorInfo.colorLabels.joinToString(", ").ifEmpty { getString(R.string.info_not_available) }
             infoSection.tvColorTitle.text = colorTitle
             infoSection.tvColorDesc.text = plantDetail.colorInfo.colorGroup.joinToString(", ")
-            infoSection.ivColorImage.setImageResource(getColorDrawable(plantDetail.colorInfo.colorGroup))
+            // 칩 이미지는 첫 번째(대표) 색 라벨 기준으로 선택
+            infoSection.ivColorImage.setImageResource(getColorDrawable(plantDetail.colorInfo.colorLabels))
         }
     }
 
@@ -199,7 +204,7 @@ class Detail1Activity : AppCompatActivity() {
                 if (newState) {
                     com.example.plant.util.BookmarkToastUtil.showBookmarkSavedToast(this@Detail1Activity)
                 } else {
-                    Toast.makeText(this@Detail1Activity, "꽃갈피에서 제거되었습니다", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@Detail1Activity, getString(R.string.bookmark_removed), Toast.LENGTH_SHORT).show()
                 }
             }.onFailure { error ->
                 com.example.plant.util.ErrorHandler.handleAuthRequiredError(
@@ -217,22 +222,22 @@ class Detail1Activity : AppCompatActivity() {
                 backgroundTintList = android.content.res.ColorStateList.valueOf(
                     resources.getColor(R.color.sub_text1, null)
                 )
-                text = "이미 꽃갈피에 있어요"
+                text = getString(R.string.already_in_bookmark)
             } else {
                 backgroundTintList = android.content.res.ColorStateList.valueOf(
                     resources.getColor(R.color.button, null)
                 )
-                text = "꽃갈피에 저장"
+                text = getString(R.string.save_to_bookmark)
             }
         }
     }
 
     private fun getSeasonKorean(season: String): String = when (season.uppercase()) {
-        "SPRING" -> "봄"; "SUMMER" -> "여름"; "FALL" -> "가을"; "WINTER" -> "겨울"; else -> season
+        "SPRING" -> getString(R.string.season_spring); "SUMMER" -> getString(R.string.season_summer); "FALL" -> getString(R.string.season_fall); "WINTER" -> getString(R.string.season_winter); else -> season
     }
 
     private fun getStoryGenreKorean(genre: String): String = when (genre.uppercase()) {
-        "MYTH" -> "신화"; "SCIENCE" -> "과학"; "HISTORY" -> "역사"; else -> genre
+        "MYTH" -> getString(R.string.genre_myth); "SCIENCE" -> getString(R.string.genre_science); "HISTORY" -> getString(R.string.genre_history); "ART" -> getString(R.string.genre_art); "EPISODE" -> getString(R.string.genre_episode); else -> genre
     }
 
     private fun getSeasonDrawable(season: String): Int = when (season.uppercase()) {
@@ -266,14 +271,22 @@ class Detail1Activity : AppCompatActivity() {
         }
     }
 
-    private fun getColorDrawable(colorGroups: List<String>): Int {
-        val color = colorGroups.joinToString(" ").lowercase()
+    /**
+     * 색상 칩 이미지 선택.
+     * 여러 색을 고정 우선순위로 스캔하면 대표색과 무관한 칩이 뜨므로
+     * (예: 첫 색이 분홍이어도 그룹에 백색이 섞이면 흰색 칩),
+     * colorLabels의 첫 번째(대표) 색을 기준으로 칩을 고른다.
+     * 라벨이 비면 colorGroups로 폴백한다.
+     */
+    private fun getColorDrawable(colorLabels: List<String>): Int {
+        val rep = colorLabels.firstOrNull()?.trim().orEmpty()
         return when {
-            color.contains("백색") || color.contains("미색") || color.contains("흰") || color.contains("white") -> R.drawable.white
-            color.contains("노랑") || color.contains("주황") || color.contains("살구") || color.contains("yellow") || color.contains("orange") -> R.drawable.yellow
-            color.contains("빨강") || color.contains("분홍") || color.contains("다홍") || color.contains("red") || color.contains("pink") -> R.drawable.red
-            color.contains("파랑") || color.contains("하늘") || color.contains("보라") || color.contains("연보라") || color.contains("푸른") || color.contains("blue") || color.contains("purple") -> R.drawable.blue
-            color.contains("갈색") || color.contains("검정") || color.contains("brown") || color.contains("black") -> R.drawable.black
+            rep.contains("초록") || rep.contains("연두") || rep.contains("올리브") -> R.drawable.green
+            rep.contains("백색") || rep.contains("미색") || rep.contains("흰") -> R.drawable.white
+            rep.contains("노랑") || rep.contains("주황") || rep.contains("살구") -> R.drawable.yellow
+            rep.contains("빨강") || rep.contains("분홍") || rep.contains("다홍") || rep.contains("자주") -> R.drawable.red
+            rep.contains("파랑") || rep.contains("하늘") || rep.contains("보라") || rep.contains("라일락") || rep.contains("청") -> R.drawable.blue
+            rep.contains("갈색") || rep.contains("검정") || rep.contains("은") -> R.drawable.black
             else -> R.drawable.white
         }
     }

@@ -65,6 +65,20 @@ object RecentPlantManager {
     }
 
     /**
+     * 최근 본 식물에서 특정 식물 제거.
+     * (예: 상세 조회가 404 → 카탈로그에서 삭제된 식물을 로컬 최근 목록에서도 정리)
+     */
+    fun removeRecentPlant(context: Context, plantId: String) {
+        val prefs = getSharedPreferences(context)
+        val recentPlants = getRecentPlants(context).toMutableList()
+        val changed = recentPlants.removeAll { it.id == plantId }
+        if (changed) {
+            val json = Gson().toJson(recentPlants)
+            prefs.edit().putString(KEY_RECENT_PLANTS, json).apply()
+        }
+    }
+
+    /**
      * 최근 본 식물 목록 초기화
      */
     fun clearRecentPlants(context: Context) {
