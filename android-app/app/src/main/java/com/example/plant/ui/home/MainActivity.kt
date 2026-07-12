@@ -22,6 +22,11 @@ import com.example.plant.ui.detail.Detail1Activity
 import com.example.plant.util.ErrorHandler
 import com.example.plant.ui.components.FloripediaBottomBar
 import com.example.plant.ui.components.FloripediaCategorySection
+import com.google.android.gms.ads.AdLoader
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.nativead.NativeAd
+import com.google.android.gms.ads.nativead.NativeAdView
+import com.example.plant.BuildConfig
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -45,6 +50,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var featuredAdapter: FeaturedPlantAdapter
     private lateinit var availableAdapter: AvailablePlantAdapter
+    private lateinit var storyAdapter: StoryAdapter
+    private var currentNativeAd: NativeAd? = null
     private var allFilterCategories: MutableList<FilterCategory> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +72,9 @@ class MainActivity : AppCompatActivity() {
         setupSearchBar()
 
         loadFeaturedPlants()
+        loadPopularStories()
         loadAvailablePlants()
+        loadBannerAd()
     }
 
     /**
@@ -130,7 +139,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupCategoryCompose() {
         binding.layoutCategoryTab.composeViewCategory.setContent {
-            val topCategories = listOf("개화시기", "꽃말", "향기", "식물분류", "색상")
+            val topCategories = listOf(
+                getString(R.string.category_blooming_season),
+                getString(R.string.category_flower_language),
+                getString(R.string.category_scent),
+                getString(R.string.category_plant_classification),
+                getString(R.string.category_color)
+            )
             
             FloripediaCategorySection(
                 topCategories = topCategories,
@@ -220,12 +235,33 @@ class MainActivity : AppCompatActivity() {
         binding.layoutSlider.viewPagerFeatured.adapter = featuredAdapter
         binding.layoutSlider.dotsIndicator.attachTo(binding.layoutSlider.viewPagerFeatured)
 
+        storyAdapter = StoryAdapter { story ->
+            startActivity(Intent(this, Detail1Activity::class.java).apply { putExtra("plant_id", story.plantId) })
+        }
+        binding.layoutStorySection.rvStories.apply {
+            adapter = storyAdapter
+            layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
+        }
+
         availableAdapter = AvailablePlantAdapter { plant ->
             startActivity(Intent(this, Detail1Activity::class.java).apply { putExtra("plant_id", plant.id) })
         }
         binding.layoutAvailable.rvAvailablePlants.apply {
             adapter = availableAdapter
             layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
+        }
+    }
+
+    private fun loadPopularStories() {
+        lifecycleScope.launch {
+            AppContainer.plantRepository.getPopularStories(limit = 10)
+                .onSuccess { stories ->
+                    val storiesWithImages = stories.filter { !it.imageUrl.isNullOrEmpty() }
+                    storyAdapter.submitList(storiesWithImages)
+                }
+                .onFailure { error ->
+                    ErrorHandler.handleApiError(this@MainActivity, error, "MainActivity_Stories")
+                }
         }
     }
 
@@ -242,6 +278,67 @@ class MainActivity : AppCompatActivity() {
                     ErrorHandler.handleApiError(this@MainActivity, error, "MainActivity_Available")
                 }
         }
+    }
+
+    private fun loadBannerAd() {
+        val adLoader = AdLoader.Builder(this, BuildConfig.ADMOB_BANNER_ID)
+            .forNativeAd { nativeAd ->
+                currentNativeAd?.destroy()
+                currentNativeAd = nativeAd
+
+                val adView = layoutInflater.inflate(
+                    R.layout.item_native_ad, null
+                ) as NativeAdView
+
+                populateNativeAdView(nativeAd, adView)
+
+                binding.nativeAdContainer.removeAllViews()
+                binding.nativeAdContainer.addView(adView)
+            }
+            .build()
+
+        adLoader.loadAd(AdRequest.Builder().build())
+    }
+
+    private fun populateNativeAdView(nativeAd: NativeAd, adView: NativeAdView) {
+        val headlineView = adView.findViewById<android.widget.TextView>(R.id.adHeadline)
+        val bodyView = adView.findViewById<android.widget.TextView>(R.id.adBody)
+        val iconView = adView.findViewById<android.widget.ImageView>(R.id.adIcon)
+        val mediaView = adView.findViewById<com.google.android.gms.ads.nativead.MediaView>(R.id.adMedia)
+        val ctaView = adView.findViewById<android.widget.TextView>(R.id.adCallToAction)
+        val advertiserView = adView.findViewById<android.widget.TextView>(R.id.adAdvertiser)
+
+        adView.headlineView = headlineView
+        adView.bodyView = bodyView
+        adView.iconView = iconView
+        adView.mediaView = mediaView
+        adView.callToActionView = ctaView
+        adView.advertiserView = advertiserView
+
+        headlineView.text = nativeAd.headline
+        bodyView.text = nativeAd.body
+        ctaView.text = nativeAd.callToAction
+
+        if (nativeAd.icon != null) {
+            iconView.setImageDrawable(nativeAd.icon!!.drawable)
+            iconView.visibility = View.VISIBLE
+        } else {
+            iconView.visibility = View.GONE
+        }
+
+        if (nativeAd.advertiser != null) {
+            advertiserView.text = nativeAd.advertiser
+            advertiserView.visibility = View.VISIBLE
+        } else {
+            advertiserView.visibility = View.GONE
+        }
+
+        adView.setNativeAd(nativeAd)
+    }
+
+    override fun onDestroy() {
+        currentNativeAd?.destroy()
+        super.onDestroy()
     }
 
 }

@@ -45,7 +45,11 @@
         <activity android:name=".ui.browse.SearchActivity"/>
         <activity android:name=".ui.mypage.MyPageActivity"/>
         <activity android:name=".ui.mypage.ProfileEditActivity"/>
-        <activity android:name=".ui.detail.Detail2Activity"/>
+
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="${admobAppId}" />
     </application>
 
 </manifest>
