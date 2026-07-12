@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit
 object RetrofitClient {
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
+        // 앱의 BuildConfig.DEBUG를 사용하여 로그 레벨 결정
         level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
                 else HttpLoggingInterceptor.Level.NONE
     }
@@ -24,9 +25,12 @@ object RetrofitClient {
             val original = chain.request()
             val requestBuilder = original.newBuilder()
             val contentType = original.body?.contentType()
+            
+            // Multipart 요청이 아닐 때만 Content-Type 설정
             if (contentType == null || !contentType.toString().contains("multipart")) {
                 requestBuilder.header("Content-Type", "application/json")
             }
+            
             TokenManager.getToken()?.let { token ->
                 requestBuilder.header("Authorization", "Bearer $token")
             }

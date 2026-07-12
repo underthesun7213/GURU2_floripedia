@@ -5,6 +5,7 @@ import com.example.plant.data.remote.dto.response.PlantCardDto
 import com.example.plant.data.remote.dto.response.PlantDetailDto
 import com.example.plant.data.remote.dto.response.PlantExploreDto
 import com.example.plant.data.remote.dto.response.PlantSearchResultDto
+import com.example.plant.data.remote.dto.response.PopularStoryDto
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -54,6 +55,25 @@ class PlantRepository {
                 Result.success(response.body()!!)
             } else {
                 Result.failure(Exception("식물 목록 조회 실패: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * 인기 스토리 목록 조회
+     */
+    suspend fun getPopularStories(
+        skip: Int = 0,
+        limit: Int = 10
+    ): Result<List<PopularStoryDto>> {
+        return try {
+            val response = api.getPopularStories(skip = skip, limit = limit)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception("인기 스토리 조회 실패: ${response.code()}"))
             }
         } catch (e: Exception) {
             Result.failure(e)

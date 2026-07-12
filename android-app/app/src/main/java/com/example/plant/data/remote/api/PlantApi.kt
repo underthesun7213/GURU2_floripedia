@@ -5,6 +5,7 @@ import com.example.plant.data.remote.dto.response.PlantCountResponse
 import com.example.plant.data.remote.dto.response.PlantDetailDto
 import com.example.plant.data.remote.dto.response.PlantExploreDto
 import com.example.plant.data.remote.dto.response.PlantSearchResultDto
+import com.example.plant.data.remote.dto.response.PopularStoryDto
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.GET
@@ -61,6 +62,15 @@ interface PlantApi {
         @Query("skip") skip: Int = 0,
         @Query("limit") limit: Int = 20
     ): Response<List<PlantCardDto>>
+
+    /**
+     * 인기 스토리 목록 조회
+     */
+    @GET("plants/stories/popular")
+    suspend fun getPopularStories(
+        @Query("skip") skip: Int = 0,
+        @Query("limit") limit: Int = 10
+    ): Response<List<PopularStoryDto>>
 
     /**
      * 식물 상세 정보 조회

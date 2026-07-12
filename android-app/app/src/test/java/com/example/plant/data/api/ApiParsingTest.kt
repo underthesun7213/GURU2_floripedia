@@ -129,7 +129,7 @@ class ApiParsingTest {
         assertEquals("장미과", detail.taxonomy.family)
         // horticulture
         assertEquals("꽃과 풀", detail.horticulture.categoryGroup)
-        assertEquals(2, detail.horticulture.usage.size)
+        assertEquals(2, detail.horticulture.usage?.size)
         // flowerInfo
         assertEquals("사랑", detail.flowerInfo.language)
         assertEquals("사랑/고백", detail.flowerInfo.flowerGroup)
@@ -144,6 +144,74 @@ class ApiParsingTest {
         // scentInfo
         assertEquals("달콤·화사", detail.scentInfo.scentGroup[0])
         assertFalse(detail.isFavorite)
+    }
+
+    @Test
+    fun `상세 DTO - habitat_bloomingMonths_usage 키 누락 시 null 파싱 (NPE 방어)`() = runTest {
+        // 백엔드가 해당 키를 아예 안 보내는 경우(키 누락)를 모사.
+        // Gson 은 Kotlin 기본값을 적용하지 않으므로 nullable 타입이 아니면
+        // non-null 필드에 런타임 null 이 주입되어 잠복 NPE 가 된다.
+        // nullable 굳히기 이후엔 타입상 null 이 허용되어 크래시 없이 파싱된다.
+        val json = """
+        {
+            "_id": "1",
+            "name": "장미",
+            "scientificName": "Rosa",
+            "isRepresentative": true,
+            "taxonomy": {
+                "genus": "Rosa",
+                "species": "Rosa hybrida",
+                "family": "장미과"
+            },
+            "horticulture": {
+                "category": "관상용",
+                "categoryGroup": "꽃과 풀",
+                "management": "가지치기 필요",
+                "preContent": "관리가 쉬운 꽃"
+            },
+            "flowerInfo": {
+                "language": "사랑",
+                "flowerGroup": "사랑/고백"
+            },
+            "stories": [
+                {"genre": "신화", "content": "그리스 신화의 장미"}
+            ],
+            "images": ["img1.jpg"],
+            "imageUrl": "https://example.com/rose.jpg",
+            "season": "SPRING",
+            "searchKeywords": ["장미"],
+            "popularityScore": 95,
+            "colorInfo": {
+                "hexCodes": ["#FF0000"],
+                "colorLabels": ["빨강"],
+                "colorGroup": ["빨강/분홍"]
+            },
+            "scentInfo": {
+                "scentTags": ["달콤한"],
+                "scentGroup": ["달콤·화사"]
+            },
+            "isFavorite": false
+        }
+        """.trimIndent()
+
+        server.enqueue(MockResponse().setBody(json).setResponseCode(200))
+        val response = api.getPlantDetail("1")
+
+        // 1) 크래시 없이 성공 파싱
+        assertTrue(response.isSuccessful)
+        val detail = response.body()!!
+        assertEquals("장미", detail.name)
+
+        // 2) 세 필드는 키 누락 → Gson 이 null 주입 (Kotlin 기본값 미적용).
+        //    nullable 타입이라 NPE 없이 null 로 안전하게 들어온다.
+        assertNull(detail.bloomingMonths)
+        assertNull(detail.habitat)
+        assertNull(detail.horticulture.usage)
+
+        // 3) 소비 측은 elvis 로 빈 기본값을 받아내는 게 타입상 강제된다.
+        assertEquals(emptyList<Int>(), detail.bloomingMonths ?: emptyList<Int>())
+        assertEquals("", detail.habitat ?: "")
+        assertEquals(emptyList<String>(), detail.horticulture.usage ?: emptyList<String>())
     }
 
     @Test
