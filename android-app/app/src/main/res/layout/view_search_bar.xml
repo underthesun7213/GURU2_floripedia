@@ -27,7 +27,7 @@
                 android:layout_height="match_parent"
                 android:layout_toStartOf="@id/ivSearchIcon"
                 android:background="@android:color/transparent"
-                android:hint="식물 이름, 꽃말로 검색하기"
+                android:hint="@string/hint_search_by_name"
                 android:fontFamily="@font/pretendardmedium"
                 android:inputType="text"
                 android:maxLines="1"

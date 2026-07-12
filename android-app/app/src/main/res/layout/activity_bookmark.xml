@@ -22,7 +22,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/pretendardsemibold"
-        android:text="꽃갈피"
+        android:text="@string/bookmark_title"
         android:textColor="@color/text1"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -51,7 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/pretendardsemibold"
-                android:text="총 식물 갯수: 0개"
+                android:text="@string/bookmark_total_count_default"
                 android:textColor="@color/bookmark_text"
                 android:textSize="14sp" />
 
@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:fontFamily="@font/pretendardsemibold"
-                android:text="추천 계절 식물: -"
+                android:text="@string/bookmark_recommended_default"
                 android:textColor="#4A6750"
                 android:textSize="14sp" />
         </LinearLayout>
@@ -91,7 +91,7 @@
             <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
                 <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop" android:src="@drawable/flower_language" />
                 <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="#44000000" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:fontFamily="@font/pretendardbold" android:text="꽃말" android:textColor="@color/white" android:textSize="20sp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:fontFamily="@font/pretendardbold" android:text="@string/category_flower_language" android:textColor="@color/white" android:textSize="20sp" />
                 <ImageView android:layout_width="20dp" android:layout_height="20dp" android:layout_gravity="center_vertical|end" android:layout_marginEnd="16dp" android:src="@drawable/outline_arrow_forward_ios_24" app:tint="@color/white" />
             </FrameLayout>
         </androidx.cardview.widget.CardView>
@@ -107,7 +107,7 @@
             <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
                 <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop" android:src="@drawable/scent" />
                 <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="#44000000" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:fontFamily="@font/pretendardbold" android:text="향기" android:textColor="@color/white" android:textSize="20sp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:fontFamily="@font/pretendardbold" android:text="@string/category_scent" android:textColor="@color/white" android:textSize="20sp" />
                 <ImageView android:layout_width="20dp" android:layout_height="20dp" android:layout_gravity="center_vertical|end" android:layout_marginEnd="16dp" android:src="@drawable/outline_arrow_forward_ios_24" app:tint="@color/white" />
             </FrameLayout>
         </androidx.cardview.widget.CardView>
@@ -123,7 +123,7 @@
             <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
                 <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop" android:src="@drawable/season" />
                 <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="#44000000" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:fontFamily="@font/pretendardbold" android:text="개화시기" android:textColor="@color/white" android:textSize="20sp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:fontFamily="@font/pretendardbold" android:text="@string/category_blooming_season" android:textColor="@color/white" android:textSize="20sp" />
                 <ImageView android:layout_width="20dp" android:layout_height="20dp" android:layout_gravity="center_vertical|end" android:layout_marginEnd="16dp" android:src="@drawable/outline_arrow_forward_ios_24" app:tint="@color/white" />
             </FrameLayout>
         </androidx.cardview.widget.CardView>
@@ -139,7 +139,7 @@
             <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
                 <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="centerCrop" android:src="@drawable/hexcode" />
                 <View android:layout_width="match_parent" android:layout_height="match_parent" android:background="#44000000" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:fontFamily="@font/pretendardbold" android:text="색상" android:textColor="@color/white" android:textSize="20sp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:fontFamily="@font/pretendardbold" android:text="@string/category_color" android:textColor="@color/white" android:textSize="20sp" />
                 <ImageView android:layout_width="20dp" android:layout_height="20dp" android:layout_gravity="center_vertical|end" android:layout_marginEnd="16dp" android:src="@drawable/outline_arrow_forward_ios_24" app:tint="@color/white" />
             </FrameLayout>
         </androidx.cardview.widget.CardView>

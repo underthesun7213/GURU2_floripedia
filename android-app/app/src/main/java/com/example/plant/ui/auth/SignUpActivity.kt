@@ -48,7 +48,7 @@ class SignUpActivity : AppCompatActivity() {
         if (isGranted) {
             openGallery()
         } else {
-            Toast.makeText(this, "갤러리 접근 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.permission_gallery_required), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -77,11 +77,11 @@ class SignUpActivity : AppCompatActivity() {
         binding.btnCheckId.setOnClickListener {
             val email = binding.etId.text.toString().trim()
             if (email.isEmpty()) {
-                binding.etId.error = "이메일을 입력해주세요"
+                binding.etId.error = getString(R.string.error_email_required)
                 return@setOnClickListener
             }
             if (!com.example.plant.util.InputValidator.isValidEmail(email)) {
-                binding.etId.error = "올바른 이메일 형식을 입력해주세요"
+                binding.etId.error = getString(R.string.error_email_invalid)
                 return@setOnClickListener
             }
             checkEmailExists(email)
@@ -148,31 +148,31 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun validateInput(nickname: String, email: String, password: String, passwordCheck: String): Boolean {
         if (nickname.isEmpty()) {
-            binding.etNickname.error = "닉네임을 입력해주세요"
+            binding.etNickname.error = getString(R.string.error_nickname_required)
             return false
         }
         if (!com.example.plant.util.InputValidator.isValidNickname(nickname)) {
-            binding.etNickname.error = "닉네임은 1-20자이며, 한글/영문/숫자만 사용 가능합니다"
+            binding.etNickname.error = getString(R.string.error_nickname_invalid)
             return false
         }
         if (email.isEmpty()) {
-            binding.etId.error = "이메일을 입력해주세요"
+            binding.etId.error = getString(R.string.error_email_required)
             return false
         }
         if (!com.example.plant.util.InputValidator.isValidEmail(email)) {
-            binding.etId.error = "올바른 이메일 형식을 입력해주세요"
+            binding.etId.error = getString(R.string.error_email_invalid)
             return false
         }
         if (password.isEmpty()) {
-            binding.etPw.error = "비밀번호를 입력해주세요"
+            binding.etPw.error = getString(R.string.error_password_required)
             return false
         }
         if (!com.example.plant.util.InputValidator.isValidPassword(password)) {
-            binding.etPw.error = "비밀번호는 6자 이상이어야 합니다"
+            binding.etPw.error = getString(R.string.error_password_too_short)
             return false
         }
         if (password != passwordCheck) {
-            binding.etPwCheck.error = "비밀번호가 일치하지 않습니다"
+            binding.etPwCheck.error = getString(R.string.error_password_mismatch)
             return false
         }
         return true
@@ -207,7 +207,7 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun showSuccessAndNavigate() {
-        Toast.makeText(this, "회원가입이 완료되었습니다", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.signup_complete), Toast.LENGTH_SHORT).show()
         // 로그아웃 후 로그인 화면으로 (로그인 흐름 유지)
         AppContainer.firebaseAuthManager.signOut()
         navigateToLogin()
@@ -266,10 +266,10 @@ class SignUpActivity : AppCompatActivity() {
             
             result.onSuccess { exists ->
                 if (exists) {
-                    binding.etId.error = "이미 사용 중인 이메일입니다"
-                    Toast.makeText(this@SignUpActivity, "이미 사용 중인 이메일입니다", Toast.LENGTH_SHORT).show()
+                    binding.etId.error = getString(R.string.error_email_in_use)
+                    Toast.makeText(this@SignUpActivity, getString(R.string.error_email_in_use), Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this@SignUpActivity, "사용 가능한 이메일입니다", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@SignUpActivity, getString(R.string.email_available), Toast.LENGTH_SHORT).show()
                 }
             }.onFailure { error ->
                 com.example.plant.util.ErrorHandler.handleApiError(

@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:fontFamily="@font/pretendardsemibold"
-            android:text="식물 사진 찍기"
+            android:text="@string/camera_title"
             android:textColor="@color/white"
             android:textSize="18sp" />
     </LinearLayout>
@@ -141,7 +141,7 @@
             android:layout_height="56dp"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
-            android:text="다시 찍기"
+            android:text="@string/retake_photo"
             android:textColor="@color/white"
             app:backgroundTint="#44FFFFFF"
             app:cornerRadius="28dp"
@@ -154,7 +154,7 @@
             android:layout_height="56dp"
             android:layout_weight="1"
             android:layout_marginStart="8dp"
-            android:text="검색하기"
+            android:text="@string/search"
             android:textColor="@color/white"
             app:backgroundTint="@color/button"
             app:cornerRadius="28dp" />

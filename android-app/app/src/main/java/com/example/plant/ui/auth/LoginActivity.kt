@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.plant.data.remote.TokenManager
+import com.example.plant.R
 import com.example.plant.databinding.ActivityLoginBinding
 import com.example.plant.di.AppContainer
 import com.example.plant.ui.home.MainActivity
@@ -60,11 +61,11 @@ class LoginActivity : AppCompatActivity() {
         binding.tvForgotPassword.setOnClickListener {
             val email = binding.etEmail.text.toString().trim()
             if (!com.example.plant.util.InputValidator.isNotEmpty(email)) {
-                binding.etEmail.error = "이메일을 입력해주세요"
+                binding.etEmail.error = getString(R.string.error_email_required)
                 return@setOnClickListener
             }
             if (!com.example.plant.util.InputValidator.isValidEmail(email)) {
-                binding.etEmail.error = "올바른 이메일 형식을 입력해주세요"
+                binding.etEmail.error = getString(R.string.error_email_invalid)
                 return@setOnClickListener
             }
             sendPasswordResetEmail(email)
@@ -73,19 +74,19 @@ class LoginActivity : AppCompatActivity() {
 
     private fun validateInput(email: String, password: String): Boolean {
         if (email.isEmpty()) {
-            binding.etEmail.error = "이메일을 입력해주세요"
+            binding.etEmail.error = getString(R.string.error_email_required)
             return false
         }
         if (!com.example.plant.util.InputValidator.isValidEmail(email)) {
-            binding.etEmail.error = "올바른 이메일 형식을 입력해주세요"
+            binding.etEmail.error = getString(R.string.error_email_invalid)
             return false
         }
         if (password.isEmpty()) {
-            binding.etPassword.error = "비밀번호를 입력해주세요"
+            binding.etPassword.error = getString(R.string.error_password_required)
             return false
         }
         if (!com.example.plant.util.InputValidator.isValidPassword(password)) {
-            binding.etPassword.error = "비밀번호는 6자 이상이어야 합니다"
+            binding.etPassword.error = getString(R.string.error_password_too_short)
             return false
         }
         return true
@@ -140,9 +141,9 @@ class LoginActivity : AppCompatActivity() {
             result.onSuccess {
                 // Toast 대신 AlertDialog를 띄워 사용자에게 명확하게 알림
                 androidx.appcompat.app.AlertDialog.Builder(this@LoginActivity)
-                    .setTitle("이메일 전송 완료")
-                    .setMessage("입력하신 이메일($email)로 비밀번호 재설정 링크를 보냈습니다. 이메일을 확인해 주세요.")
-                    .setPositiveButton("확인", null)
+                    .setTitle(getString(R.string.email_sent_title))
+                    .setMessage(getString(R.string.email_sent_message, email))
+                    .setPositiveButton(getString(R.string.confirm), null)
                     .show()
             }.onFailure { error ->
                 com.example.plant.util.ErrorHandler.handleApiError(

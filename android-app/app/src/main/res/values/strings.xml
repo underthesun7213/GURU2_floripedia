@@ -5,6 +5,7 @@
 
     <!-- 접근성 설명 -->
     <string name="desc_camera_button">식물 사진 촬영 및 검색</string>
+    <string name="desc_close">닫기</string>
 
     <!-- Firebase Google Sign-In Web Client ID -->
     <!-- TODO: Firebase Console에서 발급받은 Web Client ID로 교체하세요 -->
@@ -15,4 +16,133 @@
         <item>오래된순</item>
         <item>인기도순</item>
     </string-array>
+
+    <!-- 공통 -->
+    <string name="confirm">확인</string>
+    <string name="cancel">취소</string>
+    <string name="edit">편집</string>
+    <string name="search">검색하기</string>
+    <string name="info_not_available">정보 없음</string>
+
+    <!-- 로그인 -->
+    <string name="login_title">당신만의 식물도감, Floripedia\n자연을 천천히 기록합니다!</string>
+    <string name="hint_email">이메일</string>
+    <string name="hint_password">비밀번호</string>
+    <string name="forgot_password">비밀번호를 잊으셨나요?</string>
+    <string name="login">로그인</string>
+    <string name="not_member_yet">아직 회원이 아니신가요?\u0020</string>
+    <string name="sign_up">회원가입</string>
+
+    <!-- 회원가입 -->
+    <string name="label_nickname">닉네임</string>
+    <string name="hint_nickname">닉네임</string>
+    <string name="label_email">이메일</string>
+    <string name="hint_email_example">example@email.com</string>
+    <string name="check_duplicate">중복확인</string>
+    <string name="helper_email_format">이메일 형식으로 입력해주세요</string>
+    <string name="label_password">비밀번호</string>
+    <string name="hint_password_confirm">비밀번호 확인</string>
+    <string name="helper_password_format">6~20자/영문 대문자, 소문자, 숫자, 특수문자 중 2가지 이상 조합</string>
+    <string name="already_have_account">이미 계정이 있으신가요?\u0020</string>
+    <string name="sign_up_submit">가입하기</string>
+
+    <!-- 탐색 -->
+    <string name="browse_title">당신의 이야기를 들려주세요</string>
+    <string name="browse_subtitle">당신의 이야기에 어울리는 식물을 찾아드릴게요</string>
+    <string name="hint_browse_example">예) 오랜만에 만나는 친구에게 선물할 꽃을 찾고 있어요. 우정과 감사의 의미가 담긴 꽃이면 좋겠어요.</string>
+    <string name="browse_search">탐색하기</string>
+
+    <!-- 꽃갈피(북마크) -->
+    <string name="bookmark_title">꽃갈피</string>
+    <string name="bookmark_total_count_default">총 식물 갯수: 0개</string>
+    <string name="bookmark_total_count_format">총 식물 갯수: %d개</string>
+    <string name="bookmark_recommended_default">추천 계절 식물: -</string>
+    <string name="bookmark_recommended_format">추천 계절 식물: %s</string>
+    <string name="save_to_bookmark">꽃갈피에 저장</string>
+    <string name="already_in_bookmark">이미 꽃갈피에 있어요</string>
+    <string name="bookmark_removed">꽃갈피에서 제거되었습니다</string>
+
+    <!-- 카테고리 -->
+    <string name="category_flower_language">꽃말</string>
+    <string name="category_scent">향기</string>
+    <string name="category_blooming_season">개화시기</string>
+    <string name="category_color">색상</string>
+    <string name="category_plant_classification">식물분류</string>
+
+    <!-- 카메라 -->
+    <string name="camera_title">식물 사진 찍기</string>
+    <string name="retake_photo">다시 찍기</string>
+
+    <!-- 식물 상세 -->
+    <string name="story_history">역사적 이야기</string>
+    <string name="story_another">또 다른 이야기</string>
+    <string name="default_plant_description">%s은 아름다운 식물입니다</string>
+    <string name="plant_added_to_collection">새로운 식물이 도감에 추가되었습니다!</string>
+
+    <!-- 검색 -->
+    <string name="hint_search_plant">식물 검색하기</string>
+    <string name="recent_search">최근 검색 식물</string>
+    <string name="hint_search_by_name">식물 이름, 꽃말로 검색하기</string>
+
+    <!-- 마이페이지 -->
+    <string name="mypage_title">마이페이지</string>
+    <string name="recent_viewed_plants">최근 본 식물</string>
+    <string name="no_recent_plants">아직 본 식물이 없습니다</string>
+    <string name="change_password">비밀번호 변경</string>
+    <string name="logout">로그아웃</string>
+    <string name="delete_account">회원 탈퇴</string>
+
+    <!-- 레벨 시스템 -->
+    <string name="level_title_format">%s Lv.%d</string>
+    <string name="level_exp_format">EXP %d / %d</string>
+    <string name="level_exp_max">EXP MAX</string>
+    <string name="no_image_report_hint">아직 이 식물의 사진을 준비 중이에요. 멋진 사진이 있다면 제보해 주세요 🙏</string>
+    <string name="plant_not_found">더 이상 제공되지 않는 식물이에요</string>
+    <string name="discovered_plants">발견한 식물</string>
+    <string name="explore_records">탐험 기록</string>
+    <string name="discovered_count_format">%d종</string>
+    <string name="viewed_count_format">%d회</string>
+
+    <!-- 프로필 편집 -->
+    <string name="profile_edit_title">프로필 편집</string>
+    <string name="hint_enter_nickname">닉네임을 입력하세요</string>
+    <string name="label_id">아이디</string>
+    <string name="delete_account_short">회원탈퇴</string>
+    <string name="save_changes">변경하기</string>
+
+    <!-- 유효성 검사 에러 메시지 -->
+    <string name="error_email_required">이메일을 입력해주세요</string>
+    <string name="error_email_invalid">올바른 이메일 형식을 입력해주세요</string>
+    <string name="error_password_required">비밀번호를 입력해주세요</string>
+    <string name="error_password_too_short">비밀번호는 6자 이상이어야 합니다</string>
+    <string name="error_nickname_required">닉네임을 입력해주세요</string>
+    <string name="error_nickname_invalid">닉네임은 1-20자이며, 한글/영문/숫자만 사용 가능합니다</string>
+    <string name="error_password_mismatch">비밀번호가 일치하지 않습니다</string>
+    <string name="error_email_in_use">이미 사용 중인 이메일입니다</string>
+
+    <!-- Toast/Dialog 메시지 -->
+    <string name="email_available">사용 가능한 이메일입니다</string>
+    <string name="signup_complete">회원가입이 완료되었습니다</string>
+    <string name="permission_gallery_required">갤러리 접근 권한이 필요합니다.</string>
+    <string name="email_sent_title">이메일 전송 완료</string>
+    <string name="email_sent_message">입력하신 이메일(%s)로 비밀번호 재설정 링크를 보냈습니다. 이메일을 확인해 주세요.</string>
+
+    <!-- 계절 -->
+    <string name="season_spring">봄</string>
+    <string name="season_summer">여름</string>
+    <string name="season_fall">가을</string>
+    <string name="season_winter">겨울</string>
+
+    <!-- 스토리 장르 -->
+    <string name="genre_myth">신화</string>
+    <string name="genre_science">과학</string>
+    <string name="genre_history">역사</string>
+    <string name="genre_art">예술</string>
+    <string name="genre_episode">관련 일화</string>
+
+    <!-- Detail2 스토리 장르 (긴 형태) -->
+    <string name="genre_myth_story">신화적 이야기</string>
+    <string name="genre_science_story">과학적 이야기</string>
+    <string name="genre_history_story">역사적 이야기</string>
+    <string name="genre_art_story">예술 이야기</string>
 </resources>
