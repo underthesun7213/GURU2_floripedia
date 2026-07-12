@@ -140,6 +140,7 @@ class Plant(CamelCaseModel):
 
     season: Season                              # 대표 계절 (Enum 사용)
     blooming_months: List[int]                  # 개화 시기 (1~12월 숫자 리스트)
+    season_description: Optional[str] = None    # 개화시기 서술 (상세 화면 계절 뱃지 아래 표시)
     search_keywords: List[str]                  # 검색 최적화를 위한 키워드 뭉치
     popularity_score: int = 0                   # 인기도 점수
 
@@ -270,9 +271,28 @@ class PlantExploreDto(CamelCaseModel):
 # 7. 이미지 기반 식물 검색 응답 DTO(추후 게이미피케이션 활용)
 # ==========================================
 
-class PlantSearchResultDto(Plant): 
+class PlantSearchResultDto(Plant):
     is_newly_created: bool = Field(..., description="DB에 새로 생성된 식물인지 여부")
     is_favorite: bool = Field(False, description="찜 여부")
+    model_config = ConfigDict(
+        populate_by_name=True,
+        use_enum_values=True,
+        from_attributes=True
+    )
+
+# ==========================================
+# 8. 인기 스토리용 DTO
+# ==========================================
+
+class PopularStoryDto(CamelCaseModel):
+    """인기 스토리 목록용 경량 DTO (Lazy Aggregation 결과)"""
+    plant_id: str
+    plant_name: str
+    image_url: Optional[str] = None
+    genre: str
+    content: str
+    popularity_score: int = 0
+
     model_config = ConfigDict(
         populate_by_name=True,
         use_enum_values=True,

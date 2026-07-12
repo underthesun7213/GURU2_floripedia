@@ -48,7 +48,7 @@ data class PlantDetailDto(
     val horticulture: HorticultureDto,
 
     @SerializedName("habitat")
-    val habitat: String,
+    val habitat: String? = "",
 
     @SerializedName("flowerInfo")
     val flowerInfo: FlowerInfoDto,
@@ -66,7 +66,10 @@ data class PlantDetailDto(
     val season: String,
 
     @SerializedName("bloomingMonths")
-    val bloomingMonths: List<Int>,
+    val bloomingMonths: List<Int>? = emptyList(),
+
+    @SerializedName("seasonDescription")
+    val seasonDescription: String? = null,
 
     @SerializedName("searchKeywords")
     val searchKeywords: List<String>,
@@ -103,7 +106,7 @@ data class HorticultureDto(
     val categoryGroup: String,
 
     @SerializedName("usage")
-    val usage: List<String>,
+    val usage: List<String>? = emptyList(),
 
     @SerializedName("management")
     val management: String?,
@@ -203,6 +206,29 @@ data class PlantSearchResultDto(
 
     @SerializedName("isFavorite")
     val isFavorite: Boolean
+)
+
+/**
+ * 인기 스토리 DTO
+ */
+data class PopularStoryDto(
+    @SerializedName("plantId")
+    val plantId: String,
+
+    @SerializedName("plantName")
+    val plantName: String,
+
+    @SerializedName("imageUrl")
+    val imageUrl: String?,
+
+    @SerializedName("genre")
+    val genre: String,
+
+    @SerializedName("content")
+    val content: String,
+
+    @SerializedName("popularityScore")
+    val popularityScore: Int = 0
 )
 
 /**
