@@ -25,6 +25,15 @@ LEVEL_THRESHOLDS = [
 MAX_LEVEL = len(LEVEL_THRESHOLDS)  # 10
 
 
+def compute_level(total_exp: int) -> int:
+    """누적 경험치로 레벨(1~MAX_LEVEL) 계산. EXP/레벨 계산 단일 소스."""
+    level = 1
+    for lv, _, threshold in LEVEL_THRESHOLDS:
+        if total_exp >= threshold:
+            level = lv
+    return level
+
+
 def compute_level_info(total_exp: int, level: int, discovered_count: int = 0) -> dict:
     """레벨 정보를 계산하여 LevelInfo dict 반환"""
     # 레벨 범위 방어 (1~MAX_LEVEL)

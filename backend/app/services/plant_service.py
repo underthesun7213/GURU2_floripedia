@@ -9,7 +9,7 @@ from typing import List, Optional
 
 from app.repositories import PlantRepository, UserRepository
 from app.services.gemini_service import GeminiService, gemini_service
-from app.schemas.user import LEVEL_THRESHOLDS
+from app.schemas.user import compute_level
 from app.cache import CacheBackend, get_cache, make_key, make_list_key
 
 # 로거 설정
@@ -55,11 +55,7 @@ class PlantService:
             return
         current_exp = user.get("totalExp", 0)
         new_exp = current_exp + amount
-        # 레벨 계산
-        new_level = 1
-        for lv, _, threshold in LEVEL_THRESHOLDS:
-            if new_exp >= threshold:
-                new_level = lv
+        new_level = compute_level(new_exp)  # 단일 소스 (schemas.user)
         await self.user_repo.add_exp(user_id, amount, new_level)
         logger.info(f"[_award_exp] user={user_id}, +{amount} ({reason}), total={new_exp}, lv={new_level}")
 

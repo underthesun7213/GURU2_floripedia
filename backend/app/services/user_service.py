@@ -9,7 +9,7 @@ from typing import List, Optional
 
 from app.repositories import UserRepository, PlantRepository
 from app.services.firebase_service import firebase_storage
-from app.schemas.user import LEVEL_THRESHOLDS, compute_level_info
+from app.schemas.user import LEVEL_THRESHOLDS, compute_level, compute_level_info
 
 # 로거 설정
 logger = logging.getLogger(__name__)
@@ -24,13 +24,8 @@ if not logger.handlers:
     logger.addHandler(handler)
 
 
-def _compute_level(total_exp: int) -> int:
-    """누적 경험치로 레벨 계산 (1~10)"""
-    level = 1
-    for lv, _, threshold in LEVEL_THRESHOLDS:
-        if total_exp >= threshold:
-            level = lv
-    return level
+# 레벨 계산은 단일 소스(schemas.user.compute_level)를 사용한다.
+_compute_level = compute_level
 
 
 class UserService:
