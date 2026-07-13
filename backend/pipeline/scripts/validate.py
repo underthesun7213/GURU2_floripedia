@@ -21,11 +21,14 @@ _REPO_ROOT = _HERE.parents[3]
 DEFAULT_DATA = _REPO_ROOT / 'backend' / 'data' / 'floripedia_v2.json'
 REPORT_PATH = _HERE.parent / 'validation_report.json'
 
-
-VALID_GENRES = {'SCIENCE', 'HISTORY', 'EPISODE', 'ART', 'MYTH'}
-VALID_COLOR_GROUPS = {'빨강/분홍', '푸른색', '백색/미색', '노랑/주황', '갈색/검정', '초록/연두'}
-VALID_SCENT_GROUPS = {'은은·차분', '싱그러운·시원', '달콤·화사', '무향'}
-VALID_FLOWER_GROUPS = {'사랑/고백', '감사/존경', '행복/즐거움', '위로/슬픔', '이별/그리움'}
+# 열거값 단일 소스(app/core/enums.py)에서 가져온다 — 하드코딩 중복 제거
+sys.path.insert(0, str(_REPO_ROOT / 'backend'))
+from app.core.enums import (  # noqa: E402
+    STORY_GENRES as VALID_GENRES,
+    COLOR_GROUPS as VALID_COLOR_GROUPS,
+    SCENT_GROUPS as VALID_SCENT_GROUPS,
+    FLOWER_GROUPS as VALID_FLOWER_GROUPS,
+)
 
 
 def check_item(p):
