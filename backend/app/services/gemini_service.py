@@ -18,6 +18,33 @@ import io
 
 from app.core.config import settings
 
+# ==========================================================
+# 구조화 출력(Structured Output) 스키마
+# google-genai response_schema로 모델이 스키마에 맞는 JSON을 보장하게 한다
+# → 마크다운 펜스 벗기기·파싱 실패·리스트/객체 흔들림 제거.
+# (주의: Google Search 그라운딩과는 동시 사용 불가 → grounded 경로에는 미적용)
+# ==========================================================
+PLANT_IDENTITY_SCHEMA = types.Schema(
+    type=types.Type.OBJECT,
+    properties={
+        "name": types.Schema(type=types.Type.STRING),
+        "englishName": types.Schema(type=types.Type.STRING),
+        "scientificName": types.Schema(type=types.Type.STRING),
+    },
+    required=["name", "scientificName"],
+)
+
+IS_PLANT_SCHEMA = types.Schema(
+    type=types.Type.OBJECT,
+    properties={
+        "isPlant": types.Schema(type=types.Type.BOOLEAN),
+        "confidence": types.Schema(
+            type=types.Type.STRING, enum=["high", "medium", "low"]
+        ),
+    },
+    required=["isPlant"],
+)
+
 # 로거 설정
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -42,14 +69,17 @@ class GeminiService:
         
         logger.info("[GeminiService] 초기화 완료 (Google Gen AI SDK 적용)")
 
-    async def _generate_content(self, parts: list, is_grounded: bool = False, is_json: bool = False, model: str = None) -> Optional[Any]:
+    async def _generate_content(self, parts: list, is_grounded: bool = False, is_json: bool = False, model: str = None, response_schema: Any = None) -> Optional[Any]:
         try:
             tools = [types.Tool(google_search=types.GoogleSearch())] if is_grounded else None
-            mime_type = "application/json" if (is_json and not is_grounded) else "text/plain"
+            use_json = is_json and not is_grounded
+            mime_type = "application/json" if use_json else "text/plain"
 
             config = types.GenerateContentConfig(
                 tools=tools,
-                response_mime_type=mime_type
+                response_mime_type=mime_type,
+                # 그라운딩과 동시 불가하므로 JSON 모드일 때만 스키마 강제
+                response_schema=response_schema if use_json else None,
             )
 
             response = self.client.models.generate_content(
@@ -81,7 +111,9 @@ class GeminiService:
     async def is_plant_image(self, image_data: bytes) -> bool:
         prompt = "Determine if this image is a plant. Return JSON: {\"isPlant\": bool, \"confidence\": \"high\"|\"medium\"|\"low\"}"
         image = Image.open(io.BytesIO(image_data))
-        result = await self._generate_content([prompt, image], is_json=True)
+        result = await self._generate_content(
+            [prompt, image], is_json=True, response_schema=IS_PLANT_SCHEMA
+        )
         
         if isinstance(result, list):
             result = result[0] if result else {}
@@ -94,7 +126,9 @@ class GeminiService:
         prompt = """Identify this plant. Return JSON: {"name": "..", "englishName": "..", "scientificName": ".."}
 IMPORTANT: scientificName MUST be the FULL binomial name (genus + species), e.g. "Rosa canina", NOT just "Rosa"."""
         image = Image.open(io.BytesIO(image_data))
-        result = await self._generate_content([prompt, image], is_json=True)
+        result = await self._generate_content(
+            [prompt, image], is_json=True, response_schema=PLANT_IDENTITY_SCHEMA
+        )
 
         if isinstance(result, list):
             result = result[0] if result else None
@@ -111,7 +145,9 @@ IMPORTANT: scientificName MUST be the FULL binomial name (genus + species), e.g.
         Return JSON: {{"name": "Korean name", "englishName": "English name", "scientificName": "Scientific name"}}
         IMPORTANT: scientificName MUST be the FULL binomial name (genus + species), e.g. "Lavandula angustifolia", NOT just "Lavandula".
         """
-        result = await self._generate_content([prompt], is_json=True)
+        result = await self._generate_content(
+            [prompt], is_json=True, response_schema=PLANT_IDENTITY_SCHEMA
+        )
 
         if isinstance(result, list):
             result = result[0] if result else None
