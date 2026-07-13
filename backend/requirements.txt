@@ -17,6 +17,9 @@ pydantic-settings==2.5.2
 motor==3.6.0
 certifi>=2024.0.0
 
+# Cache (인메모리 캐시 계층; 추후 Redis 교체 대비 추상화)
+cachetools==7.0.5
+
 # AI & ML  (신 SDK: 코드가 `from google import genai` / genai.Client 사용)
 google-genai==1.65.0
 

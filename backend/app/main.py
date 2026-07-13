@@ -16,6 +16,7 @@ from firebase_admin import credentials
 from app.api.v1 import api_router
 from app.core.config import settings
 from app.db.session import mongodb
+from app.middleware import CacheHeadersMiddleware
 
 
 # ==========================================
@@ -70,6 +71,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 전역 읽기 응답에 Cache-Control/ETag 부여 + 304 처리
+app.add_middleware(CacheHeadersMiddleware)
 
 # Assets 폴더 마운트 (프로필 기본 이미지 등 서빙용)
 if not os.path.exists("assets"):

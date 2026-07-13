@@ -51,6 +51,14 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Floripedia API"
     API_V1_STR: str = "/api/v1"
 
+    # === Cache (인메모리; 추후 Redis 교체 대비 추상화) ===
+    CACHE_ENABLED: bool = True          # False면 캐시 완전 우회(디버깅용)
+    CACHE_TTL: int = 3600               # 기본 캐시 TTL(초)
+    CACHE_NEGATIVE_TTL: int = 60        # 존재하지 않는 리소스(None) 캐시 TTL(초)
+    CACHE_MAXSIZE: int = 2048           # 최대 캐시 엔트리 수
+    CACHE_SCHEMA_VERSION: int = 1       # 캐시 키 스키마 버전 (일괄 무효화용)
+    CACHE_INVALIDATE_TOKEN: str = ""    # 관리자 무효화 토큰 (빈값이면 무효화 엔드포인트 거부)
+
     # === Security ===
     BACKEND_CORS_ORIGINS: List[str] = [
         "http://10.0.2.2:8000",   # Android 에뮬레이터

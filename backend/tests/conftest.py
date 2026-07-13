@@ -34,6 +34,20 @@ from app.repositories.user_repository import UserRepository
 
 
 # ============================================
+# 캐시 격리: 매 테스트 전 모듈 싱글톤 캐시 비우기
+# (서비스가 모듈 싱글톤 캐시를 공유하므로 테스트 간 오염 방지)
+# ============================================
+@pytest.fixture(autouse=True)
+def _clear_cache():
+    from app.cache import get_cache
+    c = get_cache()
+    c._store.clear()
+    c._locks.clear()
+    c._lock_users.clear()
+    yield
+
+
+# ============================================
 # MongoDB Mock Fixtures
 # ============================================
 

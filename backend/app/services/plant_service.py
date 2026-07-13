@@ -10,6 +10,7 @@ from typing import List, Optional
 from app.repositories import PlantRepository, UserRepository
 from app.services.gemini_service import GeminiService, gemini_service
 from app.schemas.user import LEVEL_THRESHOLDS
+from app.cache import CacheBackend, get_cache, make_key, make_list_key
 
 # 로거 설정
 logger = logging.getLogger(__name__)
@@ -35,11 +36,14 @@ class PlantService:
         plant_repo: PlantRepository,
         user_repo: UserRepository,
         gemini_svc: GeminiService = None,
+        cache: CacheBackend = None,
     ):
         self.plant_repo = plant_repo
         self.user_repo = user_repo
         # 싱글톤 인스턴스 사용 (메모리 효율적)
         self.gemini = gemini_svc or gemini_service
+        # 캐시 백엔드 (기본: 모듈 싱글톤; 테스트/무효화에서 주입 가능)
+        self.cache = cache or get_cache()
 
     # =========================================================
     # 0. EXP 헬퍼
@@ -224,9 +228,14 @@ class PlantService:
         skip: int = 0,
         limit: int = 10,
     ) -> List[dict]:
-        """인기 스토리 목록 조회 (Lazy Aggregation)"""
+        """인기 스토리 목록 조회 (Lazy Aggregation). 전역 데이터 → 캐시 대상."""
         logger.debug(f"[get_popular_stories] skip={skip}, limit={limit}")
-        result = await self.plant_repo.get_popular_stories(skip=skip, limit=limit)
+        key = make_list_key("stories-popular", {"skip": skip, "limit": limit})
+
+        async def loader():
+            return await self.plant_repo.get_popular_stories(skip=skip, limit=limit)
+
+        result = await self.cache.get_or_load(key, loader)
         logger.debug(f"[get_popular_stories] 결과: {len(result)}개")
         return result
 
@@ -250,23 +259,34 @@ class PlantService:
     ) -> List[dict]:
         """식물 목록 조회 (필터링 + 페이지네이션)"""
         logger.debug(f"[get_plants] skip={skip}, limit={limit}, sort_by={sort_by}")
-        
+
         order = 1 if sort_order == "asc" else -1
-        result = await self.plant_repo.get_list(
-            season=season, 
-            blooming_month=blooming_month, 
-            category_group=category_group, 
-            color_group=color_group, 
-            scent_group=scent_group, 
-            flower_group=flower_group, 
-            story_genre=story_genre, 
-            keyword=keyword, 
-            skip=skip, 
-            limit=limit, 
-            sort_by=sort_by, 
-            sort_order=order
-        )
-        
+        # 전역 목록 → 캐시 대상 (파라미터 정렬 키). 인기순 $rand 셔플은 TTL 동안 고정됨.
+        key = make_list_key("species", {
+            "season": season, "blooming_month": blooming_month,
+            "category_group": category_group, "color_group": color_group,
+            "scent_group": scent_group, "flower_group": flower_group,
+            "story_genre": story_genre, "keyword": keyword,
+            "skip": skip, "limit": limit, "sort_by": sort_by, "sort_order": order,
+        })
+
+        async def loader():
+            return await self.plant_repo.get_list(
+                season=season,
+                blooming_month=blooming_month,
+                category_group=category_group,
+                color_group=color_group,
+                scent_group=scent_group,
+                flower_group=flower_group,
+                story_genre=story_genre,
+                keyword=keyword,
+                skip=skip,
+                limit=limit,
+                sort_by=sort_by,
+                sort_order=order,
+            )
+
+        result = await self.cache.get_or_load(key, loader)
         logger.debug(f"[get_plants] 결과: {len(result)}개")
         return result
 
@@ -311,17 +331,27 @@ class PlantService:
         story_genre: Optional[str] = None, 
         keyword: Optional[str] = None
     ) -> int:
-        """필터 조건에 맞는 식물 개수"""
-        count = await self.plant_repo.count(
-            season=season, 
-            blooming_month=blooming_month, 
-            category_group=category_group, 
-            color_group=color_group, 
-            scent_group=scent_group, 
-            flower_group=flower_group, 
-            story_genre=story_genre, 
-            keyword=keyword
-        )
+        """필터 조건에 맞는 식물 개수. 전역 → 캐시 대상."""
+        key = make_list_key("species-count", {
+            "season": season, "blooming_month": blooming_month,
+            "category_group": category_group, "color_group": color_group,
+            "scent_group": scent_group, "flower_group": flower_group,
+            "story_genre": story_genre, "keyword": keyword,
+        })
+
+        async def loader():
+            return await self.plant_repo.count(
+                season=season,
+                blooming_month=blooming_month,
+                category_group=category_group,
+                color_group=color_group,
+                scent_group=scent_group,
+                flower_group=flower_group,
+                story_genre=story_genre,
+                keyword=keyword,
+            )
+
+        count = await self.cache.get_or_load(key, loader)
         logger.debug(f"[get_plants_count] 결과: {count}개")
         return count
 
@@ -329,18 +359,32 @@ class PlantService:
     # 4. 상세 조회
     # =========================================================
     async def get_plant_detail(self, plant_id: str, user_id: Optional[str] = None) -> Optional[dict]:
-        """식물 상세 조회 (조회수 증가 포함)"""
+        """
+        식물 상세 조회 (조회수 증가 포함).
+
+        [D2-A] 전역 문서(get_by_id)만 캐시한다. 조회수 증가·찜여부·EXP는 캐시 밖.
+        - 캐시된 문서는 공유 객체이므로 반드시 복사 후 per-user 필드(is_favorite)를 주입한다.
+        - 존재하지 않으면 negative 캐시(None)로 반복 조회를 막는다.
+        """
         logger.debug(f"[get_plant_detail] plant_id={plant_id}, user_id={user_id}")
-        
-        plant = await self.plant_repo.get_by_id(plant_id)
-        if not plant:
+
+        key = make_key("species", plant_id)
+
+        async def loader():
+            return await self.plant_repo.get_by_id(plant_id)
+
+        cached = await self.cache.get_or_load(key, loader)
+        if cached is None:
             logger.warning(f"[get_plant_detail] 식물을 찾을 수 없음: {plant_id}")
             return None
-            
-        # 조회수 증가
+
+        # 조회수 증가 (캐시 히트/미스와 무관하게 항상 — 부수효과는 캐시 밖)
         await self.plant_repo.increment_view_count(plant_id)
         logger.debug(f"[get_plant_detail] 조회수 증가: {plant_id}")
-        
+
+        # 캐시 원본 오염 방지: 얕은 복사 후 top-level is_favorite만 주입
+        plant = dict(cached)
+
         # 찜 여부 확인
         is_favorite = False
         if user_id:
