@@ -36,9 +36,12 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // TODO(배포): 릴리스 keystore 설정 후 signingConfig 지정 (Play Store 업로드용).
+            //            현재는 미서명 — R8/축소 검증은 완료됨(debug 서명으로 스모크 테스트 통과).
         }
         debug {
             zipAlignEnabled true
