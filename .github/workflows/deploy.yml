@@ -1,0 +1,47 @@
+name: Deploy backend to EC2
+
+# main에 backend 변경이 push되면: 테스트 → SSH로 EC2 pull + 무중단 reload + 헬스체크
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch: {}   # 수동 실행도 허용
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install deps
+        run: pip install -r backend/requirements.txt
+      - name: Run tests
+        working-directory: backend
+        run: pytest -q --no-cov
+
+  deploy:
+    needs: test           # 테스트 통과해야 배포
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH deploy (pull + graceful reload + healthcheck)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}       # Elastic IP 또는 도메인
+          username: ${{ secrets.EC2_USER }}   # 예: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}     # EC2 접속 개인키(pem 내용)
+          script: |
+            set -e
+            cd ~/GURU2_floripedia
+            git pull --ff-only origin main
+            cd backend
+            .venv/bin/pip install -q -r requirements.txt
+            # 무중단: 워커 graceful 교체 (reload 실패 시 restart 폴백)
+            sudo systemctl reload floripedia || sudo systemctl restart floripedia
+            # 헬스체크 (실패하면 워크플로 실패로 표시)
+            for i in $(seq 1 10); do
+              curl -fsS http://127.0.0.1:8000/health && break || sleep 2
+            done

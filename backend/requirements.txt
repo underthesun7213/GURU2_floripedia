@@ -1,6 +1,7 @@
 # FastAPI & ASGI Server
 fastapi==0.115.0
 uvicorn[standard]==0.32.0
+gunicorn==23.0.0        # 프로덕션 프로세스 매니저(무중단 reload). deploy/gunicorn.conf.py 참고
 
 # Authentication & Security
 python-jose[cryptography]==3.3.0

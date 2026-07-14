@@ -1,0 +1,20 @@
+# Nginx 리버스 프록시 예시 (443 HTTPS 종료 → 내부 gunicorn 8000)
+# 설치: /etc/nginx/sites-available/floripedia 로 복사 후 sites-enabled에 심볼릭 링크,
+#       server_name을 실제 도메인으로 바꾸고 `sudo nginx -t && sudo systemctl reload nginx`.
+# HTTPS: sudo certbot --nginx -d api.example.com  (Let's Encrypt가 443/인증서 자동 구성)
+
+server {
+    listen 80;
+    server_name api.example.com;   # TODO: 실제 도메인
+
+    client_max_body_size 10M;      # 이미지 업로드 여유
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 120s;   # AI/이미지 요청 대비
+    }
+}

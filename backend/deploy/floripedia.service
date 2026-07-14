@@ -1,0 +1,20 @@
+# systemd 유닛: Floripedia FastAPI (gunicorn)
+# 설치: sudo cp backend/deploy/floripedia.service /etc/systemd/system/
+#       sudo systemctl daemon-reload && sudo systemctl enable --now floripedia
+# 경로/User는 실제 서버에 맞게 수정할 것 (아래는 ubuntu 유저 기준 예시).
+[Unit]
+Description=Floripedia FastAPI (gunicorn/uvicorn)
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/GURU2_floripedia/backend
+EnvironmentFile=/home/ubuntu/GURU2_floripedia/backend/.env
+ExecStart=/home/ubuntu/GURU2_floripedia/backend/.venv/bin/gunicorn app.main:app -c deploy/gunicorn.conf.py
+# 무중단 재적용: 워커 graceful 교체
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
