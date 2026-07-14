@@ -9,6 +9,7 @@ class PlantRepository:
 
     def __init__(self, db: AsyncIOMotorDatabase):
         self.collection = db["plants"]
+        self.db_config = db["config"]   # 큐레이션 등 설정 문서
 
     async def get_by_id(self, plant_id: str) -> Optional[dict]:
         """ID로 식물 상세 조회"""
@@ -172,22 +173,15 @@ class PlantRepository:
             "horticulture.preContent": 1,
         }
 
-        # 인기도 정렬 시 같은 점수끼리 랜덤 셔플 (이름/id 정렬 편향 방지)
+        # 결정적 정렬 (캐시·재현 정합). 인기도 정렬 시 동점은 _id로 안정 정렬.
+        # (과거 $rand 셔플은 매 호출 결과가 달라져 캐시/재현이 불가했음)
+        sort_spec = [(sort_by, sort_order)]
         if sort_by == "popularity_score":
-            pipeline = [
-                {"$match": query},
-                {"$project": {**projection, "popularity_score": 1}},
-                {"$addFields": {"_rand": {"$rand": {}}}},
-                {"$sort": {"popularity_score": sort_order, "_rand": 1}},
-                {"$skip": skip},
-                {"$limit": limit},
-                {"$project": {"_rand": 0}},
-            ]
-            return await self.collection.aggregate(pipeline).to_list(length=limit)
+            sort_spec.append(("_id", 1))
 
         cursor = (
             self.collection.find(query, projection)
-            .sort(sort_by, sort_order)
+            .sort(sort_spec)
             .skip(skip)
             .limit(limit)
         )
@@ -274,9 +268,8 @@ class PlantRepository:
                     {"$expr": {"$eq": ["$_storyIdx", "$_firstSciIdx"]}}
                 ]
             }},
-            # 4. 인기도 내림차순 + 동점 시 랜덤 셔플
-            {"$addFields": {"_rand": {"$rand": {}}}},
-            {"$sort": {"popularity_score": -1, "_rand": 1}},
+            # 4. 인기도 내림차순 (동점은 _id로 안정 정렬 — 결정적, 캐시 정합)
+            {"$sort": {"popularity_score": -1, "_id": 1}},
             # 5. 페이지네이션
             {"$skip": skip},
             {"$limit": limit},
@@ -292,6 +285,63 @@ class PlantRepository:
             }},
         ]
         return await self.collection.aggregate(pipeline).to_list(length=limit)
+
+    # ==========================================
+    # 큐레이션 인기 스토리 (편집자가 고른 순서 있는 리스트)
+    # config 컬렉션의 단일 문서에 [{plantId, genre}, ...] 로 저장
+    # ==========================================
+    CURATED_STORIES_ID = "curated_popular_stories"
+
+    async def get_curated_stories(self, skip: int = 0, limit: int = 10) -> Optional[List[dict]]:
+        """
+        큐레이션된 인기 스토리 반환(순서 보존). 큐레이션이 없으면 None.
+        각 {plantId, genre}에 대해 해당 식물의 그 장르 스토리를 찾아 DTO 형태로 만든다.
+        """
+        cfg = await self.db_config.find_one({"_id": self.CURATED_STORIES_ID})
+        items = (cfg or {}).get("items") or []
+        if not items:
+            return None
+
+        page = items[skip: skip + limit]
+        if not page:
+            return []
+
+        # 페이지에 등장하는 식물만 한 번에 조회
+        ids = list({it["plantId"] for it in page})
+        plants = {
+            p["_id"]: p
+            async for p in self.collection.find(
+                {"_id": {"$in": ids}},
+                {"name": 1, "imageUrl": 1, "stories": 1, "popularity_score": 1},
+            )
+        }
+
+        result: List[dict] = []
+        for it in page:
+            p = plants.get(it["plantId"])
+            if not p:
+                continue  # 삭제된 식물은 건너뜀
+            story = next((s for s in p.get("stories", []) if s.get("genre") == it["genre"]), None)
+            if not story:
+                continue
+            result.append({
+                "plantId": p["_id"],
+                "plantName": p.get("name"),
+                "imageUrl": p.get("imageUrl"),
+                "genre": story.get("genre"),
+                "content": story.get("content"),
+                "popularityScore": p.get("popularity_score", 0),
+            })
+        return result
+
+    async def set_curated_stories(self, items: List[dict]) -> int:
+        """큐레이션 리스트 저장(덮어쓰기). 저장한 항목 수 반환."""
+        await self.db_config.replace_one(
+            {"_id": self.CURATED_STORIES_ID},
+            {"_id": self.CURATED_STORIES_ID, "items": items},
+            upsert=True,
+        )
+        return len(items)
 
     async def get_for_recommendation(self, limit: int = 50) -> List[dict]:
         """

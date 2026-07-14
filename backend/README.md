@@ -79,3 +79,21 @@ pytest tests/test_cache.py tests/test_cache_integration.py -q
 ```
 히트/미스, TTL 만료, stampede(동시 N요청 → 로더 1회), negative caching,
 무효화, `CACHE_ENABLED=false` 우회, HTTP 헤더/ETag·304를 검증한다.
+
+## ⭐ 인기 스토리 큐레이션
+
+`GET /plants/stories/popular`는 **편집자가 고른 순서 있는 리스트(큐레이션)** 를 우선 사용하고,
+없으면 알고리즘(인기순) 폴백. 둘 다 **결정적**이라 캐시와 정합(과거 `$rand` 셔플 제거됨).
+
+- 저장 위치: `config` 컬렉션의 `curated_popular_stories` 문서 → `items: [{plantId, genre}, ...]`
+- **초기 시드**: `python scripts/seed_curated_stories.py [개수]` (카테고리 다양성 + 이미지·스토리
+  보유 + 인기순 기준 자동 구성. `--dry`로 미리보기)
+- **갱신(관리자)**:
+  ```bash
+  curl -X POST http://<host>/api/v1/admin/curated/stories \
+       -H "X-Admin-Token: $CACHE_INVALIDATE_TOKEN" -H "Content-Type: application/json" \
+       -d '[{"plantId":"266","genre":"EPISODE"}, {"plantId":"1","genre":"MYTH"}]'
+  ```
+  저장 후 스토리 캐시(`stories-popular`)를 자동 무효화한다. 응답 스키마(`PopularStoryDto`)는 불변.
+
+> 시간 감쇠(decay) 랭킹은 이벤트 타임스탬프 스키마가 필요해 현재는 미도입(신호가 쌓이면 재검토).

@@ -385,8 +385,9 @@ async def test_app(mock_db_full):
     app.dependency_overrides[_gcui] = override_current_user_id
     app.dependency_overrides[_gcuio] = override_current_user_id_optional
 
-    # plants 라우터는 get_plant_service()를 직접 호출하므로 모듈 레벨 패치
-    with patch("app.api.v1.endpoints.plants.get_plant_service", override_plant_service):
+    # plants·admin 라우터는 get_plant_service()를 직접 호출하므로 모듈 레벨 패치
+    with patch("app.api.v1.endpoints.plants.get_plant_service", override_plant_service), \
+         patch("app.api.v1.endpoints.admin.get_plant_service", override_plant_service):
         yield app
 
     app.dependency_overrides.clear()

@@ -224,11 +224,18 @@ class PlantService:
         skip: int = 0,
         limit: int = 10,
     ) -> List[dict]:
-        """인기 스토리 목록 조회 (Lazy Aggregation). 전역 데이터 → 캐시 대상."""
+        """
+        인기 스토리 목록 조회. 전역 데이터 → 캐시 대상.
+        큐레이션(편집자 선정 순서)이 있으면 그것을, 없으면 알고리즘(인기순) 폴백.
+        둘 다 결정적이라 캐시와 정합.
+        """
         logger.debug(f"[get_popular_stories] skip={skip}, limit={limit}")
         key = make_list_key("stories-popular", {"skip": skip, "limit": limit})
 
         async def loader():
+            curated = await self.plant_repo.get_curated_stories(skip=skip, limit=limit)
+            if curated is not None:
+                return curated
             return await self.plant_repo.get_popular_stories(skip=skip, limit=limit)
 
         result = await self.cache.get_or_load(key, loader)
