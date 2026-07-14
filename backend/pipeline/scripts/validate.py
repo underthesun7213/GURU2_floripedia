@@ -28,6 +28,7 @@ from app.core.enums import (  # noqa: E402
     COLOR_GROUPS as VALID_COLOR_GROUPS,
     SCENT_GROUPS as VALID_SCENT_GROUPS,
     FLOWER_GROUPS as VALID_FLOWER_GROUPS,
+    CATEGORY_GROUPS as VALID_CATEGORY_GROUPS,
 )
 
 
@@ -97,8 +98,16 @@ def check_item(p):
     elif fg not in VALID_FLOWER_GROUPS:
         err('flowerInfo.flowerGroup', f'유효하지 않음: {fg!r}')
 
+    # === horticulture ===
+    hort = p.get('horticulture', {})
+    cat = hort.get('categoryGroup', '')
+    if not cat:
+        err('horticulture.categoryGroup', '비어있음')
+    elif cat not in VALID_CATEGORY_GROUPS:
+        err('horticulture.categoryGroup', f'유효하지 않음: {cat!r}')
+
     # === preContent ===
-    pc = p.get('horticulture', {}).get('preContent', '')
+    pc = hort.get('preContent', '')
     if not pc:
         err('horticulture.preContent', '비어있음')
     elif not (150 <= len(pc) <= 500):
