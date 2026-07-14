@@ -98,6 +98,8 @@
     <string name="level_exp_max">EXP MAX</string>
     <string name="no_image_report_hint">아직 이 식물의 사진을 준비 중이에요. 멋진 사진이 있다면 제보해 주세요 🙏</string>
     <string name="plant_not_found">더 이상 제공되지 않는 식물이에요</string>
+    <string name="error_login_backend_failed">서버 연결에 실패했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="signup_backend_pending">계정이 생성됐어요. 로그인해서 시작해 주세요.</string>
     <string name="discovered_plants">발견한 식물</string>
     <string name="explore_records">탐험 기록</string>
     <string name="discovered_count_format">%d종</string>

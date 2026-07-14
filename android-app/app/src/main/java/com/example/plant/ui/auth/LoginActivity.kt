@@ -121,17 +121,28 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private suspend fun loginToBackend(idToken: String) {
-        val result = AppContainer.authRepository.login(idToken)
+        // 1회 재시도 (일시적 백엔드 장애 대응)
+        var result = AppContainer.authRepository.login(idToken)
+        if (result.isFailure) {
+            Log.w("LoginActivity", "백엔드 로그인 실패, 1회 재시도")
+            result = AppContainer.authRepository.login(idToken)
+        }
 
         result.onSuccess { user ->
             Log.d("LoginActivity", "백엔드 로그인 성공: ${user.nickname}")
             TokenManager.setToken(idToken, applicationContext)
             navigateToMain()
         }.onFailure { error ->
-            Log.e("LoginActivity", "백엔드 로그인 실패", error)
-            // 백엔드 실패해도 Firebase 로그인은 성공했으므로 토큰 저장 후 메인으로 이동
-            TokenManager.setToken(idToken, applicationContext)
-            navigateToMain()
+            Log.e("LoginActivity", "백엔드 로그인 최종 실패", error)
+            // 반쪽 로그인 상태(Firebase O, 서버 X) 방지: 세션 해제 후 로그인 화면 유지
+            AppContainer.firebaseAuthManager.signOut()
+            TokenManager.clearToken(applicationContext)
+            Toast.makeText(
+                this@LoginActivity,
+                getString(R.string.error_login_backend_failed),
+                Toast.LENGTH_LONG
+            ).show()
+            binding.btnLogin.isEnabled = true
         }
     }
 

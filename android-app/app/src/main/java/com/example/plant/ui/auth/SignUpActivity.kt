@@ -190,7 +190,12 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private suspend fun registerToBackend(idToken: String, nickname: String) {
-        val result = AppContainer.authRepository.login(idToken)
+        // 1회 재시도 (일시적 백엔드 장애 대응)
+        var result = AppContainer.authRepository.login(idToken)
+        if (result.isFailure) {
+            Log.w("SignUpActivity", "백엔드 등록 실패, 1회 재시도")
+            result = AppContainer.authRepository.login(idToken)
+        }
 
         result.onSuccess { user ->
             Log.d("SignUpActivity", "백엔드 등록 성공")
@@ -201,8 +206,16 @@ class SignUpActivity : AppCompatActivity() {
 
             showSuccessAndNavigate()
         }.onFailure { error ->
-            Log.e("SignUpActivity", "백엔드 등록 실패", error)
-            showSuccessAndNavigate()
+            Log.e("SignUpActivity", "백엔드 등록 최종 실패", error)
+            // 거짓 "완료" 대신 정직하게 안내. Firebase 계정은 생성됐고 백엔드는 최초 로그인 시
+            // 자동 생성되므로, 로그인으로 유도한다.
+            AppContainer.firebaseAuthManager.signOut()
+            Toast.makeText(
+                this@SignUpActivity,
+                getString(R.string.signup_backend_pending),
+                Toast.LENGTH_LONG
+            ).show()
+            navigateToLogin()
         }
     }
 
