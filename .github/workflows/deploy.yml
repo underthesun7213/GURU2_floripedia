@@ -18,7 +18,9 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install deps
-        run: pip install -r backend/requirements.txt
+        run: |
+          pip install -r backend/requirements.txt
+          pip install -r backend/requirements-dev.txt   # pytest·mongomock 등 테스트 의존성
       - name: Run tests
         working-directory: backend
         run: pytest -q --no-cov
