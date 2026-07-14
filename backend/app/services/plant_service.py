@@ -286,35 +286,7 @@ class PlantService:
         logger.debug(f"[get_plants] 결과: {len(result)}개")
         return result
 
-    async def get_user_favorites(
-        self, 
-        user_id: str, 
-        season: Optional[str] = None, 
-        category_group: Optional[str] = None, 
-        color_group: Optional[str] = None, 
-        skip: int = 0, 
-        limit: int = 20
-    ) -> List[dict]:
-        """사용자 찜 목록 조회"""
-        logger.debug(f"[get_user_favorites] user_id={user_id}")
-        
-        favorite_ids = await self.user_repo.get_favorites(user_id)
-        if not favorite_ids:
-            logger.debug("[get_user_favorites] 찜 목록 없음")
-            return []
-            
-        result = await self.plant_repo.get_list(
-            plant_ids=favorite_ids, 
-            season=season, 
-            category_group=category_group, 
-            color_group=color_group, 
-            skip=skip, 
-            limit=limit, 
-            sort_by="name"
-        )
-        
-        logger.debug(f"[get_user_favorites] 결과: {len(result)}개")
-        return result
+    # (구 get_user_favorites 제거 — 찜 목록은 UserService.get_favorites로 단일화)
 
     async def get_plants_count(
         self, 

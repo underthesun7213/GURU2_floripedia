@@ -18,37 +18,8 @@ router = APIRouter()
 # 0. 식물 api 관련 인증 의존성 주입(메소드 별 Depends로 permit state 조절절)
 # ==========================================
 
-# ==========================================
-# 1. 꽃갈피(찜) 목록 조회 API 
-# ==========================================
-# 주의: 동적 경로(/{plant_id})보다 위에 있어야 함
-@router.get("/favorites", response_model=List[PlantCardDto])
-async def get_user_favorites(
-    # [인증] 로그인 필수
-    current_user_id: str = Depends(get_current_user_id),
-    
-    # [필터] 꽃갈피 내 재검색 (단일 선택)
-    season: Optional[str] = Query(None, description="계절"),
-    category_group: Optional[str] = Query(None, description="카테고리"),
-    color_group: Optional[str] = Query(None, description="색상"),
-    
-    skip: int = Query(0, ge=0),
-    limit: int = Query(20, ge=1, le=100),
-):
-    """
-    내 꽃갈피(찜) 목록 조회.
-    로그인한 사용자가 찜한 식물만 모아봅니다.
-    """
-    service = get_plant_service()
-    
-    return await service.get_user_favorites(
-        user_id=current_user_id,
-        season=season,
-        category_group=category_group,
-        color_group=color_group,
-        skip=skip,
-        limit=limit
-    )
+# 참고: 찜 목록은 /users/me/favorites(users 라우터)로 단일화됨.
+#       (구 /plants/favorites 는 앱 미사용으로 제거)
 
 
 # ==========================================

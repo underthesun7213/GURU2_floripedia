@@ -66,10 +66,10 @@ async def test_etag_returns_304(client):
 
 
 @pytest.mark.asyncio
-async def test_favorites_endpoint_not_publicly_cached(client):
-    """per-user 목록(/plants/favorites)엔 public 캐시 헤더가 붙지 않는다."""
-    r = await client.get("/api/v1/plants/favorites")
-    # 미들웨어 제외 대상 → public max-age 헤더 없음
+async def test_user_favorites_not_publicly_cached(client):
+    """per-user 목록(/users/me/favorites)엔 public 캐시 헤더가 붙지 않는다."""
+    r = await client.get("/api/v1/users/me/favorites")
+    # /plants 외 경로 → 미들웨어 대상 아님 → public max-age 헤더 없음
     assert "public" not in r.headers.get("cache-control", "")
 
 

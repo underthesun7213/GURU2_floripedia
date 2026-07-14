@@ -114,33 +114,7 @@ class PlantRepository {
         }
     }
 
-    /**
-     * 꽃갈피(찜) 목록 조회
-     */
-    suspend fun getFavorites(
-        season: String? = null,
-        categoryGroup: String? = null,
-        colorGroup: String? = null,
-        skip: Int = 0,
-        limit: Int = 20
-    ): Result<List<PlantCardDto>> {
-        return try {
-            val response = api.getFavorites(
-                season = season,
-                categoryGroup = categoryGroup,
-                colorGroup = colorGroup,
-                skip = skip,
-                limit = limit
-            )
-            if (response.isSuccessful && response.body() != null) {
-                Result.success(response.body()!!)
-            } else {
-                Result.failure(Exception("찜 목록 조회 실패: ${response.code()}"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
+    // (구 getFavorites 제거 — 찜 목록은 UserRepository.getMyFavorites로 단일화)
 
     /**
      * 식물 상세 정보 조회

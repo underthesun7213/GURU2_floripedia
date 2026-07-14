@@ -52,18 +52,6 @@ interface PlantApi {
     ): Response<PlantCountResponse>
 
     /**
-     * 내 꽃갈피(찜) 목록 조회
-     */
-    @GET("plants/favorites")
-    suspend fun getFavorites(
-        @Query("season") season: String? = null,
-        @Query("category_group") categoryGroup: String? = null,
-        @Query("color_group") colorGroup: String? = null,
-        @Query("skip") skip: Int = 0,
-        @Query("limit") limit: Int = 20
-    ): Response<List<PlantCardDto>>
-
-    /**
      * 인기 스토리 목록 조회
      */
     @GET("plants/stories/popular")
