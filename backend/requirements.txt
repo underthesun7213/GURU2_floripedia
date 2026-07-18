@@ -33,8 +33,8 @@ python-dotenv==1.0.1
 # Image Processing
 Pillow==10.4.0
 
-# HTTP Client (for image search API)
-httpx==0.27.2
+# HTTP Client (for image search API) — google-genai가 >=0.28.1 요구
+httpx==0.28.1
 
 # Kew Gardens API (POWO plant data) — scripts/_legacy/etl_add_plants.py 전용
 pykew==0.1.3
