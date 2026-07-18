@@ -107,11 +107,12 @@ def check_item(p):
         err('horticulture.categoryGroup', f'유효하지 않음: {cat!r}')
 
     # === preContent ===
+    # 카드용 짧은 블러브(첫 문장 위주). 상세 노출 없이 추천/리스트 카드에만 쓰임 → 컴팩트 유지.
     pc = hort.get('preContent', '')
     if not pc:
         err('horticulture.preContent', '비어있음')
-    elif not (150 <= len(pc) <= 500):
-        warn('horticulture.preContent', f'길이 권장 150~500자 ({len(pc)}자)')
+    elif not (10 <= len(pc) <= 120):
+        warn('horticulture.preContent', f'길이 권장 10~120자 카드 블러브 ({len(pc)}자)')
 
     return issues
 
