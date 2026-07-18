@@ -8,13 +8,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginHorizontal="30dp"
+        android:layout_marginHorizontal="10dp"
         android:layout_marginVertical="16dp"
         app:cardCornerRadius="20dp"
         app:cardElevation="4dp"
         android:backgroundTint="@color/white">
 
         <LinearLayout
+            android:id="@+id/featuredContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
@@ -77,11 +78,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:ellipsize="end"
                 android:fontFamily="@font/pretendardregular"
                 android:gravity="center"
                 android:lineSpacingExtra="2dp"
-                android:maxLines="3"
+                android:maxLines="4"
                 android:text="유럽 원산으로 전국에 심어 기르는 낙엽 작은키나무이다.\n줄기는 가지가 갈라지고 높이 3-7m이다."
                 android:textColor="@color/text1"
                 android:textSize="10sp" />

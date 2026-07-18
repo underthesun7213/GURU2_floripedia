@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"   android:clipChildren="false"
         android:clipToPadding="false"
-        android:paddingHorizontal="50dp"
+        android:paddingHorizontal="47dp"
         xmlns:tools="http://schemas.android.com/tools"
         tools:listitem="@layout/item_featured_plant"
         tools:itemCount="5" />

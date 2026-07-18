@@ -232,7 +232,34 @@ class MainActivity : AppCompatActivity() {
         featuredAdapter = FeaturedPlantAdapter { plant ->
             startActivity(Intent(this, Detail1Activity::class.java).apply { putExtra("plant_id", plant.id) })
         }
-        binding.layoutSlider.viewPagerFeatured.adapter = featuredAdapter
+        binding.layoutSlider.viewPagerFeatured.apply {
+            adapter = featuredAdapter
+            // 양옆 인접 카드가 살짝 보이게(peek) - 넘길 수 있음을 시각적으로 표현.
+            // ViewPager2 함정: clipToPadding/offscreen을 내부 RecyclerView에도 적용해야 peek이 렌더됨.
+            offscreenPageLimit = 3
+            (getChildAt(0) as? androidx.recyclerview.widget.RecyclerView)?.apply {
+                clipToPadding = false
+                clipChildren = false
+            }
+            // 히어로 캐러셀: 가운데 카드 강조, 양옆 인접 카드는 0.69배로 축소(시안 300dp→208dp 측정).
+            // pivot을 '중심 쪽 가장자리'로 둬서 축소해도 peek(가장자리)이 유지되게 함.
+            setPageTransformer { page, position ->
+                val minScale = 0.69f
+                val absPos = kotlin.math.abs(position).coerceIn(0f, 1f)
+                val scale = minScale + (1f - minScale) * (1f - absPos)
+                page.pivotY = page.height / 2f
+                page.pivotX = when {
+                    position < 0f -> page.width.toFloat()  // 왼쪽 카드: 오른쪽(중심측) 가장자리 기준
+                    position > 0f -> 0f                     // 오른쪽 카드: 왼쪽(중심측) 가장자리 기준
+                    else -> page.width / 2f
+                }
+                page.scaleX = scale
+                page.scaleY = scale
+                // 사이드(비중앙) 카드는 내용 숨겨 빈 카드로 - 중앙일 때만 이미지·글씨 표시
+                page.findViewById<android.view.View>(R.id.featuredContent)?.alpha =
+                    (1f - absPos).coerceIn(0f, 1f)
+            }
+        }
         binding.layoutSlider.dotsIndicator.attachTo(binding.layoutSlider.viewPagerFeatured)
 
         storyAdapter = StoryAdapter { story ->

@@ -28,6 +28,15 @@ class AvailablePlantAdapter(
         holder.binding.apply {
             tvPlantGridName.text = plant.name
 
+            // 꽃말을 태그로 표시 (첫 번째 꽃말만, 없으면 숨김)
+            val flower = plant.flowerLanguage.split(",", "、", "/").firstOrNull()?.trim()
+            if (!flower.isNullOrEmpty()) {
+                tvPlantGridTag.text = "#$flower"
+                tvPlantGridTag.visibility = android.view.View.VISIBLE
+            } else {
+                tvPlantGridTag.visibility = android.view.View.GONE
+            }
+
             ivPlantGrid.loadPlantImage(plant.imageUrl)
 
             // 카드 전체 클릭 리스너

@@ -133,7 +133,7 @@ class Detail1Activity : AppCompatActivity() {
             // 에피소드 1
             if (plantDetail.stories.isNotEmpty()) {
                 tvStoryGenre1.visibility = View.VISIBLE
-                tvStoryGenre1.text = "[${getStoryGenreKorean(plantDetail.stories[0].genre)}]"
+                tvStoryGenre1.text = getStoryGenreKorean(plantDetail.stories[0].genre)
                 tvStoryContent1.text = plantDetail.stories[0].content
             } else {
                 tvStoryGenre1.visibility = View.GONE
@@ -142,7 +142,7 @@ class Detail1Activity : AppCompatActivity() {
             // 에피소드 2
             if (plantDetail.stories.size >= 2) {
                 tvStoryGenre2.visibility = View.VISIBLE
-                tvStoryGenre2.text = "[${getStoryGenreKorean(plantDetail.stories[1].genre)}]"
+                tvStoryGenre2.text = getStoryGenreKorean(plantDetail.stories[1].genre)
                 tvStoryContent2.text = plantDetail.stories[1].content
             } else {
                 tvStoryGenre2.visibility = View.GONE

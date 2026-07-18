@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="240dp"
+    android:layout_width="194dp"
     android:layout_height="wrap_content"
     android:layout_marginEnd="12dp"
     app:cardCornerRadius="16dp"
@@ -16,7 +16,7 @@
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivPlantGrid"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="130dp"
             android:scaleType="centerCrop"
             android:src="@drawable/lilac"
             app:shapeAppearanceOverlay="@style/TopRoundedImage20" />
@@ -25,11 +25,28 @@
             android:id="@+id/tvPlantGridName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp"
+            android:paddingHorizontal="12dp"
+            android:paddingTop="12dp"
             android:text="라일락"
-            android:fontFamily="@font/pretendardmedium"
+            android:fontFamily="@font/pretendardregular"
+            android:textStyle="bold"
             android:textColor="@color/text1"
-            android:textSize="16sp"
+            android:textSize="13sp"
+            android:gravity="start" />
+
+        <TextView
+            android:id="@+id/tvPlantGridTag"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="12dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="12dp"
+            android:text="#새로운 시작"
+            android:fontFamily="@font/pretendardmedium"
+            android:textColor="@color/flower_tag"
+            android:textSize="11sp"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:gravity="start" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
