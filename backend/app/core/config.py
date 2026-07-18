@@ -43,9 +43,9 @@ class Settings(BaseSettings):
     FIREBASE_STORAGE_BUCKET: str = "floripedia-c0bf0.firebasestorage.app"    # Firebase Storage 버킷
 
     # === Gemini Models ===
-    GEMINI_BASIC_MODEL: str = "gemini-2.5-flash-lite"      # 식별·분류 등 경량 작업
-    GEMINI_DEFAULT_MODEL: str = "gemini-2.5-flash"          # ETL 등 일반 생성
-    GEMINI_ESSAY_MODEL: str = "gemini-3-flash-preview"      # 에세이·고품질 텍스트
+    # 앱에서 실제 쓰는 건 2개(basic/essay). 모델명은 비밀이 아니므로 여기 기본값으로 관리(필요 시 env override).
+    GEMINI_BASIC_MODEL: str = "gemini-3.1-flash-lite"   # 이미지 판정·식별·상황 추천(고빈도·가성비, stable)
+    GEMINI_ESSAY_MODEL: str = "gemini-3.5-flash"        # 추천 에세이(저빈도·UX 핵심, stable)
 
     # === Application ===
     PROJECT_NAME: str = "Floripedia API"
