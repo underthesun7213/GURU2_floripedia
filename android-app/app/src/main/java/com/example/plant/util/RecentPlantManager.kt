@@ -12,10 +12,31 @@ import com.google.gson.reflect.TypeToken
 object RecentPlantManager {
     private const val PREFS_NAME = "recent_plants_prefs"
     private const val KEY_RECENT_PLANTS = "recent_plants"
+    private const val KEY_CACHE_VERSION = "cache_version"
     private const val MAX_RECENT_PLANTS = 16
+
+    // 캐시 스키마 버전. 저장된 description 스냅샷 형식이 바뀌면 올린다.
+    // v2(2026-07): 설명 소스를 이다체 preContent → 습니다체 seasonDescription 으로 전환.
+    //   → 이전 버전의 이다체 스냅샷을 1회 무효화(clear)해 새로 습니다체로 다시 쌓이게 한다.
+    private const val CURRENT_CACHE_VERSION = 2
 
     private fun getSharedPreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    }
+
+    /**
+     * 캐시 버전이 낮으면(구 스냅샷) 최근 목록을 비우고 버전을 올린다. (구 이다체 설명 무효화)
+     * @return 유효한 캐시면 true, 무효화되어 비워졌으면 false
+     */
+    private fun ensureCacheVersion(prefs: SharedPreferences): Boolean {
+        if (prefs.getInt(KEY_CACHE_VERSION, 1) < CURRENT_CACHE_VERSION) {
+            prefs.edit()
+                .remove(KEY_RECENT_PLANTS)
+                .putInt(KEY_CACHE_VERSION, CURRENT_CACHE_VERSION)
+                .apply()
+            return false
+        }
+        return true
     }
 
     /**
@@ -53,6 +74,7 @@ object RecentPlantManager {
      */
     fun getRecentPlants(context: Context): List<RecentPlant> {
         val prefs = getSharedPreferences(context)
+        if (!ensureCacheVersion(prefs)) return emptyList()   // 구 이다체 스냅샷 무효화
         val json = prefs.getString(KEY_RECENT_PLANTS, null) ?: return emptyList()
 
         return try {

@@ -112,7 +112,8 @@ class Detail1Activity : AppCompatActivity() {
         plant = plantDetail
 
         // 최근 본 식물에 이미지와 설명 포함하여 저장
-        val description = plantDetail.horticulture.preContent
+        // 설명은 습니다체인 seasonDescription 우선(horticulture.preContent는 이다체 원전이라 지양)
+        val description = plantDetail.seasonDescription?.takeIf { it.isNotBlank() }
             ?: plantDetail.stories.firstOrNull()?.content?.take(50)
             ?: getString(R.string.default_plant_description, plantDetail.name)
         com.example.plant.util.RecentPlantManager.addRecentPlant(
