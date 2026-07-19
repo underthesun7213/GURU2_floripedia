@@ -10,6 +10,7 @@ Floripedia는 AI 기반 식물 식별, 감성 추천, 그리고 풍부한 식물
 ## 📑 목차
 
 - [주요 기능](#-주요-기능)
+- [화면 구성](#-화면-구성)
 - [기술 스택](#-기술-스택)
 - [프로젝트 구조](#-프로젝트-구조)
 - [시스템 아키텍처](#-시스템-아키텍처)
@@ -68,6 +69,15 @@ Floripedia는 AI 기반 식물 식별, 감성 추천, 그리고 풍부한 식물
 - **마이페이지**: 프로필 관리, 찜한 식물 목록 조회
 - **Firebase 인증**: Google/Email 소셜 로그인
 - **프로필 이미지 업로드**: Firebase Storage 연동
+
+---
+
+## 📱 화면 구성
+
+| 스플래시 | 홈 | AI 탐색 | 상세 | 검색 |
+|:---:|:---:|:---:|:---:|:---:|
+| <img src="docs/screenshots/splash.png" width="150"> | <img src="docs/screenshots/home.png" width="150"> | <img src="docs/screenshots/explore.png" width="150"> | <img src="docs/screenshots/detail.png" width="150"> | <img src="docs/screenshots/search.png" width="150"> |
+| 로딩 화면 | 히어로 캐러셀 · 계절 필터 · 인기 스토리 | 상황 입력 → AI 식물 추천 | 이미지 · 꽃말 · 스토리 · 분류 | 키워드 검색 결과 |
 
 ---
 

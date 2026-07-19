@@ -160,7 +160,18 @@ IMPORTANT: scientificName MUST be the FULL binomial name (genus + species), e.g.
         return result
 
     async def generate_recommendation_essay(self, user_situation: str, plant_data: dict) -> str:
-        prompt = f"Role: Expert Florist(한국어로만 말을 한다). Situation: {user_situation}. Plant: {plant_data['name']}. Write a 400-char touching essay."
+        flower_language = (plant_data.get("flowerInfo") or {}).get("language") or ""
+        flower_hint = f" (꽃말: {flower_language})" if flower_language else ""
+        prompt = f"""사용자 상황: "{user_situation}"
+추천 식물: {plant_data['name']}{flower_hint}
+
+위 상황의 사용자에게 이 식물을 추천하는 글을 400자 내외의 한국어(습니다체)로 작성하라.
+
+규칙:
+- 인사말·자기소개·화자 언급 금지("안녕하세요", "플로리스트입니다" 등 어떤 인격도 드러내지 않는다). 첫 문장부터 바로 본론으로 시작한다.
+- 첫 문단에 이 식물을 추천한다는 명확한 문장(예: "'{plant_data['name']}'을 추천합니다")을 넣는다.
+- 꽃말과 식물의 특징을 사용자의 상황과 자연스럽게 연결하고, 따뜻한 마무리로 끝맺는다.
+- 본문만 출력한다. 제목·머리말·이모지·마크다운을 쓰지 않는다."""
         result = await self._generate_content([prompt], model=self.essay_model)
         return result if result else "에세이를 작성할 수 없습니다."
 
