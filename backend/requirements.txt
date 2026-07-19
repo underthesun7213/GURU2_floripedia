@@ -10,8 +10,8 @@ passlib[bcrypt]==1.7.4
 # File Upload
 python-multipart==0.0.12
 
-# Data Validation & Settings
-pydantic==2.9.2
+# Data Validation & Settings — [email]: 스키마의 EmailStr이 email-validator 필요
+pydantic[email]==2.9.2
 pydantic-settings==2.5.2
 
 # Database

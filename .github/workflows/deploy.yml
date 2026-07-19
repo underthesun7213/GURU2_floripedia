@@ -12,6 +12,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    outputs:
+      has_ec2: ${{ steps.chk.outputs.has_ec2 }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -24,9 +26,13 @@ jobs:
       - name: Run tests
         working-directory: backend
         run: pytest -q --no-cov
+      - name: Check EC2 secrets           # secrets는 job-level if에서 못 쓰므로 output으로 전달
+        id: chk
+        run: echo "has_ec2=${{ secrets.EC2_HOST != '' }}" >> "$GITHUB_OUTPUT"
 
   deploy:
     needs: test           # 테스트 통과해야 배포
+    if: ${{ needs.test.outputs.has_ec2 == 'true' }}   # EC2 Secrets 등록 전까지는 skip (deploy/README.md 참고)
     runs-on: ubuntu-latest
     steps:
       - name: SSH deploy (pull + graceful reload + healthcheck)
