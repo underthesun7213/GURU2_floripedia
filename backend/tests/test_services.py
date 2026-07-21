@@ -61,6 +61,55 @@ class TestAuthServiceLogin:
         assert result["favoritePlantIds"] == []
 
     @pytest.mark.asyncio
+    async def test_signup_captures_consent(self, auth_service: AuthService):
+        """신규 유저 가입 시 동의 여부와 동의 시각이 기록된다"""
+        with patch("app.services.auth_service.firebase_auth") as mock_fb:
+            mock_fb.verify_id_token.return_value = {
+                "uid": "consent-uid",
+                "email": "consent@test.com",
+                "name": "동의유저",
+            }
+
+            result = await auth_service.login_or_signup(
+                "tok", terms_agreed=True, privacy_agreed=True
+            )
+
+        assert result["isTermsAgreed"] is True
+        assert result["isPrivacyAgreed"] is True
+        assert result["agreedAt"] is not None
+
+    @pytest.mark.asyncio
+    async def test_signup_without_consent_has_no_timestamp(self, auth_service: AuthService):
+        """동의 없이 생성되면 agreedAt은 None으로 남는다"""
+        with patch("app.services.auth_service.firebase_auth") as mock_fb:
+            mock_fb.verify_id_token.return_value = {
+                "uid": "noconsent-uid",
+                "email": "noconsent@test.com",
+                "name": "무동의유저",
+            }
+
+            result = await auth_service.login_or_signup("tok")
+
+        assert result["isTermsAgreed"] is False
+        assert result["agreedAt"] is None
+
+    @pytest.mark.asyncio
+    async def test_signup_random_nickname_when_no_name(self, auth_service: AuthService):
+        """토큰에 name이 없으면 랜덤 닉네임이 부여된다(기본 문구 아님)"""
+        with patch("app.services.auth_service.firebase_auth") as mock_fb:
+            mock_fb.verify_id_token.return_value = {
+                "uid": "noname-uid",
+                "email": "noname@test.com",
+                # name 없음
+            }
+
+            result = await auth_service.login_or_signup("tok")
+
+        nickname = result["nickname"]
+        assert nickname  # 비어있지 않음
+        assert " " in nickname  # '형용사 명사' 형태
+
+    @pytest.mark.asyncio
     async def test_invalid_token(self, auth_service: AuthService):
         """잘못된 토큰 -> AuthenticationError"""
         with patch("app.services.auth_service.firebase_auth") as mock_fb:

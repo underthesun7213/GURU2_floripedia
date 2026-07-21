@@ -24,7 +24,11 @@ async def login_or_signup(
     """
     try:
         # request.id_token 안에 "ey..." 로 시작하는 JWT 토큰이 들어있어야 함
-        user = await service.login_or_signup(request.id_token)
+        user = await service.login_or_signup(
+            request.id_token,
+            terms_agreed=request.terms_agreed,
+            privacy_agreed=request.privacy_agreed,
+        )
         return user
 
     except AuthenticationError as e:

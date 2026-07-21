@@ -12,12 +12,16 @@ class AuthRepository {
     /**
      * Firebase ID Token으로 로그인/회원가입
      */
-    suspend fun login(idToken: String): Result<UserResponse> {
+    suspend fun login(
+        idToken: String,
+        termsAgreed: Boolean = false,
+        privacyAgreed: Boolean = false
+    ): Result<UserResponse> {
         return try {
             // Token 저장
             TokenManager.setToken(idToken)
 
-            val response = api.login(LoginRequest(idToken))
+            val response = api.login(LoginRequest(idToken, termsAgreed, privacyAgreed))
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!)
             } else {

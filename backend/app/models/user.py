@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from typing import List
+from typing import List, Optional
 from pydantic import Field, EmailStr
 
 from app.schemas import CamelCaseModel
@@ -35,6 +35,8 @@ class UserModel(CamelCaseModel):
 
     # 5. 관리용 데이터
     is_active: bool = Field(default=True, description="활성 계정 여부 (탈퇴 시 False)")
-    is_terms_agreed: bool = Field(default=True, description="약관 동의 여부")
+    is_terms_agreed: bool = Field(default=False, description="이용약관 동의 여부")
+    is_privacy_agreed: bool = Field(default=False, description="개인정보 처리방침 동의 여부")
+    agreed_at: Optional[datetime] = Field(default=None, description="약관·개인정보 동의 시각 (UTC)")
     created_at: datetime = Field(default_factory=_utc_now, description="가입 시각 (UTC)")
     updated_at: datetime = Field(default_factory=_utc_now, description="마지막 수정 시각 (UTC)")

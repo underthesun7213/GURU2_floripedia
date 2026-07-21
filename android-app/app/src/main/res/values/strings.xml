@@ -121,6 +121,15 @@
     <string name="error_nickname_invalid">닉네임은 1-20자이며, 한글/영문/숫자만 사용 가능합니다</string>
     <string name="error_password_mismatch">비밀번호가 일치하지 않습니다</string>
     <string name="error_email_in_use">이미 사용 중인 이메일입니다</string>
+    <string name="error_consent_required">필수 약관에 동의해주세요</string>
+
+    <!-- 닉네임 랜덤 -->
+    <string name="cd_shuffle_nickname">닉네임 새로 추천</string>
+
+    <!-- 약관 동의 -->
+    <string name="consent_all">약관 전체 동의</string>
+    <string name="consent_terms">(필수) 이용약관에 동의합니다</string>
+    <string name="consent_privacy">(필수) 개인정보 처리방침에 동의합니다</string>
 
     <!-- Toast/Dialog 메시지 -->
     <string name="email_available">사용 가능한 이메일입니다</string>
