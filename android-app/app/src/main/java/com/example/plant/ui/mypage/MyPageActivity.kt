@@ -10,7 +10,6 @@ import coil.load
 import com.example.plant.R
 import com.example.plant.databinding.ActivityMypageBinding
 import com.example.plant.di.AppContainer
-import com.example.plant.ui.auth.LoginActivity
 import com.example.plant.ui.home.MainActivity
 import com.example.plant.ui.bookmark.Bookmark1Activity
 import com.example.plant.ui.browse.Browse2Activity
@@ -167,21 +166,21 @@ class MyPageActivity : AppCompatActivity() {
     }
 
     private fun loadUserProfile() {
-        // 로그인 상태 확인
-        if (!AppContainer.firebaseAuthManager.isLoggedIn()) {
-            navigateToLogin()
-            return
-        }
-
+        // 익명 세션은 앱 시작 시 확보됨 → 별도 로그인 게이트 불필요
         lifecycleScope.launch {
             val result = AppContainer.userRepository.getMyProfile()
 
             result.onSuccess { user ->
                 binding.tvUserName.text = user.nickname
 
-                // @핸들 표시 (email의 @ 앞부분)
-                val handle = "@${user.email.substringBefore("@")}"
-                binding.tvUserHandle.text = handle
+                // @핸들 표시 (email의 @ 앞부분). 익명 세션은 email이 없어 핸들 미표시.
+                val email = user.email
+                if (!email.isNullOrBlank()) {
+                    binding.tvUserHandle.text = "@${email.substringBefore("@")}"
+                    binding.tvUserHandle.visibility = View.VISIBLE
+                } else {
+                    binding.tvUserHandle.visibility = View.GONE
+                }
 
                 // 레벨 정보 바인딩
                 user.levelInfo?.let { info ->
@@ -250,10 +249,4 @@ class MyPageActivity : AppCompatActivity() {
         }
     }
 
-    private fun navigateToLogin() {
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        finish()
-    }
 }

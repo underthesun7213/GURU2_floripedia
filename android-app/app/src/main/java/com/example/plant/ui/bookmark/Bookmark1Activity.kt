@@ -8,7 +8,6 @@ import androidx.lifecycle.lifecycleScope
 import com.example.plant.R
 import com.example.plant.databinding.ActivityBookmarkBinding
 import com.example.plant.di.AppContainer
-import com.example.plant.ui.auth.LoginActivity
 import com.example.plant.ui.home.MainActivity
 import com.example.plant.ui.camera.CameraActivity
 import com.example.plant.ui.components.FloripediaBottomBar
@@ -25,11 +24,7 @@ class Bookmark1Activity : AppCompatActivity() {
         binding = ActivityBookmarkBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (!AppContainer.firebaseAuthManager.isLoggedIn()) {
-            navigateToLogin()
-            return
-        }
-
+        // 익명 세션은 앱 시작 시 확보됨 → 별도 로그인 게이트 불필요
         setupNavigation()
         setupCategoryClickListeners()
         loadSummaryData()
@@ -93,10 +88,4 @@ class Bookmark1Activity : AppCompatActivity() {
         }
     }
 
-    private fun navigateToLogin() {
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        finish()
-    }
 }
