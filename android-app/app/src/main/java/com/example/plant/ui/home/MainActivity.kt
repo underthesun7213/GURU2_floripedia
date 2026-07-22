@@ -59,8 +59,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Firebase 로그인 상태이면 토큰 갱신
-        refreshTokenIfLoggedIn()
+        // 익명 세션 보장(로그인 화면 없이 uid/토큰 확보) + 토큰 갱신
+        ensureSession()
 
         // 로그인 상태 확인 없이 앱 시작 - 인증 필요 시 ErrorHandler가 리다이렉트 처리
         allFilterCategories = FilterCategoryFactory.createDefaultFilters().toMutableList()
@@ -78,16 +78,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Firebase에 로그인되어 있으면 ID Token 갱신
+     * 익명 세션 보장 + 토큰 갱신.
+     * 로그인돼 있지 않으면 익명 로그인으로 세션을 만들고 백엔드 유저 문서를 생성한다.
      */
-    private fun refreshTokenIfLoggedIn() {
-        if (AppContainer.firebaseAuthManager.isLoggedIn()) {
-            lifecycleScope.launch {
-                val newToken = AppContainer.firebaseAuthManager.getIdToken()
-                if (newToken != null) {
-                    TokenManager.setToken(newToken, applicationContext)
-                }
-            }
+    private fun ensureSession() {
+        lifecycleScope.launch {
+            com.example.plant.data.auth.SessionManager.ensureSession(applicationContext)
         }
     }
 

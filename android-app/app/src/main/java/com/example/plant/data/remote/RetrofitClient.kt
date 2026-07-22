@@ -4,6 +4,8 @@ import com.example.plant.BuildConfig
 import com.example.plant.data.remote.api.AuthApi
 import com.example.plant.data.remote.api.PlantApi
 import com.example.plant.data.remote.api.UserApi
+import com.example.plant.di.AppContainer
+import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -30,9 +32,21 @@ object RetrofitClient {
             if (contentType == null || !contentType.toString().contains("multipart")) {
                 requestBuilder.header("Content-Type", "application/json")
             }
-            
-            TokenManager.getToken()?.let { token ->
-                requestBuilder.header("Authorization", "Bearer $token")
+
+            // 매 요청마다 유효한 토큰을 확보한다.
+            // Firebase getIdToken(false)는 만료 시 자동 갱신하므로, 정적 캐시로 인한 만료 401을 방지.
+            // (Firebase 세션이 있으면 최신 토큰, 없으면 저장된 토큰으로 폴백)
+            val token = runBlocking {
+                try {
+                    AppContainer.firebaseAuthManager.getIdToken()
+                } catch (e: Exception) {
+                    null
+                }
+            } ?: TokenManager.getToken()
+
+            token?.let {
+                TokenManager.setToken(it)
+                requestBuilder.header("Authorization", "Bearer $it")
             }
             chain.proceed(requestBuilder.build())
         }
