@@ -5,7 +5,9 @@ import com.example.plant.data.remote.api.AuthApi
 import com.example.plant.data.remote.api.PlantApi
 import com.example.plant.data.remote.api.UserApi
 import com.example.plant.di.AppContainer
+import com.google.firebase.appcheck.FirebaseAppCheck
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -48,6 +50,19 @@ object RetrofitClient {
                 TokenManager.setToken(it)
                 requestBuilder.header("Authorization", "Bearer $it")
             }
+
+            // App Check 토큰(정품 앱 증명)을 헤더로 첨부 → 백엔드가 검증해 봇 차단
+            val appCheckToken = runBlocking {
+                try {
+                    FirebaseAppCheck.getInstance().getAppCheckToken(false).await().token
+                } catch (e: Exception) {
+                    null
+                }
+            }
+            appCheckToken?.takeIf { it.isNotEmpty() }?.let {
+                requestBuilder.header("X-Firebase-AppCheck", it)
+            }
+
             chain.proceed(requestBuilder.build())
         }
         .connectTimeout(30, TimeUnit.SECONDS)

@@ -107,6 +107,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage'
     implementation 'com.google.firebase:firebase-auth'
 
+    // App Check (봇/어뷰징 방어: 릴리즈는 Play Integrity, 디버그는 debug provider)
+    implementation 'com.google.firebase:firebase-appcheck-playintegrity'
+    debugImplementation 'com.google.firebase:firebase-appcheck-debug'
+
     // Google Sign-In
     implementation 'com.google.android.gms:play-services-auth:21.0.0'
 

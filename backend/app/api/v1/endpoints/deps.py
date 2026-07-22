@@ -1,14 +1,18 @@
+import logging
 from typing import Optional
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Header
 from fastapi.security import OAuth2PasswordBearer
-from firebase_admin import auth
+from firebase_admin import auth, app_check
 
+from app.core.config import settings
 from app.db.session import mongodb
 from app.repositories import PlantRepository, UserRepository
 from app.services.plant_service import PlantService
 
 from app.services.user_service import UserService
 from app.services.auth_service import AuthService
+
+logger = logging.getLogger(__name__)
 
 # Firebase 초기화는 main.py에서 수행됨 (settings.FIREBASE_CREDENTIALS_PATH 사용)
 
@@ -96,5 +100,43 @@ async def get_current_user_id_optional(
     except Exception:
         # 선택적 인증이므로 에러를 내지 않고 None 반환
         return None
+
+
+# =================================================================
+# 3. App Check 검증 (봇/어뷰징 방어)
+# =================================================================
+
+async def verify_app_check(
+    x_firebase_appcheck: Optional[str] = Header(None, alias="X-Firebase-AppCheck")
+) -> None:
+    """
+    Firebase App Check 토큰 검증.
+
+    - monitor 모드(APP_CHECK_ENFORCED=False): 검증 결과를 로깅만 하고 항상 통과(점진 배포).
+    - enforce 모드(True): 유효한 App Check 토큰이 없으면 403으로 거부.
+
+    ※ 커스텀 백엔드는 App Check가 자동 적용되지 않으므로 여기서 직접 검증한다.
+    """
+    enforced = settings.APP_CHECK_ENFORCED
+
+    if not x_firebase_appcheck:
+        if enforced:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="App Check 토큰이 필요합니다.",
+            )
+        logger.warning("[AppCheck] 토큰 없음 (monitor 모드, 허용)")
+        return
+
+    try:
+        app_check.verify_token(x_firebase_appcheck)
+        logger.info("[AppCheck] 토큰 검증 성공")
+    except Exception as e:
+        if enforced:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="App Check 검증에 실패했습니다.",
+            )
+        logger.warning(f"[AppCheck] 검증 실패 (monitor 모드, 허용): {e}")
 
 

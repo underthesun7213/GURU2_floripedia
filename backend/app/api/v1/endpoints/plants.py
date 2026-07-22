@@ -9,9 +9,10 @@ from app.schemas import PlantCardDto, PlantDetailDto, PlantExploreDto, PlantSear
 
 # [핵심] deps.py에서 만든 3가지를 가져옵니다.
 from app.api.v1.endpoints.deps import (
-    get_plant_service, 
-    get_current_user_id, 
-    get_current_user_id_optional
+    get_plant_service,
+    get_current_user_id,
+    get_current_user_id_optional,
+    verify_app_check,
 )
 router = APIRouter()
 # ==========================================
@@ -125,6 +126,7 @@ async def get_plants_count(
 async def recommend_plants(
     situation: str = Query(..., description="사용자 상황 설명"),
     user_id: str = Depends(get_current_user_id),
+    _app_check: None = Depends(verify_app_check),
 ):
     """
     상황에 맞는 단일 식물 추천
@@ -147,7 +149,8 @@ async def recommend_plants(
 @router.post("/search/image", response_model=PlantSearchResultDto)
 async def search_plant_by_image(
     file: UploadFile = File(...),
-    user_id: str = Depends(get_current_user_id)
+    user_id: str = Depends(get_current_user_id),
+    _app_check: None = Depends(verify_app_check),
 ):
     """
     이미지로 식물 검색
