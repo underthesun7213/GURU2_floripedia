@@ -41,6 +41,21 @@ class FirebaseAuthManager {
     }
 
     /**
+     * 익명 로그인 (로그인 화면 없이 앱 첫 실행 시 자동 세션 생성)
+     * ※ Firebase 콘솔 > Authentication > 로그인 방법 > '익명' 사용 설정 필요
+     */
+    suspend fun signInAnonymously(): Result<FirebaseUser> {
+        return try {
+            val result = auth.signInAnonymously().await()
+            result.user?.let {
+                Result.success(it)
+            } ?: Result.failure(Exception("익명 로그인 실패"))
+        } catch (e: Exception) {
+            Result.failure(Exception(getErrorMessage(e)))
+        }
+    }
+
+    /**
      * 현재 로그인된 사용자의 ID Token 가져오기
      */
     suspend fun getIdToken(): String? {

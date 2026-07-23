@@ -27,7 +27,7 @@ data class UserResponse(
     val id: String,
 
     @SerializedName("email")
-    val email: String,
+    val email: String? = null,  // 익명 세션은 email이 없음
 
     @SerializedName("nickname")
     val nickname: String,

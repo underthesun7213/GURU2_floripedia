@@ -68,6 +68,29 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
+        // 닉네임 랜덤 미리 채움 + 🎲 재추첨
+        binding.etNickname.setText(com.example.plant.util.NicknameGenerator.generate())
+        binding.btnShuffleNickname.setOnClickListener {
+            val fresh = com.example.plant.util.NicknameGenerator.generate()
+            binding.etNickname.setText(fresh)
+            binding.etNickname.setSelection(fresh.length)
+        }
+
+        // 약관 동의: 전체 동의 <-> 개별 동의 동기화
+        binding.cbAgreeAll.setOnClickListener {
+            val checked = binding.cbAgreeAll.isChecked
+            binding.cbAgreeTerms.isChecked = checked
+            binding.cbAgreePrivacy.isChecked = checked
+            updateButtonStates()
+        }
+        val onConsentChanged = {
+            binding.cbAgreeAll.isChecked =
+                binding.cbAgreeTerms.isChecked && binding.cbAgreePrivacy.isChecked
+            updateButtonStates()
+        }
+        binding.cbAgreeTerms.setOnClickListener { onConsentChanged() }
+        binding.cbAgreePrivacy.setOnClickListener { onConsentChanged() }
+
         // 프로필 이미지 선택
         binding.btnProfileAdd.setOnClickListener {
             checkPermissionAndOpenGallery()
@@ -114,6 +137,14 @@ class SignUpActivity : AppCompatActivity() {
             return
         }
 
+        // 필수 약관 동의 확인
+        val agreeTerms = binding.cbAgreeTerms.isChecked
+        val agreePrivacy = binding.cbAgreePrivacy.isChecked
+        if (!agreeTerms || !agreePrivacy) {
+            Toast.makeText(this, getString(R.string.error_consent_required), Toast.LENGTH_SHORT).show()
+            return
+        }
+
         binding.btnSignUp.isEnabled = false
 
         lifecycleScope.launch {
@@ -128,10 +159,10 @@ class SignUpActivity : AppCompatActivity() {
                     uploadProfileImage(uri)
                 }
 
-                // 백엔드에 사용자 등록
+                // 백엔드에 사용자 등록 (동의 여부 함께 전달)
                 val idToken = AppContainer.firebaseAuthManager.getIdToken()
                 if (idToken != null) {
-                    registerToBackend(idToken, nickname)
+                    registerToBackend(idToken, nickname, agreeTerms, agreePrivacy)
                 } else {
                     showSuccessAndNavigate()
                 }
@@ -189,12 +220,17 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun registerToBackend(idToken: String, nickname: String) {
+    private suspend fun registerToBackend(
+        idToken: String,
+        nickname: String,
+        termsAgreed: Boolean,
+        privacyAgreed: Boolean
+    ) {
         // 1회 재시도 (일시적 백엔드 장애 대응)
-        var result = AppContainer.authRepository.login(idToken)
+        var result = AppContainer.authRepository.login(idToken, termsAgreed, privacyAgreed)
         if (result.isFailure) {
             Log.w("SignUpActivity", "백엔드 등록 실패, 1회 재시도")
-            result = AppContainer.authRepository.login(idToken)
+            result = AppContainer.authRepository.login(idToken, termsAgreed, privacyAgreed)
         }
 
         result.onSuccess { user ->
@@ -310,9 +346,10 @@ class SignUpActivity : AppCompatActivity() {
             )
         }
 
-        // 가입하기 버튼
+        // 가입하기 버튼 (필수 약관 동의 포함)
+        val isConsented = binding.cbAgreeTerms.isChecked && binding.cbAgreePrivacy.isChecked
         val isAllFilled = isIdNotEmpty && nicknameText.isNotEmpty() &&
-                pwText.isNotEmpty() && pwCheckText.isNotEmpty()
+                pwText.isNotEmpty() && pwCheckText.isNotEmpty() && isConsented
 
         with(binding.btnSignUp) {
             isEnabled = isAllFilled

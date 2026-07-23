@@ -9,9 +9,10 @@ from app.schemas import PlantCardDto, PlantDetailDto, PlantExploreDto, PlantSear
 
 # [핵심] deps.py에서 만든 3가지를 가져옵니다.
 from app.api.v1.endpoints.deps import (
-    get_plant_service, 
-    get_current_user_id, 
-    get_current_user_id_optional
+    get_plant_service,
+    get_current_user_id,
+    get_current_user_id_optional,
+    verify_app_check,
 )
 router = APIRouter()
 # ==========================================
@@ -118,12 +119,14 @@ async def get_plants_count(
 
 
 # ==========================================
-# 3. 상황별 꽃 추천 API (AI Curation, 체험 차원에서 열어 둠. 추후 배포 한다면 비즈니스 모델에 따라 permit state 조절)
+# 3. 상황별 꽃 추천 API (AI Curation)
+#    Gemini 과금 엔드포인트 → 인증 필수(익명 세션 포함)로 봇/어뷰징 차단
 # ==========================================
 @router.post("/recommend", response_model=PlantExploreDto)
 async def recommend_plants(
     situation: str = Query(..., description="사용자 상황 설명"),
-    user_id: Optional[str] = Depends(get_current_user_id_optional),
+    user_id: str = Depends(get_current_user_id),
+    _app_check: None = Depends(verify_app_check),
 ):
     """
     상황에 맞는 단일 식물 추천
@@ -140,13 +143,14 @@ async def recommend_plants(
 
 
 # ==========================================
-# 4. 이미지 기반 식물 검색 (Vision Search, 체험 차원에서 열어 둠. 추후 배포 한다면 비즈니스 모델에 따라 permit state 조절)
+# 4. 이미지 기반 식물 검색 (Vision Search)
+#    Gemini Vision 과금 엔드포인트 → 인증 필수(익명 세션 포함)로 봇/어뷰징 차단
 # ==========================================
 @router.post("/search/image", response_model=PlantSearchResultDto)
 async def search_plant_by_image(
     file: UploadFile = File(...),
-    # [추가] 검색 결과에서도 찜 여부를 알기 위해 유저 ID 주입 (선택적)
-    user_id: Optional[str] = Depends(get_current_user_id_optional)
+    user_id: str = Depends(get_current_user_id),
+    _app_check: None = Depends(verify_app_check),
 ):
     """
     이미지로 식물 검색

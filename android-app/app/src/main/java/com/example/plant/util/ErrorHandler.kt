@@ -2,13 +2,14 @@ package com.example.plant.util
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
 import android.widget.Toast
-import com.example.plant.di.AppContainer
-import com.example.plant.ui.auth.LoginActivity
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import com.example.plant.data.auth.SessionManager
+import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 import java.net.SocketTimeoutException
 import java.io.IOException
@@ -121,29 +122,19 @@ object ErrorHandler {
             return true
         }
 
-        // 인증 에러인 경우 로그인 화면으로 리다이렉트
+        // 인증 에러: 익명 인증 모델에서는 로그아웃/로그인 화면 이동을 하지 않는다.
+        // (그러면 익명 세션이 파괴되고 사용 불가 화면으로 빠짐)
+        // 대신 익명 세션을 재확보해 다음 요청이 복구되도록 한다.
         if (isAuthError(error)) {
-            redirectToLogin(activity)
+            Toast.makeText(activity, "일시적인 인증 오류입니다. 잠시 후 다시 시도해주세요", Toast.LENGTH_SHORT).show()
+            (activity as? LifecycleOwner)?.lifecycleScope?.launch {
+                SessionManager.ensureSession(activity.applicationContext)
+            }
             return true
         }
 
         // 일반 에러 처리
         handleError(activity, error, tag)
         return true
-    }
-
-    /**
-     * 로그인 화면으로 리다이렉트
-     */
-    fun redirectToLogin(activity: Activity) {
-        // Firebase 로그아웃
-        AppContainer.firebaseAuthManager.signOut()
-
-        Toast.makeText(activity, "로그인이 필요합니다", Toast.LENGTH_SHORT).show()
-
-        val intent = Intent(activity, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        activity.startActivity(intent)
-        activity.finish()
     }
 }

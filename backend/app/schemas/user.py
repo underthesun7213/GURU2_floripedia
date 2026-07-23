@@ -75,7 +75,10 @@ class UserBase(CamelCaseModel):
     유저의 공통 필드 정의
     - DB 저장 및 조회 시 공통적으로 사용되는 필드들
     """
-    email: EmailStr = Field(..., description="사용자 구글 이메일")
+    email: Optional[EmailStr] = Field(
+        default=None,
+        description="사용자 이메일 (Apple '이메일 가리기' 시 없거나 relay 주소일 수 있음)"
+    )
     nickname: str = Field(default="식물 탐험가", description="앱 내 표시될 별명")
 
     # 기본값은 로컬 placeholder 이미지로 설정.
@@ -87,7 +90,10 @@ class UserBase(CamelCaseModel):
 
 class UserLoginRequest(CamelCaseModel):
     """안드로이드에서 로그인 요청 시 보낼 데이터 규격"""
-    id_token: str = Field(..., description="Firebase에서 발급받은 구글 ID Token")
+    id_token: str = Field(..., description="Firebase에서 발급받은 ID Token")
+    # 신규 가입 시 동의 캡처용 (기존 유저 로그인 시에는 무시됨)
+    terms_agreed: bool = Field(default=False, description="이용약관 동의 여부")
+    privacy_agreed: bool = Field(default=False, description="개인정보 처리방침 동의 여부")
 
 
 class UserResponse(UserBase):

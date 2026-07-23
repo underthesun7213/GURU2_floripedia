@@ -16,7 +16,6 @@ import com.example.plant.R
 import com.example.plant.data.remote.TokenManager
 import com.example.plant.databinding.ActivityProfileEditBinding
 import com.example.plant.di.AppContainer
-import com.example.plant.ui.auth.LoginActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -109,7 +108,7 @@ class ProfileEditActivity : AppCompatActivity() {
             binding.progressBar.visibility = View.GONE
 
             Toast.makeText(this@ProfileEditActivity, "로그아웃 되었습니다", Toast.LENGTH_SHORT).show()
-            navigateToLogin()
+            navigateToHome()
         }
     }
 
@@ -127,7 +126,7 @@ class ProfileEditActivity : AppCompatActivity() {
                 TokenManager.clearToken(this@ProfileEditActivity)
 
                 Toast.makeText(this@ProfileEditActivity, "회원 탈퇴가 완료되었습니다", Toast.LENGTH_SHORT).show()
-                navigateToLogin()
+                navigateToHome()
             }.onFailure { error ->
                 com.example.plant.util.ErrorHandler.handleApiError(
                     this@ProfileEditActivity,
@@ -138,8 +137,10 @@ class ProfileEditActivity : AppCompatActivity() {
         }
     }
 
-    private fun navigateToLogin() {
-        val intent = Intent(this, LoginActivity::class.java)
+    // 익명 인증 모델: 로그아웃/회원탈퇴 후 로그인 화면이 없으므로 홈으로 이동.
+    // 홈(MainActivity)에서 익명 세션이 새로 확보된다.
+    private fun navigateToHome() {
+        val intent = Intent(this, com.example.plant.ui.home.MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()
