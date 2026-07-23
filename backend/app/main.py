@@ -15,6 +15,7 @@ from firebase_admin import credentials
 
 from app.api.v1 import api_router
 from app.core.config import settings
+from app.core.rate_limit import create_rate_limit_index
 from app.db.session import mongodb
 from app.middleware import CacheHeadersMiddleware
 
@@ -41,7 +42,10 @@ async def lifespan(app: FastAPI):
     """
     await mongodb.connect()
     print("✅ MongoDB Connected")  # 로그 추가 (확인용)
-    
+
+    # rate_limits 컬렉션 TTL 인덱스 (지난 카운터 자동 삭제)
+    await create_rate_limit_index(mongodb.db)
+
     yield
     
     await mongodb.close()

@@ -47,6 +47,11 @@ class Settings(BaseSettings):
     # True(enforce): 유효한 App Check 토큰이 없으면 거부. 디버그 토큰 등록·검증 확인 후 켤 것.
     APP_CHECK_ENFORCED: bool = False
 
+    # === AI 요청 rate limit (1인당 남용 방지) ===
+    # 익명 uid당 하루 AI 엔드포인트(추천·이미지검색) 호출 상한.
+    # Google 프로젝트 할당량은 "전체 합산"이라, 1인당 제한은 여기서 uid 기준으로 건다.
+    AI_DAILY_LIMIT_PER_USER: int = 60
+
     # === Gemini Models ===
     # 앱에서 실제 쓰는 건 2개(basic/essay). 모델명은 비밀이 아니므로 여기 기본값으로 관리(필요 시 env override).
     GEMINI_BASIC_MODEL: str = "gemini-3.1-flash-lite"   # 이미지 판정·식별·상황 추천(고빈도·가성비, stable)

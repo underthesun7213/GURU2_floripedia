@@ -5,6 +5,7 @@ from fastapi.security import OAuth2PasswordBearer
 from firebase_admin import auth, app_check
 
 from app.core.config import settings
+from app.core.rate_limit import check_and_increment
 from app.db.session import mongodb
 from app.repositories import PlantRepository, UserRepository
 from app.services.plant_service import PlantService
@@ -139,4 +140,28 @@ async def verify_app_check(
             )
         logger.warning(f"[AppCheck] 검증 실패 (monitor 모드, 허용): {e}")
 
+
+# =================================================================
+# 4. uid별 일일 rate limit (AI 과금 엔드포인트 남용 방지)
+# =================================================================
+
+async def enforce_ai_rate_limit(
+    user_id: str = Depends(get_current_user_id),
+) -> str:
+    """
+    인증된 uid의 오늘 AI 호출 횟수를 확인·증가시키고, 상한 초과 시 429로 거부한다.
+
+    - 상한: settings.AI_DAILY_LIMIT_PER_USER (기본 60/일)
+    - get_current_user_id에 의존하므로 유효한 (익명 포함) 토큰이 선행 조건.
+    - 통과 시 uid를 반환하여 엔드포인트에서 그대로 사용 가능.
+    """
+    allowed = await check_and_increment(
+        mongodb.db, user_id, settings.AI_DAILY_LIMIT_PER_USER
+    )
+    if not allowed:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="오늘 AI 기능 사용 한도를 초과했습니다. 내일 다시 이용해 주세요.",
+        )
+    return user_id
 

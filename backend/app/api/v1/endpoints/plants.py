@@ -13,6 +13,7 @@ from app.api.v1.endpoints.deps import (
     get_current_user_id,
     get_current_user_id_optional,
     verify_app_check,
+    enforce_ai_rate_limit,
 )
 router = APIRouter()
 # ==========================================
@@ -125,7 +126,7 @@ async def get_plants_count(
 @router.post("/recommend", response_model=PlantExploreDto)
 async def recommend_plants(
     situation: str = Query(..., description="사용자 상황 설명"),
-    user_id: str = Depends(get_current_user_id),
+    user_id: str = Depends(enforce_ai_rate_limit),
     _app_check: None = Depends(verify_app_check),
 ):
     """
@@ -149,7 +150,7 @@ async def recommend_plants(
 @router.post("/search/image", response_model=PlantSearchResultDto)
 async def search_plant_by_image(
     file: UploadFile = File(...),
-    user_id: str = Depends(get_current_user_id),
+    user_id: str = Depends(enforce_ai_rate_limit),
     _app_check: None = Depends(verify_app_check),
 ):
     """
