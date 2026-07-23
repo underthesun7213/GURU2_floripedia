@@ -14,6 +14,7 @@ Floripedia는 AI 기반 식물 식별, 감성 추천, 그리고 풍부한 식물
 - [기술 스택](#-기술-스택)
 - [프로젝트 구조](#-프로젝트-구조)
 - [시스템 아키텍처](#-시스템-아키텍처)
+- [설계 결정](#-설계-결정)
 - [시작하기](#-시작하기)
 - [API 문서](#-api-문서)
 - [데이터베이스 스키마](#-데이터베이스-스키마)
@@ -66,8 +67,8 @@ Floripedia는 AI 기반 식물 식별, 감성 추천, 그리고 풍부한 식물
 ### 💖 사용자 기능
 
 - **꽃갈피 (찜하기)**: 마음에 드는 식물 저장
-- **마이페이지**: 프로필 관리, 찜한 식물 목록 조회
-- **Firebase 인증**: Google/Email 소셜 로그인
+- **마이페이지**: 프로필, 레벨/경험치(씨앗→식물 마스터), 찜 목록
+- **무마찰 온보딩**: 로그인 화면 없이 Firebase 익명 인증으로 즉시 사용
 - **프로필 이미지 업로드**: Firebase Storage 연동
 
 ---
@@ -86,11 +87,11 @@ Floripedia는 AI 기반 식물 식별, 감성 추천, 그리고 풍부한 식물
 ### Backend
 - **프레임워크**: FastAPI 0.115.0
 - **데이터베이스**: MongoDB (Motor 3.6.0)
-- **AI/ML**: Google Gemini 2.5 Flash Lite (google-generativeai 0.8.6)
-- **인증**: Firebase Admin SDK 6.5.0
+- **AI/ML**: Google Gemini (google-genai 1.65.0) — basic: gemini-3.1-flash-lite, essay: gemini-3.5-flash
+- **인증**: Firebase Admin SDK 6.5.0 (익명 인증 + App Check)
 - **이미지 처리**: Pillow 10.4.0
-- **HTTP 클라이언트**: httpx 0.27.2
-- **검색 그라운딩**: Google Search Tool (Gemini)
+- **HTTP 클라이언트**: httpx 0.28.1
+- **캐시**: 인메모리 계층 (cachetools, Redis 교체 대비 추상화)
 
 ### Android
 - **언어**: Kotlin
@@ -100,8 +101,8 @@ Floripedia는 AI 기반 식물 식별, 감성 추천, 그리고 풍부한 식물
 
 ### Infrastructure
 - **클라우드 저장소**: Firebase Storage
-- **컨테이너**: Docker
-- **ASGI 서버**: Uvicorn 0.32.0
+- **배포**: AWS EC2 + GitHub Actions (SSH 무중단 배포), Nginx + HTTPS
+- **ASGI/프로세스 매니저**: Uvicorn 0.32.0 + Gunicorn 23.0.0
 
 ---
 
@@ -117,7 +118,7 @@ GURU2_floripedia/
 │   │   │   ├── util/              # 유틸리티 (InputValidator, ErrorHandler)
 │   │   │   └── di/                # 의존성 주입
 │   │   ├── src/main/res/          # 리소스 (layout, drawable, values)
-│   │   └── src/test/              # Unit Tests (49개)
+│   │   └── src/test/              # Unit Tests (50개)
 │   └── build.gradle
 │
 ├── backend/                        # FastAPI 백엔드
@@ -165,7 +166,7 @@ GURU2_floripedia/
 │   │   ├── open_data/             # 공공 데이터 수집
 │   │   └── upload_to_mongodb.py   # DB 업로드
 │   │
-│   ├── tests/                     # pytest 테스트 (46개)
+│   ├── tests/                     # pytest 테스트 (98개)
 │   ├── data/                      # 데이터셋
 │   └── requirements.txt           # Python 패키지
 │
@@ -258,6 +259,30 @@ Gemini 반환값: { name: "장미", scientificName: "Rosa rugosa" }
 
 ---
 
+## 🧭 설계 결정
+
+주요 기술 선택의 **배경과 트레이드오프**를 기록합니다.
+
+### 1. 로그인 대신 익명 인증 (무마찰 온보딩)
+- **문제**: 소셜/커뮤니티 기능이 없는 유틸형 앱에서 로그인 강제는 이탈만 키움. 하지만 AI(Gemini) 호출은 건당 과금이라 **비용/어뷰징 통제**가 필요.
+- **결정**: 로그인 화면을 없애고 앱 첫 실행 시 **Firebase 익명 인증**으로 세션 발급. 사용자는 아무 행동 없이 바로 사용하되, 백엔드는 익명 `uid` 기반으로 찜·레벨·요청 주체를 그대로 식별.
+- **효과**: 로그인 UX 마찰 제거 + 기존 `uid` 기반 기능(찜/레벨) 무변경 유지. 향후 "익명 → 정식 계정" 승격도 가능.
+
+### 2. 다층 봇/어뷰징 방어 (AI 원가 보호)
+클라이언트 게이팅(로그인 버튼·광고)은 API를 직접 때리는 봇을 못 막으므로, **서버 측**에 방어를 둠.
+- **인증 필수화**: AI 엔드포인트(`/recommend`, `/search/image`)는 유효 Firebase 토큰(익명 포함) 없으면 거부.
+- **Firebase App Check**: "정품 앱에서 온 요청"임을 검증(`X-Firebase-AppCheck` 헤더 → 백엔드 검증). `monitor → enforce` 단계적 전환으로 무중단 롤아웃.
+- **최후 방어선**: Gemini 예산/할당량 상한(배포 시).
+
+### 3. 인메모리 캐시 + 단일 워커
+- 읽기 중심 트래픽에 인메모리 캐시(TTL·네거티브 캐싱)로 DB/AI 호출 절감. 캐시가 프로세스 로컬이라 gunicorn `workers=1` 유지.
+- **확장 대비**: `CacheBackend` 추상화로 트래픽 증가 시 Redis 교체 가능하게 설계.
+
+### 4. 무중단 배포 (graceful reload)
+- `git push → 테스트 → SSH → gunicorn graceful reload → 헬스체크`. 새 워커가 준비되면 옛 워커를 교체해 진행 중 요청을 끊지 않음. (`backend/deploy/` 참고)
+
+---
+
 ## 🚀 시작하기
 
 ### 필수 요구사항
@@ -280,20 +305,22 @@ cd GURU2_floripedia
 
 `.env` 파일을 생성하고 다음 항목을 입력하세요:
 
-```env
-# MongoDB
-MONGO_URI=<your-mongodb-uri>
+`backend/.env` 파일을 생성하고 다음 항목을 입력하세요:
 
-# Gemini API
+```env
+# 필수
+MONGO_URI=<your-mongodb-uri>
 GEMINI_API_KEY=<your-gemini-api-key>
 
-# Firebase
-FIREBASE_STORAGE_BUCKET=<your-bucket>.appspot.com
+# 선택 (기본값 있음)
+FIREBASE_STORAGE_BUCKET=<your-bucket>.firebasestorage.app
+APP_CHECK_ENFORCED=false        # 배포 시 true (App Check 봇 방어 강제)
 ```
 
 3. **Firebase 설정**
 
-`serviceAccountKey.json` 파일을 `backend/app/` 디렉토리에 추가하세요.
+- 서비스 계정 키를 `backend/app/core/firebase-key.json` 에 배치 (git 커밋 금지)
+- Firebase 콘솔에서 **익명 로그인**과 **App Check** 활성화
 
 ### Backend 실행
 
@@ -330,26 +357,32 @@ http://localhost:8000/api/v1
 
 ### 인증 (Authentication)
 
+> 앱은 첫 실행 시 **Firebase 익명 인증**으로 세션을 만들고, 그 ID Token으로 `/auth/login`을 호출해 유저 문서를 생성합니다. 별도 로그인 화면 없이 즉시 사용 가능합니다.
+
 #### POST `/auth/login`
-Firebase ID Token 기반 로그인/자동 회원가입
+Firebase ID Token 기반 로그인/자동 회원가입 (익명 토큰 포함)
 
 **Request Body:**
 ```json
 {
-  "idToken": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+  "idToken": "<firebase-id-token>",
+  "termsAgreed": true,
+  "privacyAgreed": true
 }
 ```
+> `termsAgreed`/`privacyAgreed`는 신규 가입 시 동의 캡처용(선택).
 
 **Response:**
 ```json
 {
   "id": "user_id",
-  "email": "user@example.com",
-  "displayName": "사용자",
+  "email": null,
+  "nickname": "달콤한 햇살",
   "profileImageUrl": "https://...",
-  "createdAt": "2024-01-01T00:00:00"
+  "createdAt": "2026-01-01T00:00:00"
 }
 ```
+> 익명 세션은 `email`이 `null`이고, 닉네임은 랜덤 부여됩니다.
 
 #### GET `/auth/check-email?email={email}`
 이메일 중복 확인
@@ -489,60 +522,53 @@ Firebase ID Token 기반 로그인/자동 회원가입
 
 **Response:** (POST /plants/search/image와 동일)
 
-#### GET `/plants/favorites`
-내 꽃갈피(찜) 목록 조회 🔒 (인증 필수)
-
-**Header:**
-- `Authorization: Bearer {firebase_token}`
-
-**Query Parameters:**
-- `season`, `category_group`, `color_group` (필터)
-- `skip`, `limit` (페이지네이션)
+#### GET `/plants/stories/popular`
+인기 스토리 큐레이션 목록
 
 ---
 
 ### 사용자 (Users)
 
-#### GET `/users/me` 🔒
-내 프로필 조회
+> 🔒 표시는 인증 필수. 앱은 익명 세션 토큰으로 자동 인증되므로 별도 로그인 없이 호출됩니다.
 
-**Header:**
-- `Authorization: Bearer {firebase_token}`
+#### GET `/users/me` 🔒
+내 프로필 조회 (닉네임, 레벨/경험치, 찜 목록 등)
+
+**Header:** `Authorization: Bearer {firebase_token}`
 
 **Response:**
 ```json
 {
   "id": "user_id",
-  "email": "user@example.com",
-  "displayName": "사용자",
+  "email": null,
+  "nickname": "달콤한 햇살",
   "profileImageUrl": "https://...",
-  "favoriteCount": 5,
-  "createdAt": "2024-01-01T00:00:00"
+  "favoritePlantIds": ["1", "2"],
+  "levelInfo": { "level": 1, "title": "씨앗", "totalExp": 20, "nextLevelExp": 30 },
+  "createdAt": "2026-01-01T00:00:00"
 }
 ```
+> 익명 세션은 `email`이 `null`입니다.
 
 #### PATCH `/users/me` 🔒
 프로필 수정
 
-**Request Body:**
-```json
-{
-  "displayName": "새로운 닉네임"
-}
-```
+**Request Body:** `{ "nickname": "새로운 닉네임" }`
 
 #### POST `/users/me/profile-image` 🔒
-프로필 이미지 업로드
-
-**Request:**
-- Content-Type: `multipart/form-data`
-- Body: `file` (이미지 파일)
+프로필 이미지 업로드 (`multipart/form-data`, `file`)
 
 #### POST `/users/me/favorites/{plant_id}` 🔒
-식물 찜하기
+식물 찜 토글 (추가/취소)
 
-#### DELETE `/users/me/favorites/{plant_id}` 🔒
-식물 찜 취소
+#### GET `/users/me/favorites` 🔒
+내 꽃갈피(찜) 목록 조회 — 필터(`season`, `category_group`, `color_group`) + 페이지네이션(`skip`, `limit`)
+
+#### GET `/users/me/favorites/count` 🔒
+내 찜 개수
+
+#### POST `/users/logout` 🔒
+로그아웃
 
 #### DELETE `/users/me` 🔒
 회원 탈퇴
@@ -668,9 +694,9 @@ db.plants.createIndex({ "search_keywords": 1 })
 
 ## 🧪 테스트
 
-**총 95개 테스트** (Backend 46 + Android 49) — 에뮬레이터/서버 없이 전부 로컬 실행 가능.
+**총 148개 테스트** (Backend 98 + Android 50) — 에뮬레이터/서버 없이 전부 로컬 실행 가능.
 
-### Backend (pytest, 46개)
+### Backend (pytest, 98개)
 
 ```bash
 cd backend
@@ -680,12 +706,16 @@ pytest -v
 
 ```
 backend/tests/
-├── conftest.py                # 공통 Fixture (MongoDB Mock, Gemini Mock, TestClient)
-├── test_plant_repository.py   # Repository 단위 테스트 (8개)
-├── test_plant_service.py      # 이미지 검색 · 추천 통합 테스트 (7개)
-├── test_user_repository.py    # User Repository 테스트 (6개)
-├── test_services.py           # Auth · User Service 테스트 (14개)
-└── test_api.py                # API 엔드포인트 E2E 테스트 (10개)
+├── conftest.py                  # 공통 Fixture (MongoDB Mock, Gemini Mock, TestClient)
+├── test_plant_repository.py     # Repository 단위 테스트 (8개)
+├── test_plant_service.py        # 이미지 검색 · 추천 통합 테스트 (7개)
+├── test_user_repository.py      # User Repository 테스트 (6개)
+├── test_services.py             # Auth · User Service 테스트 (17개)
+├── test_api.py                  # API 엔드포인트 E2E 테스트 (10개)
+├── test_cache.py                # 캐시 계층 단위 테스트 (13개)
+├── test_cache_integration.py    # 캐시 통합 테스트 (9개)
+├── test_curated_stories.py      # 스토리 큐레이션 (4개)
+└── test_level_system.py         # 레벨/경험치 시스템 (24개)
 ```
 
 | 레이어 | 테스트 파일 | 주요 검증 |
@@ -693,10 +723,12 @@ backend/tests/
 | Repository | `test_plant_repository.py` | 학명 퍼지 매칭, 이름 조회, 대소문자 무시 |
 | Repository | `test_user_repository.py` | 소프트 삭제, 찜 추가/중복/제거 |
 | Service | `test_plant_service.py` | Gemini 이미지 검색, 추천 에세이 생성, 에러 핸들링 |
-| Service | `test_services.py` | 로그인/회원가입, 토큰 검증, 프로필 이미지, 찜 토글 |
+| Service | `test_services.py` | 익명/토큰 검증, 동의 캡처, 랜덤 닉네임, 프로필, 찜 토글 |
 | API | `test_api.py` | 식물 목록/상세/검색, 인증, 프로필, 파일 업로드 |
+| Cache | `test_cache*.py` | TTL·무효화·네거티브 캐싱, 서비스 통합 |
+| Domain | `test_level_system.py` | 경험치 적립, 레벨 임계값, 칭호 산정 |
 
-### Android (JUnit + MockWebServer, 49개)
+### Android (JUnit + MockWebServer, 50개)
 
 ```bash
 cd android-app
