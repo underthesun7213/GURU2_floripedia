@@ -5,9 +5,11 @@ gunicorn graceful reload + 헬스체크를 수행한다. (워크플로: `.github
 
 ## 사전 준비 (한 번만)
 
-### 1. 고정 주소
-- EC2에 **Elastic IP** 연결 (IP 고정). 가능하면 **도메인**을 Elastic IP로 연결.
-- 안드로이드 `local.properties`의 `SERVER_URL`을 이 주소(HTTPS 권장)로 설정.
+### 1. 고정 주소 (서브도메인 전용)
+- EC2에 **Elastic IP** 연결 (IP 고정).
+- DNS **A 레코드**: `floripedia.<도메인>` → Elastic IP.
+- 앱은 `https://floripedia.<도메인>/api/v1/...` 로 호출한다 (경로 prefix 없이 서브도메인만으로 분리).
+  안드로이드 `local.properties`의 `SERVER_URL` = `https://floripedia.<도메인>/api/v1/`.
 
 ### 2. EC2 초기 설정
 ```bash
@@ -26,7 +28,7 @@ sudo apt install -y nginx certbot python3-certbot-nginx
 sudo cp deploy/nginx.conf.example /etc/nginx/sites-available/floripedia   # server_name 수정
 sudo ln -s /etc/nginx/sites-available/floripedia /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl reload nginx
-sudo certbot --nginx -d api.example.com   # 443 + 인증서 자동
+sudo certbot --nginx -d floripedia.example.com   # 443 + 인증서 자동
 ```
 
 ### 4. sudo 비번 없이 reload 허용 (Actions가 systemctl 호출)

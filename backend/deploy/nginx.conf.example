@@ -1,13 +1,27 @@
 # Nginx 리버스 프록시 예시 (443 HTTPS 종료 → 내부 gunicorn 8000)
+#
+# 구성: 서브도메인 전용 — floripedia.<도메인> 이 이 EC2를 가리키고,
+#       앱은 https://floripedia.<도메인>/api/v1/... 로 호출한다.
+#       (경로 prefix 없이 서브도메인만으로 서비스 분리)
+#
 # 설치: /etc/nginx/sites-available/floripedia 로 복사 후 sites-enabled에 심볼릭 링크,
-#       server_name을 실제 도메인으로 바꾸고 `sudo nginx -t && sudo systemctl reload nginx`.
-# HTTPS: sudo certbot --nginx -d api.example.com  (Let's Encrypt가 443/인증서 자동 구성)
+#       server_name을 실제 서브도메인으로 바꾸고 `sudo nginx -t && sudo systemctl reload nginx`.
+# HTTPS: sudo certbot --nginx -d floripedia.example.com  (Let's Encrypt가 443/인증서 자동 구성)
+
+# 등록되지 않은 Host로 오는 요청(EIP 직접 접근, 미지의 서브도메인, 봇 IP 스캔)은
+# 실제 앱에 닿지 않도록 여기서 즉시 연결 종료(444). 앱을 여러 개로 늘릴 때 방어선이 된다.
+# (443 쪽 catch-all은 인증서가 필요해 지금은 생략 — 와일드카드 인증서 도입 시 함께 추가)
+server {
+    listen 80 default_server;
+    server_name _;
+    return 444;
+}
 
 server {
     listen 80;
-    server_name api.example.com;   # TODO: 실제 도메인
+    server_name floripedia.example.com;   # TODO: 실제 서브도메인
 
-    client_max_body_size 10M;      # 이미지 업로드 여유
+    client_max_body_size 10M;             # 이미지 업로드 여유
 
     location / {
         proxy_pass http://127.0.0.1:8000;
@@ -15,6 +29,6 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_read_timeout 120s;   # AI/이미지 요청 대비
+        proxy_read_timeout 120s;          # AI/이미지 요청 대비
     }
 }
