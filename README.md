@@ -294,7 +294,7 @@ Gemini 반환값: { name: "장미", scientificName: "Rosa rugosa" }
 
 앱을 직접 빌드하지 않아도, 배포된 백엔드 API를 라이브 문서(Swagger UI)에서 바로 확인할 수 있습니다.
 
-- 🔗 **라이브 API 문서**: `https://floripedia.<도메인>/docs` <!-- TODO: 배포 도메인 확정 후 교체 -->
+- 🔗 **라이브 API 문서**: https://floripedia.juha.dev/docs
 - 설계 의도는 [시스템 아키텍처](#-시스템-아키텍처) · [설계 결정](#-설계-결정) 참고
 
 ---
@@ -303,7 +303,7 @@ Gemini 반환값: { name: "장미", scientificName: "Rosa rugosa" }
 
 ### Base URL
 ```
-https://floripedia.<도메인>/api/v1
+https://floripedia.juha.dev/api/v1
 ```
 
 ### 인증 (Authentication)
