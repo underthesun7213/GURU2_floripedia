@@ -15,7 +15,7 @@ Floripedia는 AI 기반 식물 식별, 감성 추천, 그리고 풍부한 식물
 - [프로젝트 구조](#-프로젝트-구조)
 - [시스템 아키텍처](#-시스템-아키텍처)
 - [설계 결정](#-설계-결정)
-- [시작하기](#-시작하기)
+- [다운로드](#-다운로드)
 - [API 문서](#-api-문서)
 - [데이터베이스 스키마](#-데이터베이스-스키마)
 - [테스트](#-테스트)
@@ -283,68 +283,19 @@ Gemini 반환값: { name: "장미", scientificName: "Rosa rugosa" }
 
 ---
 
-## 🚀 시작하기
+## 📲 다운로드
 
-### 필수 요구사항
+> **별도 회원가입 없이, 설치 후 바로 사용할 수 있습니다.** 첫 실행 시 Firebase 익명 세션이 자동 생성됩니다.
 
-- **Python** 3.11+
-- **Android Studio** otter
-- **MongoDB Atlas** 계정
-- **Firebase** 프로젝트
-- **Google Gemini API** 키
+**Google Play** — 출시 준비 중
+<!-- TODO: 출시 후 스토어 링크 추가 -->
 
-### 환경 설정
+### 기술 리뷰어용
 
-1. **레포지토리 클론**
-```bash
-git clone https://github.com/your-username/GURU2_floripedia.git
-cd GURU2_floripedia
-```
+앱을 직접 빌드하지 않아도, 배포된 백엔드 API를 라이브 문서(Swagger UI)에서 바로 확인할 수 있습니다.
 
-2. **환경 변수 설정**
-
-`.env` 파일을 생성하고 다음 항목을 입력하세요:
-
-`backend/.env` 파일을 생성하고 다음 항목을 입력하세요:
-
-```env
-# 필수
-MONGO_URI=<your-mongodb-uri>
-GEMINI_API_KEY=<your-gemini-api-key>
-
-# 선택 (기본값 있음)
-FIREBASE_STORAGE_BUCKET=<your-bucket>.firebasestorage.app
-APP_CHECK_ENFORCED=false        # 배포 시 true (App Check 봇 방어 강제)
-```
-
-3. **Firebase 설정**
-
-- 서비스 계정 키를 `backend/app/core/firebase-key.json` 에 배치 (git 커밋 금지)
-- Firebase 콘솔에서 **익명 로그인**과 **App Check** 활성화
-
-### Backend 실행
-
-#### 방법 1: 로컬 실행
-
-```bash
-cd backend
-pip install -r requirements.txt
-python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-#### 방법 2: AWS 서버 접속
-
-`RetrofitClient.kt`의 `BASE_URL`이 배포 서버를 가리키도록 설정 후 Android Studio에서 빌드 & 실행.
-```
-
-**API 문서 확인**: http://localhost:8000/docs
-
-### Android 앱 실행
-
-1. Android Studio에서 `android-app` 폴더를 엽니다
-2. `google-services.json` 파일을 `android-app/app/` 디렉토리에 추가
-3. `RetrofitClient.kt`에서 `BASE_URL`을 서버 주소로 변경
-4. 프로젝트 빌드 & 실행
+- 🔗 **라이브 API 문서**: `https://floripedia.<도메인>/docs` <!-- TODO: 배포 도메인 확정 후 교체 -->
+- 설계 의도는 [시스템 아키텍처](#-시스템-아키텍처) · [설계 결정](#-설계-결정) 참고
 
 ---
 
@@ -352,7 +303,7 @@ python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 ### Base URL
 ```
-http://localhost:8000/api/v1
+https://floripedia.<도메인>/api/v1
 ```
 
 ### 인증 (Authentication)
@@ -765,7 +716,9 @@ Postman → Import → File 선택 후 사용. `base_url`: `http://localhost:800
 
 ## 📝 라이선스
 
-이 프로젝트는 교육 목적으로 개발되었습니다.
+© 2026 GURU2. All rights reserved.
+
+본 저장소는 포트폴리오 용도로 공개되어 있습니다. 코드·데이터·에셋의 무단 복제, 재배포, 상업적 이용을 금합니다.
 
 ---
 
