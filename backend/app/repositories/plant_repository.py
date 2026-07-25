@@ -173,6 +173,28 @@ class PlantRepository:
             "horticulture.preContent": 1,
         }
 
+        # 키워드 검색: 관련도 랭킹 (이름 정확 > 이름 부분 > 꽃말 > 숨은 searchKeywords).
+        # find()는 이름순이라, 이름·꽃말엔 없고 숨은 키워드로만 걸린 결과가 이름 정확일치와
+        # 뒤섞여 "왜 이게 나오지?"를 유발한다. 매칭 위치로 점수를 매겨 관련 높은 것을 위로.
+        # (식물 수가 크지 않아 매칭 문서를 모아 파이썬에서 정렬 후 페이지네이션 — mongomock 호환)
+        if keyword:
+            docs = await self.collection.find(query, projection).to_list(length=None)
+            kw = keyword.lower()
+
+            def _relevance(d: dict) -> int:
+                name = (d.get("name") or "").lower()
+                if name == kw:
+                    return 3          # 이름 정확 일치
+                if kw in name:
+                    return 2          # 이름 부분 일치
+                lang = ((d.get("flowerInfo") or {}).get("language") or "").lower()
+                if kw in lang:
+                    return 1          # 꽃말 일치
+                return 0              # searchKeywords 로만 매칭 (사용자에게 근거가 안 보임)
+
+            docs.sort(key=lambda d: (-_relevance(d), d.get("name") or "", str(d.get("_id"))))
+            return docs[skip: skip + limit]
+
         # 결정적 정렬 (캐시·재현 정합). 인기도 정렬 시 동점은 _id로 안정 정렬.
         # (과거 $rand 셔플은 매 호출 결과가 달라져 캐시/재현이 불가했음)
         sort_spec = [(sort_by, sort_order)]

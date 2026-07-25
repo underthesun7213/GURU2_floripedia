@@ -76,3 +76,32 @@ class TestGetByName:
         result = await plant_repo.get_by_name("존재하지않는꽃")
 
         assert result is None
+
+
+class TestKeywordSearchRanking:
+    """키워드 검색 관련도 랭킹: 이름 정확 > 이름 부분 > 꽃말 > 숨은 searchKeywords"""
+
+    @pytest.mark.asyncio
+    async def test_relevance_order(self, mock_db):
+        """이름/꽃말/숨은 키워드 매칭이 관련도 순으로 정렬된다"""
+        repo = PlantRepository(mock_db)
+        await mock_db.plants.insert_many([
+            {"_id": "kw1", "name": "향나무", "flowerInfo": {"language": "인내"}, "searchKeywords": ["향나무"]},
+            {"_id": "kw2", "name": "나도풍란", "flowerInfo": {"language": "인내"}, "searchKeywords": ["강한 향기"]},
+            {"_id": "kw3", "name": "국화", "flowerInfo": {"language": "그윽한 향기"}, "searchKeywords": ["국화"]},
+        ])
+        names = [p["name"] for p in await repo.get_list(keyword="향")]
+        assert set(names) == {"향나무", "나도풍란", "국화"}
+        # 이름 부분일치(향나무) > 꽃말 일치(국화) > 숨은 키워드만(나도풍란)
+        assert names.index("향나무") < names.index("국화") < names.index("나도풍란")
+
+    @pytest.mark.asyncio
+    async def test_exact_name_ranks_first(self, mock_db):
+        """이름 정확 일치가 이름 부분 일치보다 앞선다"""
+        repo = PlantRepository(mock_db)
+        await mock_db.plants.insert_many([
+            {"_id": "e1", "name": "향유", "flowerInfo": {"language": "x"}, "searchKeywords": []},
+            {"_id": "e2", "name": "향", "flowerInfo": {"language": "x"}, "searchKeywords": []},
+        ])
+        results = await repo.get_list(keyword="향")
+        assert results[0]["name"] == "향"
