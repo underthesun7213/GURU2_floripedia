@@ -52,12 +52,27 @@ class Bookmark1Activity : AppCompatActivity() {
             val result = AppContainer.userRepository.getMyFavorites()
             result.onSuccess { plants ->
                 binding.tvTotalCount.text = getString(R.string.bookmark_total_count_format, plants.size)
-                if (plants.isNotEmpty()) {
-                    binding.tvRecommendedSeasonPlant.text = getString(R.string.bookmark_recommended_format, plants[0].name)
+                // "추천 계절 식물": 현재 계절에 해당하는 찜을 우선 선택 (없으면 첫 찜으로 폴백).
+                // 기존엔 계절과 무관하게 plants[0]만 보여줘 라벨과 동작이 불일치했음.
+                val season = currentSeason()
+                val pick = plants.firstOrNull { it.season == season } ?: plants.firstOrNull()
+                if (pick != null) {
+                    binding.tvRecommendedSeasonPlant.text = getString(R.string.bookmark_recommended_format, pick.name)
                 }
             }.onFailure { error ->
                 ErrorHandler.handleAuthRequiredError(this@Bookmark1Activity, error, "Bookmark1Activity")
             }
+        }
+    }
+
+    /** 기기 날짜 기준 현재 계절 (백엔드 season 코드와 동일 규약) */
+    private fun currentSeason(): String {
+        val month = java.util.Calendar.getInstance().get(java.util.Calendar.MONTH) + 1
+        return when (month) {
+            in 3..5 -> "SPRING"
+            in 6..8 -> "SUMMER"
+            in 9..11 -> "FALL"
+            else -> "WINTER"
         }
     }
 

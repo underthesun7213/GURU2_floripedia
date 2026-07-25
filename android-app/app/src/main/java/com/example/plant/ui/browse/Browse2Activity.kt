@@ -61,25 +61,34 @@ class Browse2Activity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        setupNavigation()
+        val showingSearchResults = !searchQuery.isNullOrEmpty()
+        setupNavigation(showingSearchResults)
         setupSearchResults()
 
         // 검색어가 있으면 검색 결과 표시, 없으면 탐색 화면 유지
-        if (!searchQuery.isNullOrEmpty()) {
-            searchPlants(searchQuery)
+        if (showingSearchResults) {
+            searchPlants(searchQuery!!)
         }
     }
 
-    private fun setupNavigation() {
+    private fun setupNavigation(showingSearchResults: Boolean) {
         binding.bottomNav.composeViewBottomNav.setContent {
             FloripediaBottomBar(
-                selectedMenu = "search",
+                // 탐색(스토리 기반 AI 추천)과 키워드 검색은 다른 기능이다.
+                // 검색 결과 화면에선 어떤 탭도 강조하지 않고, 탐색 진입 화면일 때만 탐색 탭을 강조.
+                selectedMenu = if (showingSearchResults) "" else "search",
                 onNavigate = { menu ->
                     when (menu) {
                         "home" -> {
                             val intent = Intent(this, MainActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                             startActivity(intent)
+                        }
+                        "search" -> {
+                            // 검색 결과 화면에서 탐색 탭을 누르면 탐색(AI 추천) 화면으로 이동
+                            if (showingSearchResults) {
+                                startActivity(Intent(this, Browse2Activity::class.java))
+                            }
                         }
                         "bookmark" -> {
                             startActivity(Intent(this, Bookmark1Activity::class.java))
