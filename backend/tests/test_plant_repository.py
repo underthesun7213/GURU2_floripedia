@@ -105,3 +105,19 @@ class TestKeywordSearchRanking:
         ])
         results = await repo.get_list(keyword="향")
         assert results[0]["name"] == "향"
+
+    @pytest.mark.asyncio
+    async def test_match_reason_only_for_hidden_keyword(self, mock_db):
+        """이름·꽃말 매칭은 근거 None, 숨은 searchKeywords 매칭만 근거(키워드)를 담는다"""
+        repo = PlantRepository(mock_db)
+        await mock_db.plants.insert_many([
+            {"_id": "m1", "name": "향나무", "flowerInfo": {"language": "인내"}, "searchKeywords": ["향나무"]},
+            {"_id": "m2", "name": "나도풍란", "flowerInfo": {"language": "인내"}, "searchKeywords": ["강한 향기"]},
+            {"_id": "m3", "name": "국화", "flowerInfo": {"language": "그윽한 향기"}, "searchKeywords": ["국화"]},
+        ])
+        by_name = {p["name"]: p for p in await repo.get_list(keyword="향")}
+        assert by_name["향나무"].get("match_reason") is None        # 이름 매칭 → 근거 생략
+        assert by_name["국화"].get("match_reason") is None          # 꽃말 매칭 → 근거 생략
+        assert by_name["나도풍란"].get("match_reason") == "강한 향기"  # 숨은 키워드 → 근거 노출
+        # searchKeywords 원본은 응답에 노출되지 않음
+        assert "searchKeywords" not in by_name["나도풍란"]

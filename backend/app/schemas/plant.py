@@ -166,6 +166,9 @@ class PlantCardDto(CamelCaseModel):
     image_url: str
     season: Season
     pre_content: str      # Horticulture 내부에서 추출 (평탄화 2)
+    # 키워드 검색에서 이름·꽃말이 아닌 '숨은 searchKeywords'로만 매칭된 경우, 그 키워드를 담아
+    # "왜 이 결과가 나왔는지"를 사용자에게 보여준다. (그 외에는 None)
+    match_reason: Optional[str] = None
 
     @model_validator(mode='before')
     @classmethod

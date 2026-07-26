@@ -178,7 +178,9 @@ class PlantRepository:
         # 뒤섞여 "왜 이게 나오지?"를 유발한다. 매칭 위치로 점수를 매겨 관련 높은 것을 위로.
         # (식물 수가 크지 않아 매칭 문서를 모아 파이썬에서 정렬 후 페이지네이션 — mongomock 호환)
         if keyword:
-            docs = await self.collection.find(query, projection).to_list(length=None)
+            # searchKeywords는 '근거 표시'용으로만 잠깐 조회하고 응답엔 노출하지 않는다.
+            kw_projection = {**projection, "searchKeywords": 1}
+            docs = await self.collection.find(query, kw_projection).to_list(length=None)
             kw = keyword.lower()
 
             def _relevance(d: dict) -> int:
@@ -190,10 +192,25 @@ class PlantRepository:
                 lang = ((d.get("flowerInfo") or {}).get("language") or "").lower()
                 if kw in lang:
                     return 1          # 꽃말 일치
-                return 0              # searchKeywords 로만 매칭 (사용자에게 근거가 안 보임)
+                return 0              # searchKeywords 로만 매칭
+
+            def _match_reason(d: dict):
+                # 이름·꽃말은 카드에 이미 보이므로 근거 생략. 숨은 키워드로만 걸린 것만 근거로 노출.
+                name = (d.get("name") or "").lower()
+                lang = ((d.get("flowerInfo") or {}).get("language") or "").lower()
+                if kw in name or kw in lang:
+                    return None
+                for k in (d.get("searchKeywords") or []):
+                    if kw in k.lower():
+                        return k
+                return None
 
             docs.sort(key=lambda d: (-_relevance(d), d.get("name") or "", str(d.get("_id"))))
-            return docs[skip: skip + limit]
+            page = docs[skip: skip + limit]
+            for d in page:
+                d["match_reason"] = _match_reason(d)
+                d.pop("searchKeywords", None)
+            return page
 
         # 결정적 정렬 (캐시·재현 정합). 인기도 정렬 시 동점은 _id로 안정 정렬.
         # (과거 $rand 셔플은 매 호출 결과가 달라져 캐시/재현이 불가했음)
