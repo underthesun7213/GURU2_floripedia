@@ -22,7 +22,11 @@ data class PlantCardDto(
     val season: String,
 
     @SerializedName("preContent")
-    val preContent: String?
+    val preContent: String?,
+
+    // 키워드 검색에서 이름·꽃말이 아닌 '숨은 키워드'로 매칭됐을 때 그 키워드(왜 나왔는지). 그 외 null.
+    @SerializedName("matchReason")
+    val matchReason: String? = null
 )
 
 /**

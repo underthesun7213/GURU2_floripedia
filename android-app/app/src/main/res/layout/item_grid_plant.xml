@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="6dp"
@@ -26,11 +27,29 @@
             android:id="@+id/tvPlantGridName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp"
+            android:paddingHorizontal="12dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="8dp"
             android:text="라일락"
             android:fontFamily="@font/pretendardmedium"
             android:textColor="@color/text1"
             android:textSize="16sp"
             android:gravity="start" />
+
+        <!-- 검색 시 '숨은 키워드'로 매칭된 경우에만 표시되는 근거 칩 -->
+        <TextView
+            android:id="@+id/tvMatchReason"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_match_reason_chip"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="3dp"
+            android:fontFamily="@font/pretendardmedium"
+            android:textColor="@color/button"
+            android:textSize="11sp"
+            android:visibility="gone"
+            tools:text="🔍 강한 향기" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
