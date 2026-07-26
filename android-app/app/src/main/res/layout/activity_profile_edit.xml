@@ -112,39 +112,7 @@
         app:layout_constraintTop_toBottomOf="@id/tvNicknameLabel"
         tools:text="홍길동" />
 
-    <!-- 아이디(이메일) 필드 -->
-    <TextView
-        android:id="@+id/tvEmailLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:text="@string/label_id"
-        android:textColor="@color/text1"
-        android:textSize="14sp"
-        android:fontFamily="@font/pretendardmedium"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etNickname" />
-
-    <EditText
-        android:id="@+id/etEmail"
-        android:layout_width="0dp"
-        android:layout_height="52dp"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bg_edittext_underline"
-        android:enabled="false"
-        android:inputType="none"
-        android:paddingHorizontal="4dp"
-        android:textColor="@color/sub_text1"
-        android:textSize="16sp"
-        android:fontFamily="@font/pretendardmedium"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvEmailLabel"
-        tools:text="GURURU @ naver.com" />
-
-    <!-- 로그아웃/회원탈퇴 영역 (우측 정렬) -->
+    <!-- 데이터(기록) 삭제 (우측 정렬) -->
     <LinearLayout
         android:id="@+id/layoutAccountActions"
         android:layout_width="wrap_content"
@@ -153,25 +121,14 @@
         android:layout_marginEnd="24dp"
         android:orientation="vertical"
         android:gravity="end"
-        app:layout_constraintTop_toBottomOf="@id/etEmail"
+        app:layout_constraintTop_toBottomOf="@id/etNickname"
         app:layout_constraintEnd_toEndOf="parent">
-
-        <TextView
-            android:id="@+id/tvLogout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/logout"
-            android:textColor="@color/sub_text1"
-            android:textSize="14sp"
-            android:fontFamily="@font/pretendardmedium"
-            android:padding="4dp" />
 
         <TextView
             android:id="@+id/tvDeleteAccount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/delete_account_short"
+            android:text="@string/delete_data"
             android:textColor="#E53935"
             android:textSize="12sp"
             android:fontFamily="@font/pretendardmedium"

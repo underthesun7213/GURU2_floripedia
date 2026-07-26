@@ -110,6 +110,7 @@
     <string name="hint_enter_nickname">닉네임을 입력하세요</string>
     <string name="label_id">아이디</string>
     <string name="delete_account_short">회원탈퇴</string>
+    <string name="delete_data">데이터 삭제</string>
     <string name="save_changes">변경하기</string>
 
     <!-- 유효성 검사 에러 메시지 -->

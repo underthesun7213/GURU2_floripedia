@@ -62,54 +62,21 @@ class ProfileEditActivity : AppCompatActivity() {
             saveProfile()
         }
 
-        // 로그아웃 버튼
-        binding.tvLogout.setOnClickListener {
-            showLogoutDialog()
-        }
-
-        // 회원탈퇴 버튼
+        // 데이터(기록) 삭제 버튼
         binding.tvDeleteAccount.setOnClickListener {
             showDeleteAccountDialog()
         }
     }
 
-    private fun showLogoutDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("로그아웃")
-            .setMessage("정말 로그아웃 하시겠습니까?")
-            .setPositiveButton("로그아웃") { _, _ ->
-                performLogout()
-            }
-            .setNegativeButton("취소", null)
-            .show()
-    }
-
     private fun showDeleteAccountDialog() {
         AlertDialog.Builder(this)
-            .setTitle("회원탈퇴")
-            .setMessage("정말 탈퇴하시겠습니까?\n탈퇴 후에는 복구할 수 없습니다.")
-            .setPositiveButton("탈퇴") { _, _ ->
+            .setTitle("데이터 삭제")
+            .setMessage("이 기기의 찜·레벨 기록이 모두 삭제됩니다.\n삭제 후에는 복구할 수 없습니다.")
+            .setPositiveButton("삭제") { _, _ ->
                 performDeleteAccount()
             }
             .setNegativeButton("취소", null)
             .show()
-    }
-
-    private fun performLogout() {
-        binding.progressBar.visibility = View.VISIBLE
-
-        lifecycleScope.launch {
-            val result = AppContainer.userRepository.logout()
-
-            // 서버 응답 상관없이 로컬 로그아웃 처리
-            AppContainer.firebaseAuthManager.signOut()
-            TokenManager.clearToken(this@ProfileEditActivity)
-
-            binding.progressBar.visibility = View.GONE
-
-            Toast.makeText(this@ProfileEditActivity, "로그아웃 되었습니다", Toast.LENGTH_SHORT).show()
-            navigateToHome()
-        }
     }
 
     private fun performDeleteAccount() {
@@ -125,7 +92,7 @@ class ProfileEditActivity : AppCompatActivity() {
                 AppContainer.firebaseAuthManager.signOut()
                 TokenManager.clearToken(this@ProfileEditActivity)
 
-                Toast.makeText(this@ProfileEditActivity, "회원 탈퇴가 완료되었습니다", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ProfileEditActivity, "데이터가 삭제되었습니다", Toast.LENGTH_SHORT).show()
                 navigateToHome()
             }.onFailure { error ->
                 com.example.plant.util.ErrorHandler.handleApiError(
@@ -137,7 +104,7 @@ class ProfileEditActivity : AppCompatActivity() {
         }
     }
 
-    // 익명 인증 모델: 로그아웃/회원탈퇴 후 로그인 화면이 없으므로 홈으로 이동.
+    // 익명 인증 모델: 데이터 삭제 후 로그인 화면이 없으므로 홈으로 이동.
     // 홈(MainActivity)에서 익명 세션이 새로 확보된다.
     private fun navigateToHome() {
         val intent = Intent(this, com.example.plant.ui.home.MainActivity::class.java)
@@ -217,7 +184,6 @@ class ProfileEditActivity : AppCompatActivity() {
 
             result.onSuccess { user ->
                 binding.etNickname.setText(user.nickname)
-                binding.etEmail.setText(user.email)
 
                 user.profileImageUrl?.let { url ->
                     binding.ivProfile.load(url) {
