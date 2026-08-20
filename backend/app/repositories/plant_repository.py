@@ -1,3 +1,4 @@
+import re
 from typing import Optional, List
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
@@ -113,12 +114,15 @@ class PlantRepository:
         if story_genre:
             query["stories.genre"] = story_genre
 
-        # 키워드 검색
+        # 키워드 검색: 이름은 substring, 꽃말·searchKeywords는 사전 계산된
+        # searchTokens(scripts/build_search_tokens.py)에 prefix 매칭.
+        # substring이 꽃말의 "향한"(동사)·"고향"(단어 중간)까지 "향"에 걸던 오매칭을,
+        # 형태소 기반 토큰의 어두(prefix)만 보는 방식으로 차단한다.
         if keyword:
+            kw = re.escape(keyword)
             query["$or"] = [
-                {"name": {"$regex": keyword, "$options": "i"}},
-                {"flowerInfo.language": {"$regex": keyword, "$options": "i"}},
-                {"searchKeywords": {"$regex": keyword, "$options": "i"}},
+                {"name": {"$regex": kw, "$options": "i"}},
+                {"searchTokens": {"$regex": f"^{kw}", "$options": "i"}},
             ]
 
         return query
@@ -178,10 +182,13 @@ class PlantRepository:
         # 뒤섞여 "왜 이게 나오지?"를 유발한다. 매칭 위치로 점수를 매겨 관련 높은 것을 위로.
         # (식물 수가 크지 않아 매칭 문서를 모아 파이썬에서 정렬 후 페이지네이션 — mongomock 호환)
         if keyword:
-            # searchKeywords는 '근거 표시'용으로만 잠깐 조회하고 응답엔 노출하지 않는다.
-            kw_projection = {**projection, "searchKeywords": 1}
+            # searchKeywords·searchTokens는 '근거 표시'용으로만 잠깐 조회하고 응답엔 노출하지 않는다.
+            kw_projection = {**projection, "searchKeywords": 1, "searchTokens": 1}
             docs = await self.collection.find(query, kw_projection).to_list(length=None)
             kw = keyword.lower()
+
+            def _matched_tokens(d: dict) -> List[str]:
+                return [t for t in (d.get("searchTokens") or []) if t.lower().startswith(kw)]
 
             def _relevance(d: dict) -> int:
                 name = (d.get("name") or "").lower()
@@ -190,18 +197,23 @@ class PlantRepository:
                 if kw in name:
                     return 2          # 이름 부분 일치
                 lang = ((d.get("flowerInfo") or {}).get("language") or "").lower()
-                if kw in lang:
-                    return 1          # 꽃말 일치
-                return 0              # searchKeywords 로만 매칭
+                if any(t.lower() in lang for t in _matched_tokens(d)):
+                    return 1          # 꽃말 (토큰) 일치
+                return 0              # searchKeywords 토큰으로만 매칭
 
             def _match_reason(d: dict):
                 # 이름·꽃말은 카드에 이미 보이므로 근거 생략. 숨은 키워드로만 걸린 것만 근거로 노출.
                 name = (d.get("name") or "").lower()
-                lang = ((d.get("flowerInfo") or {}).get("language") or "").lower()
-                if kw in name or kw in lang:
+                if kw in name:
                     return None
+                lang = ((d.get("flowerInfo") or {}).get("language") or "").lower()
+                matched = [t.lower() for t in _matched_tokens(d)]
+                if any(t in lang for t in matched):
+                    return None
+                # 매칭 토큰의 출처 키워드 구문을 근거로 노출 (토큰은 원문 구문의 부분열)
                 for k in (d.get("searchKeywords") or []):
-                    if kw in k.lower():
+                    kl = k.lower()
+                    if any(t in kl for t in matched):
                         return k
                 return None
 
@@ -210,6 +222,7 @@ class PlantRepository:
             for d in page:
                 d["match_reason"] = _match_reason(d)
                 d.pop("searchKeywords", None)
+                d.pop("searchTokens", None)
             return page
 
         # 결정적 정렬 (캐시·재현 정합). 인기도 정렬 시 동점은 _id로 안정 정렬.
