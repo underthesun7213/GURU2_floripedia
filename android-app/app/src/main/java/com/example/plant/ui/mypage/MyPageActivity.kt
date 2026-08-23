@@ -6,7 +6,6 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
-import coil.load
 import com.example.plant.R
 import com.example.plant.databinding.ActivityMypageBinding
 import com.example.plant.di.AppContainer
@@ -16,6 +15,7 @@ import com.example.plant.ui.browse.Browse2Activity
 import com.example.plant.ui.camera.CameraActivity
 import com.example.plant.ui.components.FloripediaBottomBar
 import com.example.plant.ui.detail.Detail1Activity
+import com.example.plant.util.LevelAvatar
 import com.example.plant.util.RecentPlantManager
 import kotlinx.coroutines.launch
 
@@ -182,7 +182,8 @@ class MyPageActivity : AppCompatActivity() {
                     binding.tvUserHandle.visibility = View.GONE
                 }
 
-                // 레벨 정보 바인딩
+                // 레벨 정보 바인딩 + 칭호 연동 성장형 아바타
+                LevelAvatar.apply(binding.ivProfile, user.levelInfo?.level ?: 1)
                 user.levelInfo?.let { info ->
                     binding.tvLevelTitle.text = getString(R.string.level_title_format, info.title, info.level)
                     // 만렙이면 nextLevelExp=0 → "EXP MAX", 아니면 현재/다음 표시
@@ -202,16 +203,6 @@ class MyPageActivity : AppCompatActivity() {
 
                 // 탐험 기록 (viewedPlantIds 개수 — levelInfo에서 가져올 수 없으므로 discoveredPlantIds 길이 기반)
                 binding.tvViewedCount.text = getString(R.string.viewed_count_format, user.discoveredPlantIds.size)
-
-                user.profileImageUrl?.let { url ->
-                    binding.ivProfile.load(url) {
-                        crossfade(true)
-                        placeholder(R.drawable.ic_profile_placeholder)
-                        error(R.drawable.ic_profile_placeholder)
-                    }
-                } ?: run {
-                    binding.ivProfile.setImageResource(R.drawable.ic_profile_placeholder)
-                }
             }.onFailure { error ->
                 // 인증 에러 시 로그인 화면으로 리다이렉트
                 com.example.plant.util.ErrorHandler.handleAuthRequiredError(

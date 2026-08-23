@@ -4,9 +4,6 @@ import com.example.plant.data.remote.RetrofitClient
 import com.example.plant.data.remote.dto.request.UserUpdateRequest
 import com.example.plant.data.remote.dto.response.PlantCardDto
 import com.example.plant.data.remote.dto.response.UserResponse
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.toRequestBody
 
 class UserRepository {
 
@@ -42,25 +39,6 @@ class UserRepository {
                 Result.success(response.body()!!)
             } else {
                 Result.failure(Exception("프로필 수정 실패: ${response.code()}"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    /**
-     * 프로필 이미지 업로드
-     */
-    suspend fun uploadProfileImage(imageData: ByteArray, fileName: String, contentType: String): Result<UserResponse> {
-        return try {
-            val requestBody = imageData.toRequestBody(contentType.toMediaTypeOrNull())
-            val part = MultipartBody.Part.createFormData("file", fileName, requestBody)
-
-            val response = api.uploadProfileImage(part)
-            if (response.isSuccessful && response.body() != null) {
-                Result.success(response.body()!!)
-            } else {
-                Result.failure(Exception("이미지 업로드 실패: ${response.code()}"))
             }
         } catch (e: Exception) {
             Result.failure(e)

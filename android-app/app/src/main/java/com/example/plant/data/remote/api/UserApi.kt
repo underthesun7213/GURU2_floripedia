@@ -6,15 +6,12 @@ import com.example.plant.data.remote.dto.response.FavoriteToggleResponse
 import com.example.plant.data.remote.dto.response.MessageResponse
 import com.example.plant.data.remote.dto.response.PlantCardDto
 import com.example.plant.data.remote.dto.response.UserResponse
-import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
-import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
-import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -32,15 +29,6 @@ interface UserApi {
     @PATCH("users/me")
     suspend fun updateProfile(
         @Body request: UserUpdateRequest
-    ): Response<UserResponse>
-
-    /**
-     * 프로필 이미지 업로드
-     */
-    @Multipart
-    @POST("users/me/profile-image")
-    suspend fun uploadProfileImage(
-        @Part file: MultipartBody.Part
     ): Response<UserResponse>
 
     /**

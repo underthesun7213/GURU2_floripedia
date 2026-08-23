@@ -1,7 +1,6 @@
 package com.example.plant.di
 
 import com.example.plant.data.firebase.FirebaseAuthManager
-import com.example.plant.data.firebase.FirebaseStorageManager
 import com.example.plant.data.repository.AuthRepository
 import com.example.plant.data.repository.PlantRepository
 import com.example.plant.data.repository.UserRepository
@@ -13,10 +12,6 @@ object AppContainer {
 
     val firebaseAuthManager: FirebaseAuthManager by lazy {
         FirebaseAuthManager()
-    }
-
-    val firebaseStorageManager: FirebaseStorageManager by lazy {
-        FirebaseStorageManager()
     }
 
     val authRepository: AuthRepository by lazy {

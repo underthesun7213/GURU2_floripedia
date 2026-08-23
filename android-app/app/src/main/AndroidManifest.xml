@@ -36,8 +36,6 @@
             android:name=".ui.detail.Detail1Activity"
             android:exported="false" />
         <activity android:name=".ui.camera.CameraActivity"/>
-        <activity android:name=".ui.auth.LoginActivity"/>
-        <activity android:name=".ui.auth.SignUpActivity"/>
         <activity android:name=".ui.bookmark.Bookmark1Activity"/>
         <activity android:name=".ui.bookmark.BookmarkCategoryActivity"/>
         <activity android:name=".ui.browse.Browse2Activity"/>
