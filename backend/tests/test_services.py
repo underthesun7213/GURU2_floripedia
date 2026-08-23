@@ -162,29 +162,6 @@ class TestUserServiceProfile:
         with pytest.raises(ValueError, match="탈퇴한 계정"):
             await user_service.get_profile("user2")
 
-    @pytest.mark.asyncio
-    async def test_upload_image_success(self, user_service: UserService, mock_firebase_storage):
-        """프로필 이미지 업로드 성공"""
-        with patch("app.services.user_service.firebase_storage", mock_firebase_storage):
-            result = await user_service.upload_profile_image(
-                user_id="user1",
-                file_data=b"fake-image-data",
-                content_type="image/jpeg",
-            )
-
-        assert result is not None
-        mock_firebase_storage.upload_profile_image.assert_called_once()
-
-    @pytest.mark.asyncio
-    async def test_upload_image_user_not_found(self, user_service: UserService):
-        """존재하지 않는 유저 이미지 업로드 -> ValueError"""
-        with pytest.raises(ValueError, match="유저를 찾을 수 없습니다"):
-            await user_service.upload_profile_image(
-                user_id="nonexistent",
-                file_data=b"fake-image-data",
-                content_type="image/jpeg",
-            )
-
 
 class TestUserServiceFavorite:
     """찜 토글 비즈니스 로직"""

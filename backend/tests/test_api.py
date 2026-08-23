@@ -132,13 +132,3 @@ class TestUsersAPI:
         assert resp.status_code == 200
         data = resp.json()
         assert "isFavorite" in data
-
-    @pytest.mark.asyncio
-    async def test_upload_image_400(self, client):
-        """POST /users/me/profile-image -> 400 잘못된 형식"""
-        resp = await client.post(
-            "/api/v1/users/me/profile-image",
-            files={"file": ("test.txt", b"not-an-image", "text/plain")},
-        )
-
-        assert resp.status_code == 400

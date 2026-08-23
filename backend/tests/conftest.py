@@ -289,20 +289,6 @@ def mock_gemini_service():
 
 
 # ============================================
-# Firebase Storage Mock
-# ============================================
-
-@pytest.fixture
-def mock_firebase_storage():
-    """Firebase Storage Mock"""
-    mock = MagicMock()
-    mock.upload_profile_image = MagicMock(
-        return_value="https://storage.googleapis.com/test-bucket/profile.jpg"
-    )
-    return mock
-
-
-# ============================================
 # Service Factory Fixtures (DI 패턴)
 # ============================================
 

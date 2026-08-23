@@ -8,7 +8,6 @@ import logging
 from typing import List, Optional
 
 from app.repositories import UserRepository, PlantRepository
-from app.services.firebase_service import firebase_storage
 from app.schemas.user import LEVEL_THRESHOLDS, compute_level, compute_level_info
 
 # 로거 설정
@@ -96,39 +95,6 @@ class UserService:
             logger.warning(f"[update_profile] 업데이트 실패")
             
         return result
-
-    async def upload_profile_image(
-        self, user_id: str, file_data: bytes, content_type: str
-    ) -> dict:
-        """프로필 이미지 업로드 및 URL 저장."""
-        logger.info(f"[upload_profile_image] user_id={user_id}, size={len(file_data):,} bytes")
-        
-        user = await self.user_repo.get_by_id(user_id)
-        if not user:
-            logger.error(f"[upload_profile_image] 유저를 찾을 수 없음: {user_id}")
-            raise ValueError("유저를 찾을 수 없습니다")
-
-        try:
-            # Firebase Storage 업로드
-            logger.debug("[upload_profile_image] Firebase Storage 업로드 시작...")
-            image_url = firebase_storage.upload_profile_image(
-                user_id=user_id,
-                file_data=file_data,
-                content_type=content_type,
-            )
-            logger.info(f"[upload_profile_image] 업로드 성공: {image_url[:50]}...")
-            
-            # DB 업데이트
-            updated_user = await self.user_repo.update(
-                user_id, {"profileImageUrl": image_url}
-            )
-            logger.info("[upload_profile_image] DB 업데이트 완료")
-            
-            return updated_user
-
-        except Exception as e:
-            logger.error(f"[upload_profile_image] 실패: {e}")
-            raise RuntimeError(f"이미지 업로드 실패: {str(e)}")
 
     # ==========================================
     # 찜(꽃갈피) 기능

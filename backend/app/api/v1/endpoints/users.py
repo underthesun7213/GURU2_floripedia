@@ -1,5 +1,5 @@
 from typing import List, Optional
-from fastapi import APIRouter, HTTPException, Depends, Query, UploadFile, File, status
+from fastapi import APIRouter, HTTPException, Depends, Query, status
 
 from app.schemas.user import UserResponse, UserUpdate
 from app.schemas import PlantCardDto
@@ -65,50 +65,7 @@ async def update_my_profile(
 
 
 # ==========================================
-# 3. 마이페이지 - 프로필 이미지 업로드
-# ==========================================
-@router.post("/me/profile-image", response_model=UserResponse)
-async def upload_profile_image(
-    file: UploadFile = File(..., description="업로드할 프로필 이미지"),
-    user_id: str = Depends(get_current_user_id),
-    service: UserService = Depends(get_user_service)
-):
-    """
-    프로필 이미지 업로드.
-    - 파일 형식 및 크기 검증
-    - Firebase Storage 업로드
-    - MongoDB URL 업데이트
-    """
-    allowed_types = ["image/jpeg", "image/png", "image/jpg"]
-    if file.content_type not in allowed_types:
-        raise HTTPException(
-            status_code=400,
-            detail="지원하지 않는 이미지 형식입니다. JPEG 또는 PNG만 가능합니다."
-        )
-
-    # 5MB 용량 제한
-    contents = await file.read()
-    if len(contents) > 5 * 1024 * 1024:
-        raise HTTPException(
-            status_code=400,
-            detail="파일 크기가 너무 큽니다. 최대 5MB까지 업로드 가능합니다."
-        )
-
-    try:
-        updated_user = await service.upload_profile_image(
-            user_id=user_id,
-            file_data=contents,
-            content_type=file.content_type,
-        )
-        return updated_user
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except RuntimeError as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-# ==========================================
-# 4. 꽃갈피(찜) - 토글
+# 3. 꽃갈피(찜) - 토글
 # ==========================================
 @router.post("/me/favorites/{plant_id}")
 async def toggle_favorite(
