@@ -15,6 +15,13 @@ def serverUrl = localProps.getProperty('SERVER_URL', 'http://10.0.2.2:8000/')
 def admobAppId = localProps.getProperty('ADMOB_APP_ID', 'ca-app-pub-3940256099942544~3347511713')
 def admobBannerId = localProps.getProperty('ADMOB_BANNER_ID', 'ca-app-pub-3940256099942544/6300978111')
 
+// 릴리스 서명: keystore.properties가 있는 머신에서만 서명 (파일·키스토어는 커밋 금지)
+def keystoreProps = new Properties()
+def keystorePropsFile = rootProject.file('keystore.properties')
+if (keystorePropsFile.exists()) {
+    keystoreProps.load(keystorePropsFile.newDataInputStream())
+}
+
 android {
     namespace = 'com.example.plant'
     compileSdk 36
@@ -34,14 +41,26 @@ android {
         manifestPlaceholders["admobAppId"] = admobAppId
     }
 
+    signingConfigs {
+        if (keystorePropsFile.exists()) {
+            release {
+                storeFile file(keystoreProps.getProperty('storeFile'))
+                storePassword keystoreProps.getProperty('storePassword')
+                keyAlias keystoreProps.getProperty('keyAlias')
+                keyPassword keystoreProps.getProperty('keyPassword')
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            // TODO(배포): 릴리스 keystore 설정 후 signingConfig 지정 (Play Store 업로드용).
-            //            현재는 미서명 — R8/축소 검증은 완료됨(debug 서명으로 스모크 테스트 통과).
+            if (keystorePropsFile.exists()) {
+                signingConfig signingConfigs.release
+            }
         }
         debug {
             zipAlignEnabled true

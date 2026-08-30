@@ -26,6 +26,7 @@ render.experimental.xml
 # Keystore files
 *.jks
 *.keystore
+keystore.properties
 
 # Google Services (e.g. APIs or Firebase)
 # [보안 중요] Firebase 인증 키 파일 - 절대 커밋 금지!
