@@ -8,6 +8,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 import firebase_admin
@@ -105,3 +106,9 @@ async def root():
 async def health_check():
     """헬스체크 엔드포인트. 서비스 상태 확인용."""
     return {"status": "healthy"}
+
+
+@app.get("/privacy", include_in_schema=False)
+async def privacy_policy():
+    """개인정보처리방침 정적 페이지. Play 스토어 등록정보에 URL로 사용."""
+    return FileResponse("static/privacy.html", media_type="text/html; charset=utf-8")
