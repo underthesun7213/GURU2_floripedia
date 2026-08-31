@@ -45,6 +45,23 @@ class ProfileEditActivity : AppCompatActivity() {
         binding.tvDeleteAccount.setOnClickListener {
             showDeleteAccountDialog()
         }
+
+        // 오픈소스 라이선스 고지
+        binding.tvOpenSourceLicenses.setOnClickListener {
+            showOpenSourceLicensesDialog()
+        }
+    }
+
+    private fun showOpenSourceLicensesDialog() {
+        val licenses = resources.openRawResource(com.example.plant.R.raw.open_source_licenses)
+            .bufferedReader()
+            .use { it.readText() }
+
+        AlertDialog.Builder(this)
+            .setTitle(getString(com.example.plant.R.string.open_source_licenses))
+            .setMessage(licenses)
+            .setPositiveButton("확인", null)
+            .show()
     }
 
     private fun showDeleteAccountDialog() {

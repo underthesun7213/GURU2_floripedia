@@ -720,6 +720,18 @@ Postman → Import → File 선택 후 사용. `base_url`: `http://localhost:800
 
 본 저장소는 포트폴리오 용도로 공개되어 있습니다. 코드·데이터·에셋의 무단 복제, 재배포, 상업적 이용을 금합니다.
 
+### 오픈소스 고지
+
+앱에 포함된 주요 오픈소스 구성요소:
+
+| 구성요소 | 라이선스 | 용도 |
+|---|---|---|
+| [Material Symbols](https://fonts.google.com/icons) (Google) | Apache 2.0 | 성장형 아바타 아이콘 10종 |
+| [Pretendard](https://github.com/orioncactus/pretendard) | SIL OFL 1.1 | 앱 전체 서체 |
+| AndroidX · Material Components · Firebase SDK · Retrofit · OkHttp · Gson · Coil · kotlinx.coroutines 등 | Apache 2.0 | 라이브러리 |
+
+전체 고지문과 라이선스 전문은 앱 내 **마이페이지 → 편집 → 오픈소스 라이선스** 및 `android-app/app/src/main/res/raw/open_source_licenses.txt`에서 확인할 수 있습니다.
+
 ---
 
 ## 👥 팀
