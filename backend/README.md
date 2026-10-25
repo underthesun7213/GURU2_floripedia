@@ -2,6 +2,35 @@
 
 FastAPI + Motor(async MongoDB) + Firebase + Gemini.
 
+## API 목록
+
+기본 경로는 `/api/v1` 입니다.
+
+| 그룹 | Method | 경로 | 설명 | 인증 |
+|---|---|---|---|---|
+| auth | `POST` | `/api/v1/auth/login` | Firebase ID Token 기반 로그인/자동 회원가입 | 공개 |
+| auth | `GET` | `/api/v1/auth/check-email` | 이메일 중복 확인 | 공개 |
+| plants | `GET` | `/api/v1/plants/stories/popular` | 인기 스토리 목록 조회 | 공개 |
+| plants | `GET` | `/api/v1/plants` | 식물 목록 조회 + 필터/정렬/페이지네이션 | 공개 |
+| plants | `GET` | `/api/v1/plants/count` | 필터 조건에 맞는 식물 수 조회 | 공개 |
+| plants | `POST` | `/api/v1/plants/recommend` | 상황 기반 식물 추천 (Gemini AI) | 필요 |
+| plants | `POST` | `/api/v1/plants/search/image` | 이미지 기반 식물 검색 (Vision AI) | 필요 |
+| plants | `GET` | `/api/v1/plants/{plant_id}` | 식물 상세 조회 | 공개/토큰 선택 |
+| users | `GET` | `/api/v1/users/me` | 내 프로필 조회 | 필요 |
+| users | `PATCH` | `/api/v1/users/me` | 내 프로필 수정 | 필요 |
+| users | `POST` | `/api/v1/users/me/favorites/{plant_id}` | 찜 추가/취소 토글 | 필요 |
+| users | `GET` | `/api/v1/users/me/favorites` | 내 찜 목록 조회 | 필요 |
+| users | `GET` | `/api/v1/users/me/favorites/count` | 찜 개수 조회 | 필요 |
+| users | `POST` | `/api/v1/users/logout` | 로그아웃(클라이언트 토큰 폐기) | 필요 |
+| users | `DELETE` | `/api/v1/users/me` | 회원 탈퇴 | 필요 |
+| admin | `POST` | `/api/v1/admin/cache/invalidate` | 캐시 무효화 | 관리자 토큰 필요 |
+| admin | `POST` | `/api/v1/admin/curated/stories` | 인기 스토리 큐레이션 설정 | 관리자 토큰 필요 |
+
+### 참고 사항
+- `GET /api/v1/plants/{plant_id}`는 인증 토큰이 있으면 `is_favorite` 값을 포함해 반환합니다.
+- `POST /api/v1/plants/recommend`와 `POST /api/v1/plants/search/image`는 AI 사용량 제한 및 앱 검증 의존성이 적용됩니다.
+- 관리자 전용 API는 `X-Admin-Token` 헤더를 사용하며, 토큰 미설정 시 기능이 잠깁니다.
+
 ## 🧊 캐시 (Cache)
 
 읽기 위주 워크로드(식물 데이터는 ETL 배치로만 갱신, 런타임 쓰기 거의 없음)를 위한
