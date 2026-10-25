@@ -70,8 +70,8 @@ class FilterValidatorTest {
     }
 
     @Test
-    fun `COLOR_GROUP 유효값 5개`() {
-        assertEquals(5, FilterValidator.getValidValues(FilterType.COLOR_GROUP).size)
+    fun `COLOR_GROUP 유효값 6개`() {
+        assertEquals(6, FilterValidator.getValidValues(FilterType.COLOR_GROUP).size)
     }
 
     @Test
