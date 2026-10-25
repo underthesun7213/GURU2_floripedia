@@ -138,8 +138,14 @@ class PlantService:
             logger.info("=" * 50)
             return result
 
-        # 4. DB에 없으면 에러 반환
+        # 4. DB에 없으면 미스 기록 후 에러 반환 (기록 실패는 응답에 영향 없음)
         logger.warning(f"[실패] '{target_name}' ({target_scientific_name}) - DB에 해당 식물 정보 없음")
+        try:
+            await self.plant_repo.log_search_miss(
+                target_name, target_scientific_name, target_english_name
+            )
+        except Exception as e:
+            logger.warning(f"[search_misses] 미스 기록 실패(무시): {e}")
         raise ValueError(f"'{target_name}'에 대한 정보가 데이터베이스에 없습니다.")
     # =========================================================
     # 2. 텍스트 기반 추천 (DB-only 모드 + 에세이)
@@ -191,9 +197,15 @@ class PlantService:
             logger.debug(f"   - [3차] 학명 퍼지 매칭 조회: {target_scientific_name}")
             plant_in_db = await self.plant_repo.find_by_scientific_name_fuzzy(target_scientific_name)
 
-        # 3. DB에 없으면 에러 반환
+        # 3. DB에 없으면 미스 기록 후 에러 반환 (기록 실패는 응답에 영향 없음)
         if not plant_in_db:
             logger.warning(f"[실패] '{target_name}' ({target_scientific_name}) - DB에 해당 식물 정보 없음")
+            try:
+                await self.plant_repo.log_search_miss(
+                    target_name, target_scientific_name, identified.get("englishName", "")
+                )
+            except Exception as e:
+                logger.warning(f"[search_misses] 미스 기록 실패(무시): {e}")
             raise ValueError(f"'{target_name}'에 대한 정보가 데이터베이스에 없습니다.")
 
         logger.info(f"[Step 2 완료] DB에서 발견: {plant_in_db.get('_id')}")

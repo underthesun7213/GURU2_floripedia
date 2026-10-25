@@ -1,4 +1,5 @@
 import re
+from datetime import datetime, timezone
 from typing import Optional, List
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
@@ -11,6 +12,7 @@ class PlantRepository:
     def __init__(self, db: AsyncIOMotorDatabase):
         self.collection = db["plants"]
         self.db_config = db["config"]   # 큐레이션 등 설정 문서
+        self.search_misses = db["search_misses"]  # AI 식별됐지만 DB에 없는 종 기록
 
     async def get_by_id(self, plant_id: str) -> Optional[dict]:
         """ID로 식물 상세 조회"""
@@ -54,6 +56,32 @@ class PlantRepository:
         })
 
 
+
+    async def log_search_miss(
+        self, name: str, scientific_name: str = "", english_name: str = ""
+    ) -> None:
+        """
+        AI가 식별했지만 DB 매칭에 실패한 종을 기록.
+        count 내림차순이 곧 DB 보강 배치의 우선순위 목록이 된다.
+        """
+        key = (scientific_name or name).strip().lower()
+        if not key:
+            return
+        now = datetime.now(timezone.utc)
+        await self.search_misses.update_one(
+            {"_id": key},
+            {
+                "$inc": {"count": 1},
+                "$set": {
+                    "name": name,
+                    "scientificName": scientific_name,
+                    "englishName": english_name,
+                    "lastSeenAt": now,
+                },
+                "$setOnInsert": {"firstSeenAt": now},
+            },
+            upsert=True,
+        )
 
     async def create(self, plant_data: dict) -> dict:
         """새 식물 데이터 저장"""
