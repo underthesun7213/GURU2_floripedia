@@ -59,6 +59,23 @@ class PlantService:
         await self.user_repo.add_exp(user_id, amount, new_level)
         logger.info(f"[_award_exp] user={user_id}, +{amount} ({reason}), total={new_exp}, lv={new_level}")
 
+    async def _match_identified(self, name: str, scientific_name: str) -> Optional[dict]:
+        """AI 식별 결과를 DB와 매칭 (학명 정확 → 이름 정확 → 별칭 → 학명 퍼지)."""
+        plant = None
+        if scientific_name:
+            logger.debug(f"   - [1차] 학명 정확 일치 조회: {scientific_name}")
+            plant = await self.plant_repo.get_by_scientific_name(scientific_name)
+        if not plant:
+            logger.debug(f"   - [2차] 이름 정확 일치 조회: {name}")
+            plant = await self.plant_repo.get_by_name(name)
+        if not plant:
+            logger.debug(f"   - [3차] 별칭(searchKeywords) 조회: {name}")
+            plant = await self.plant_repo.get_by_alias(name)
+        if not plant and scientific_name:
+            logger.debug(f"   - [4차] 학명 퍼지 매칭 조회: {scientific_name}")
+            plant = await self.plant_repo.find_by_scientific_name_fuzzy(scientific_name)
+        return plant
+
     # =========================================================
     # 1. 이미지 기반 검색 (DB-only 모드)
     # =========================================================
@@ -95,24 +112,9 @@ class PlantService:
         logger.info(f"   - 학명: {target_scientific_name}")
         logger.info(f"   - 영문명: {target_english_name}")
 
-        # 2. DB 조회 (3단계: 학명 정확 → 이름 정확 → 학명 퍼지)
+        # 2. DB 조회 (4단계: 학명 정확 → 이름 정확 → 별칭 → 학명 퍼지)
         logger.debug("[Step 2] DB 조회 시작...")
-        plant_in_db = None
-
-        # 2-1. 학명 정확 일치
-        if target_scientific_name:
-            logger.debug(f"   - [1차] 학명 정확 일치 조회: {target_scientific_name}")
-            plant_in_db = await self.plant_repo.get_by_scientific_name(target_scientific_name)
-
-        # 2-2. 이름 정확 일치
-        if not plant_in_db:
-            logger.debug(f"   - [2차] 이름 정확 일치 조회: {target_name}")
-            plant_in_db = await self.plant_repo.get_by_name(target_name)
-
-        # 2-3. 학명 퍼지 매칭 (속 기준)
-        if not plant_in_db and target_scientific_name:
-            logger.debug(f"   - [3차] 학명 퍼지 매칭 조회: {target_scientific_name}")
-            plant_in_db = await self.plant_repo.find_by_scientific_name_fuzzy(target_scientific_name)
+        plant_in_db = await self._match_identified(target_name, target_scientific_name)
 
         # 3. DB에 존재하면 반환
         if plant_in_db:
@@ -165,50 +167,44 @@ class PlantService:
         logger.info("[recommend_plants] 텍스트 기반 추천 시작")
         logger.info(f"  - 상황: {situation[:50]}{'...' if len(situation) > 50 else ''}")
 
-        # 1. Gemini: 이름 선정
-        logger.debug("[Step 1] Gemini 식물 선정 호출...")
-        identified = await self.gemini.get_plant_name_from_text(situation)
+        # 1. Gemini: 후보 선정 (적합도 순 최대 3개 — 단일 추천의 즉시 실패 완화)
+        logger.debug("[Step 1] Gemini 식물 후보 선정 호출...")
+        candidates = await self.gemini.get_plant_candidates_from_text(situation)
 
-        if not identified or not identified.get("name"):
+        if not candidates:
             logger.warning("[실패] 적절한 식물을 추천하지 못함")
             raise ValueError("적절한 식물을 추천하지 못했습니다.")
 
-        target_name = identified["name"]
-        target_scientific_name = identified.get("scientificName", "").strip()
+        logger.info(f"[Step 1 완료] 후보 {len(candidates)}개: {[c.get('name') for c in candidates]}")
 
-        logger.info(f"[Step 1 완료] 추천 식물: {target_name} ({target_scientific_name})")
-
-        # 2. DB 조회 (3단계: 학명 정확 → 이름 정확 → 학명 퍼지)
-        logger.debug("[Step 2] DB 조회 시작...")
+        # 2. 후보 순차 DB 매칭 (학명 정확 → 이름 정확 → 별칭 → 학명 퍼지)
+        logger.debug("[Step 2] 후보 순차 DB 조회 시작...")
         plant_in_db = None
+        missed = []
+        for cand in candidates:
+            name = cand["name"]
+            sci = (cand.get("scientificName") or "").strip()
+            plant_in_db = await self._match_identified(name, sci)
+            if plant_in_db:
+                logger.info(f"[Step 2 완료] '{name}' → DB {plant_in_db.get('_id')}")
+                break
+            missed.append(cand)
 
-        # 2-1. 학명 정확 일치
-        if target_scientific_name:
-            logger.debug(f"   - [1차] 학명 정확 일치 조회: {target_scientific_name}")
-            plant_in_db = await self.plant_repo.get_by_scientific_name(target_scientific_name)
-
-        # 2-2. 이름 정확 일치
-        if not plant_in_db:
-            logger.debug(f"   - [2차] 이름 정확 일치 조회: {target_name}")
-            plant_in_db = await self.plant_repo.get_by_name(target_name)
-
-        # 2-3. 학명 퍼지 매칭 (속 기준)
-        if not plant_in_db and target_scientific_name:
-            logger.debug(f"   - [3차] 학명 퍼지 매칭 조회: {target_scientific_name}")
-            plant_in_db = await self.plant_repo.find_by_scientific_name_fuzzy(target_scientific_name)
-
-        # 3. DB에 없으면 미스 기록 후 에러 반환 (기록 실패는 응답에 영향 없음)
-        if not plant_in_db:
-            logger.warning(f"[실패] '{target_name}' ({target_scientific_name}) - DB에 해당 식물 정보 없음")
+        # 매칭 실패한 후보는 전부 미스 기록 — DB 갭 신호 (기록 실패는 응답에 영향 없음)
+        for cand in missed:
             try:
                 await self.plant_repo.log_search_miss(
-                    target_name, target_scientific_name, identified.get("englishName", "")
+                    cand["name"], (cand.get("scientificName") or "").strip(),
+                    cand.get("englishName", ""),
                 )
             except Exception as e:
                 logger.warning(f"[search_misses] 미스 기록 실패(무시): {e}")
-            raise ValueError(f"'{target_name}'에 대한 정보가 데이터베이스에 없습니다.")
 
-        logger.info(f"[Step 2 완료] DB에서 발견: {plant_in_db.get('_id')}")
+        # 3. 전 후보 미스면 에러 반환 (기존 응답 형식 유지 — 1순위 후보 이름 사용)
+        if not plant_in_db:
+            first = candidates[0]
+            logger.warning(f"[실패] 후보 {len(candidates)}개 전부 DB에 없음: {[c['name'] for c in candidates]}")
+            raise ValueError(f"'{first['name']}'에 대한 정보가 데이터베이스에 없습니다.")
 
         # 4. 에세이 작성
         logger.debug("[Step 3] 추천 에세이 생성 중...")

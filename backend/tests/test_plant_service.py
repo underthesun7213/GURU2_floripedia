@@ -177,11 +177,11 @@ class TestRecommendPlants:
         user_repo = MagicMock()
         service = PlantService(plant_repo, user_repo, mock_gemini_service)
 
-        mock_gemini_service.get_plant_name_from_text = AsyncMock(return_value={
+        mock_gemini_service.get_plant_candidates_from_text = AsyncMock(return_value=[{
             "name": "라벤더",
             "englishName": "Lavender",
             "scientificName": "Lavandula angustifolia"
-        })
+        }])
         mock_gemini_service.generate_recommendation_essay = AsyncMock(
             return_value="라벤더의 은은한 향기가 마음을 편안하게 해줄 거예요."
         )
@@ -202,11 +202,11 @@ class TestRecommendPlants:
         user_repo = MagicMock()
         service = PlantService(plant_repo, user_repo, mock_gemini_service)
 
-        mock_gemini_service.get_plant_name_from_text = AsyncMock(return_value={
+        mock_gemini_service.get_plant_candidates_from_text = AsyncMock(return_value=[{
             "name": "에델바이스",
             "englishName": "Edelweiss",
             "scientificName": "Leontopodium alpinum"
-        })
+        }])
 
         # Act & Assert
         with pytest.raises(ValueError) as exc_info:
@@ -220,6 +220,31 @@ class TestRecommendPlants:
         assert doc["count"] == 1
 
     @pytest.mark.asyncio
+    async def test_recommend_second_candidate_matches(self, plant_repo, mock_gemini_service):
+        """1순위 후보가 DB에 없으면 2순위로 넘어가고, 미스난 후보는 기록된다"""
+        # Arrange
+        user_repo = MagicMock()
+        service = PlantService(plant_repo, user_repo, mock_gemini_service)
+
+        mock_gemini_service.get_plant_candidates_from_text = AsyncMock(return_value=[
+            {"name": "에델바이스", "englishName": "Edelweiss",
+             "scientificName": "Leontopodium alpinum"},
+            {"name": "장미", "englishName": "Rose", "scientificName": "Rosa canina"},
+        ])
+        mock_gemini_service.generate_recommendation_essay = AsyncMock(
+            return_value="장미는 사랑의 꽃입니다."
+        )
+
+        # Act
+        result = await service.recommend_plants("사랑을 전하고 싶어")
+
+        # Assert: 2순위(장미) 매칭 성공 + 1순위 미스 기록
+        assert result["name"] == "장미"
+        doc = await plant_repo.search_misses.find_one({"_id": "leontopodium alpinum"})
+        assert doc is not None
+        assert doc["count"] == 1
+
+    @pytest.mark.asyncio
     async def test_recommend_miss_log_failure_does_not_change_response(self, plant_repo, mock_gemini_service):
         """추천 경로에서도 미스 기록 실패가 응답을 바꾸지 않는다"""
         # Arrange
@@ -227,11 +252,11 @@ class TestRecommendPlants:
         service = PlantService(plant_repo, user_repo, mock_gemini_service)
         plant_repo.log_search_miss = AsyncMock(side_effect=RuntimeError("db down"))
 
-        mock_gemini_service.get_plant_name_from_text = AsyncMock(return_value={
+        mock_gemini_service.get_plant_candidates_from_text = AsyncMock(return_value=[{
             "name": "에델바이스",
             "englishName": "Edelweiss",
             "scientificName": "Leontopodium alpinum"
-        })
+        }])
 
         # Act & Assert
         with pytest.raises(ValueError) as exc_info:
@@ -246,7 +271,7 @@ class TestRecommendPlants:
         user_repo = MagicMock()
         service = PlantService(plant_repo, user_repo, mock_gemini_service)
 
-        mock_gemini_service.get_plant_name_from_text = AsyncMock(return_value=None)
+        mock_gemini_service.get_plant_candidates_from_text = AsyncMock(return_value=[])
 
         # Act & Assert
         with pytest.raises(ValueError) as exc_info:

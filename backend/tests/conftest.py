@@ -275,11 +275,11 @@ def mock_gemini_service():
         "scientificName": "Rosa canina"
     })
 
-    mock.get_plant_name_from_text = AsyncMock(return_value={
+    mock.get_plant_candidates_from_text = AsyncMock(return_value=[{
         "name": "라벤더",
         "englishName": "Lavender",
         "scientificName": "Lavandula angustifolia"
-    })
+    }])
 
     mock.generate_recommendation_essay = AsyncMock(
         return_value="라벤더는 마음의 평화를 선사하는 식물입니다..."
@@ -342,10 +342,10 @@ async def test_app(mock_db_full):
     gemini_mock.get_plant_name_from_image = AsyncMock(return_value={
         "name": "장미", "englishName": "Rose", "scientificName": "Rosa canina"
     })
-    gemini_mock.get_plant_name_from_text = AsyncMock(return_value={
+    gemini_mock.get_plant_candidates_from_text = AsyncMock(return_value=[{
         "name": "라벤더", "englishName": "Lavender",
         "scientificName": "Lavandula angustifolia"
-    })
+    }])
     gemini_mock.generate_recommendation_essay = AsyncMock(
         return_value="추천 에세이입니다."
     )

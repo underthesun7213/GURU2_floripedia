@@ -38,6 +38,15 @@ class PlantRepository:
         # MongoDB find_one을 사용하여 단일 문서 반환
         return await self.collection.find_one({"scientificName": scientific_name})
 
+    async def get_by_alias(self, name: str) -> Optional[dict]:
+        """
+        별칭(searchKeywords)으로 식물 조회.
+        AI가 '사루비아'처럼 이명으로 답했을 때 DB 정식 이름(살비아)과 잇는다.
+        """
+        if not name:
+            return None
+        return await self.collection.find_one({"searchKeywords": name})
+
     async def find_by_scientific_name_fuzzy(self, scientific_name: str) -> Optional[dict]:
         """
         학명 속(genus) 기준 퍼지 매칭.
@@ -423,27 +432,5 @@ class PlantRepository:
         )
         return len(items)
 
-    async def get_for_recommendation(self, limit: int = 50) -> List[dict]:
-        """
-        AI 추천용 식물 목록 조회 (필요한 필드만)
-        인기도 순으로 정렬하여 상위 N개 반환
-        """
-        projection = {
-            "_id": 1,
-            "name": 1,
-            "flowerInfo": 1,
-            "season": 1,
-            "horticulture.categoryGroup": 1,
-            "colorInfo.colorGroup": 1,
-            "scentInfo.scentGroup": 1,
-        }
-        pipeline = [
-            {"$project": {**projection, "popularity_score": 1}},
-            {"$addFields": {"_rand": {"$rand": {}}}},
-            {"$sort": {"popularity_score": -1, "_rand": 1}},
-            {"$limit": limit},
-            {"$project": {"_rand": 0}},
-        ]
-        return await self.collection.aggregate(pipeline).to_list(length=limit)
 
 

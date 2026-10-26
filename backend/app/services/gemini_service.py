@@ -34,6 +34,17 @@ PLANT_IDENTITY_SCHEMA = types.Schema(
     required=["name", "scientificName"],
 )
 
+PLANT_CANDIDATES_SCHEMA = types.Schema(
+    type=types.Type.OBJECT,
+    properties={
+        "candidates": types.Schema(
+            type=types.Type.ARRAY,
+            items=PLANT_IDENTITY_SCHEMA,
+        ),
+    },
+    required=["candidates"],
+)
+
 IS_PLANT_SCHEMA = types.Schema(
     type=types.Type.OBJECT,
     properties={
@@ -135,29 +146,32 @@ IMPORTANT: scientificName MUST be the FULL binomial name (genus + species), e.g.
 
         return result
 
-    async def get_plant_name_from_text(self, user_input: str) -> Optional[dict]:
-        """상황 텍스트에서 적합한 식물 추천"""
-        logger.info(f"[get_plant_name_from_text] 상황: {user_input[:30]}...")
+    async def get_plant_candidates_from_text(self, user_input: str, n: int = 3) -> list:
+        """
+        상황 텍스트에서 추천 후보 식물 n개를 적합도 순으로 반환.
+        단일 추천의 'DB에 없는 종이면 즉시 실패' 문제를 줄이기 위해
+        후보를 여러 개 받아 서비스단에서 순차 DB 매칭한다.
+        """
+        logger.info(f"[get_plant_candidates_from_text] 상황: {user_input[:30]}...")
 
         prompt = f"""
         User situation: "{user_input}"
-        Recommend 1 suitable plant for this situation.
-        Return JSON: {{"name": "Korean name", "englishName": "English name", "scientificName": "Scientific name"}}
+        Recommend {n} suitable plants for this situation, ordered from best fit.
+        Prefer plants commonly grown or encountered in Korea (화단·공원·가로수·원예종 포함).
+        Return JSON: {{"candidates": [{{"name": "Korean name", "englishName": "English name", "scientificName": "Scientific name"}}]}}
         IMPORTANT: scientificName MUST be the FULL binomial name (genus + species), e.g. "Lavandula angustifolia", NOT just "Lavandula".
         """
         result = await self._generate_content(
-            [prompt], is_json=True, response_schema=PLANT_IDENTITY_SCHEMA
+            [prompt], is_json=True, response_schema=PLANT_CANDIDATES_SCHEMA
         )
 
-        if isinstance(result, list):
-            result = result[0] if result else None
-
-        if result:
-            logger.info(f"[get_plant_name_from_text] 추천: {result.get('name')}")
-        else:
-            logger.warning("[get_plant_name_from_text] 추천 실패")
-
-        return result
+        candidates = (result or {}).get("candidates") or []
+        candidates = [c for c in candidates if isinstance(c, dict) and c.get("name")][:n]
+        logger.info(
+            f"[get_plant_candidates_from_text] 후보 {len(candidates)}개: "
+            f"{[c.get('name') for c in candidates]}"
+        )
+        return candidates
 
     async def generate_recommendation_essay(self, user_situation: str, plant_data: dict) -> str:
         flower_language = (plant_data.get("flowerInfo") or {}).get("language") or ""
