@@ -134,7 +134,7 @@ def do_execute(docs, uri, db_name, coll_name, drop):
     if not uri:
         raise SystemExit("ERROR: MONGO_URI 가 비어 있음 (env 또는 --uri 필요)")
     try:
-        from pymongo import MongoClient, ReplaceOne
+        from pymongo import MongoClient, UpdateOne
     except ImportError:
         raise SystemExit("ERROR: pymongo 미설치 — `pip install pymongo` 후 재시도")
 
@@ -160,9 +160,20 @@ def do_execute(docs, uri, db_name, coll_name, drop):
         coll.insert_many(docs, ordered=False)
         print(f"[execute] insert_many 완료: {len(docs)}건")
     else:
-        ops = [ReplaceOne({"_id": d["_id"]}, d, upsert=True) for d in docs]
+        # $set 병합 upsert: v2.json에 없는 DB 전용 필드(view_count, favorite_count,
+        # DB에서만 생성된 콘텐츠 등)를 보존한다. ReplaceOne 전체 교체는 과거에
+        # view_count·seasonDescription(1006종) 유실 사고를 냈음 — 필드 '삭제'는
+        # 이 스크립트가 아니라 전용 정리 스크립트에서 명시적으로 할 것.
+        ops = [
+            UpdateOne(
+                {"_id": d["_id"]},
+                {"$set": {k: v for k, v in d.items() if k != "_id"}},
+                upsert=True,
+            )
+            for d in docs
+        ]
         res = coll.bulk_write(ops, ordered=False)
-        print(f"[execute] upsert 완료: matched={res.matched_count} "
+        print(f"[execute] merge-upsert 완료: matched={res.matched_count} "
               f"upserted={len(res.upserted_ids)} modified={res.modified_count}")
 
     client.close()
